@@ -8,6 +8,8 @@
 //	                function details.
 //	Dependencies:
 //									n/a
+//  NOTE: Creating functions as class prototypes allows them to be loaded only
+//        once in memory, thereby being more conservative on RAM
 
 "use strict";
 
@@ -17,18 +19,25 @@ class HandlerTag {
   // @ctor
   // @parameters    (function) ref      A reference to the function caller
   constructor( ref ) {
-    // TODO: get a function's name 
-    this.fname = ref.name;
-  }
 
-  // @function			getTag()
-  // @description		Acquires a handler tag string for this function.
-  // @parameters		n/a
-  // @returns				(string) tag        The handler tag string
-  getTag() {
-    return this.fname;
+    // Public Properties
+    this.fname = ref.name;
+    this.padding = 0;   // newline padding between a comment and previous cursor
+    this.addNL = true;
   }
 }
+
+// @function			getTag()
+// @description		Acquires a handler tag string for this function.
+// @parameters		n/a
+// @returns				(object) tag          The handler tag object
+HandlerTag.prototype.getTag = function() {
+  return {
+    src: this.fname,
+    pad: this.padding,
+    addNL: this.addNL
+  };
+};
 // END class HandlerTag
 
 module.exports = HandlerTag;

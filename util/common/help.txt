@@ -1,0 +1,22 @@
+SYNOPSIS
+
+  node server.js [options]
+
+DESCRIPTION
+
+  This script runs a web server to service RESTful API requests and server web
+  content.
+
+OPTIONS
+
+  -h, --help
+  
+    Runs this help prompt
+  
+  -p, --port [number]
+
+    Specifies the port that this web server will run on
+  
+  -v, --verbose
+
+    Enables verbos logging to shell console window.
