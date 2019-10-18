@@ -1,0 +1,3 @@
+{
+	"ignore": [ "ability", "api_skeleton", "user", "clearanceLevel", "fitnessEngine" ]
+}

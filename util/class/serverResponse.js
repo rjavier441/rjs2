@@ -38,7 +38,7 @@ class ServerResponse {
 // @description		Generates string representation of the ServerResponse instance
 // @parameters		n/a
 // @returns				(string) str          The string representation of this obj.
-ServerResponse.prototype.asString() = function() {
+ServerResponse.prototype.asString = function() {
   return JSON.stringify( this );
 };
 // END class ServerResponse

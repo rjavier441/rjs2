@@ -1,0 +1,13 @@
+SYNOPSIS
+
+  node setup.js [options]
+
+DESCRIPTION
+
+  This script runs a setup routine to initialize the server.
+
+OPTIONS
+
+  -h, --help
+
+    Runs this help prompt

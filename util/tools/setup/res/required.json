@@ -1,0 +1,19 @@
+{
+  "__notes": [
+    "(Term) Project Root",
+    "   Not to be confused with the server root, the project root is the root",
+    "   folder of the project, i.e. 'rjs2/'",
+    "(string[]) dir",
+    "   A list of directories required for the server. Used by 'setup.js'.",
+    "   Directories from 'dir' are written in reference to the project root.",
+    "(string[]) file",
+    "   A list of files required for the server. Used by 'setup.js'.",
+    "   Files from 'dir' are written in reference to the project root."
+  ],
+  "dir": [
+    "log",
+    "public"
+  ],
+  "file": [
+  ]
+}

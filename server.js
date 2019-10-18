@@ -8,15 +8,13 @@
 //	Dependencies:
 //									n/a
 
-"use strict";
+'use strict';
 
 // BEGIN includes
-var settings = require( "./util/settings.js" );
+var _lib = require( './util/_lib.js' );
 var bp = require( 'body-parser' );
-var fs = require( "fs" );
-var logger = require( `${settings.util}/logger.js` );
-var HandlerTag = require( `${settings.util}/class/handlerTag.js` );
-var minimist = require( "minimist" );
+var fs = require( 'fs' );
+var minimist = require( 'minimist' );
 // END includes
 
 // BEGIN utility functions
@@ -25,16 +23,8 @@ var minimist = require( "minimist" );
 // @parameters		n/a
 // @returns				n/a
 function help() {
-	printEmblem();
-	console.log("\n" + fs.readFileSync( `${settings.util}/common/help.txt` ) );
-}
-
-// @function			printEmblem()
-// @description		This function prints the emblem for the server.
-// @parameters		n/a
-// @returns				n/a
-function printEmblem() {
-	console.log( "\n" + fs.readFileSync( `${settings.util}/common/emblem.txt` ).toString() );
+	_lib.Util.printEmblem();
+	console.log('\n' + fs.readFileSync( `${_lib.settings.util}/common/help.txt` ) );
 }
 // END utility functions
 
@@ -46,8 +36,8 @@ function printEmblem() {
 function main( argv ) {
 
 	// At script startup, collect arguments
-	var ht = new HandlerTag( this );
-	var args = minimist( argv.slice( 2 ) );		// cut out "node" & "server" tokens
+	var ht = new _lib.Class.HandlerTag( this );
+	var args = minimist( argv.slice( 2 ) );		// cut out 'node' & 'server' tokens
 
 	// Parse arguments
 	if( args.h || args.help ) {
@@ -57,36 +47,42 @@ function main( argv ) {
 		return;
 	} else {
 
-		printEmblem();
+		_lib.Util.printEmblem();
 	}
 
 	// Initialize logger
 	if( !args.v && !args.verbose ) {
 		console.log( 'Running in non-verbose logging mode...' );
-		logger.logToConsole = false;
+		_lib.Logger.logToConsole = false;
 	}
-	logger.log( 'Initializing...', ht.getTag() );
+	_lib.Logger.log( 'Initializing...', ht.getTag() );
 
 	// Create server instance
-	const express = require( "express" );
+	const express = require( 'express' );
 	const app = express();
 	app.locals.title = 'rjserver2';
 	app.locals.email = 'rjavier441@gmail.com';
 
 	// Set static asset locations
-	logger.log( 'Preparing static assets...', ht.getTag() );
+	_lib.Logger.log( 'Preparing static assets...', ht.getTag() );
 	app.use( bp.json( {
 		strict: true
 	} ) );
 	app.use( bp.urlencoded( {
 		extended: true
 	} ) );
-	app.use( express.static( settings.root ) );
+	app.use( express.static( _lib.settings.root ) );
+
+	// Initialize applications
+	app.use( '/api', require( './api/app/app.js' ) );		// RESTful APIs
+
+	// Autoload APIs
+	_lib.AutoLoader.route.load( app );
 
 	// DEBUG
 	console.log( 'handlerTag:', ht.getTag() );
 	console.log( 'args:', args );
-	console.log( 'settings:', settings );
+	console.log( 'settings:', _lib.settings );
 }
 
 // Run main()

@@ -18,17 +18,20 @@ const defaults = {
   devMode: true,
 
   // The hostname for the server
-  hostname: "www.hostname.com",
+  hostname: "",
   
   // The directory under which the server stores its log files under
   logdir: __dirname + "/../log",
   
   // The port to run the server in
   port: 443,
-
+  
   // The public content root directory where publicly accessible content will be
   // stored
   root: __dirname + "/../public",
+
+  // The server's directory
+  serverPath: __dirname.substring( 0, __dirname.indexOf( '/util' ) ),
 
   // The directory under which the server can find its utility classes/libraries
   util: __dirname

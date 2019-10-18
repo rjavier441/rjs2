@@ -16,11 +16,14 @@ class ServerError extends Error {
 
   // @ctor
   // @parameters    (string) message    The message describing the error.
+  //	              (~object) eobj      An object passing along data to describe
+  //	                                  the error
   //                (~number) ecode     The error code.
   //	              (~string) name      The name of the error.
   //	              (~Date) ts          A timestamp to mark error occurrence.
   constructor(
     message,
+    eobj = {},
     ecode = 500,
     name = 'Internal Server Error',
     ts = new Date( Date.now() )
@@ -29,6 +32,7 @@ class ServerError extends Error {
     this.success = false;
     this.name = name;
     this.message = message;
+    this.eobj = eobj;
     this.ecode = ecode;
     this.ts = ts;
   }
