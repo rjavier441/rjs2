@@ -1,12 +1,12 @@
-//	PROJECT: 		Core-v4
-// 	Name: 			[author]
-// 	File: 			[filename]
-// 	Date Created: 	[creationdate]
-// 	Last Modified: 	[moddate]
-// 	Details:
+//	@PROJECT: 		Core-v4
+// 	@Name: 			[author]
+// 	@File: 			[filename]
+// 	@Date Created: 	[creationdate]
+// 	@Last Modified: 	[moddate]
+// 	@Details:
 // 					This file contains routing logic to service all routes requested under the the
 //                  "[endpoint]" endpoint (a.k.a. the [moduleName] Module)
-// 	Dependencies:
+// 	@Dependencies:
 // 					[Dependencies]
 
 "use strict";

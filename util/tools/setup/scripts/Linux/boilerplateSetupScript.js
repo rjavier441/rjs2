@@ -1,11 +1,11 @@
-//	PROJECT:				rjs2
-//	Name:						[author]
-//	File:						[filename]
-//	Date Created:		[dateCreated]
-//	Last Modified:	[dateCreated]
-//	Details:
+//	@PROJECT:				rjs2
+//	@Name:						[author]
+//	@File:						[filename]
+//	@Date Created:		[dateCreated]
+//	@Last Modified:	[dateCreated]
+//	@Details:
 //									[desc]
-//	Dependencies:
+//	@Dependencies:
 //									NodeJS v8+
 
 'use strict';

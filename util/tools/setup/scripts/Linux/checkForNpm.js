@@ -1,11 +1,12 @@
-//	PROJECT:				rjs2
-//	Name:						[author]
-//	File:						[filename]
-//	Date Created:		[dateCreated]
-//	Last Modified:	[dateCreated]
-//	Details:
-//									[desc]
-//	Dependencies:
+//	@PROJECT:				rjs2
+//	@Name:						R. Javier
+//	@File:						checkForNpm.js
+//	@Date Created:		2019-10-19
+//	@Last Modified:	2019-10-19
+//	@Details:
+//									Defines a Node Package Manager verification routine for
+//	                Linux.
+//	@Dependencies:
 //									NodeJS v8+
 
 'use strict';
@@ -52,4 +53,4 @@ function script() {
 
 module.exports = script;
 
-// END [filename]
+// END checkForNpm.js

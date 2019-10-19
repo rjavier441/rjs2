@@ -1,20 +1,20 @@
-//	PROJECT:				rjs2
-// 	Name:						R. Javier
-// 	File:						route_autoloader.js
-// 	Date Created: 	2019-10-13
-// 	Last Modified: 	2019-10-13
-// 	Details:
+//	@PROJECT:				rjs2
+// 	@Name:						R. Javier
+// 	@File:						route_autoloader.js
+// 	@Date Created: 	2019-10-13
+// 	@Last Modified: 	2019-10-13
+// 	@Details:
 // 					This file contains a convenient route autoloader for both APIs and 
 //					web apps within this project. Its primary use is to enable the
 //					loading of sub-apps without the need for modification of core
 //					server files, enabling drag and drop
 //					of API skeletons for automatic routing. Its intended use case is
 //					invocation within the server.js file, and any other app.js file.
-// 	Dependencies:
+// 	@Dependencies:
 //					NodeJS v6.9.1
 // 					ExpressJS 4.x
 // 					body-parser (NPM middleware req'd by ExpressJS 4.x to acquire POST data parameters: "npm install --save body-parser")
-//	Note:
+//	@Note:
 //					Libraries included in _Lib CANNOT use _Lib themselves; doing so will
 //					cause a circular dependency
 

@@ -1,11 +1,11 @@
-//	PROJECT:				rjs2
-//	Name:						R. Javier
-//	File:						util.js
-//	Date Created:		2019-10-17
-//	Last Modified:	2019-10-18
-//	Details:
+//	@PROJECT:				rjs2
+//	@Name:						R. Javier
+//	@File:						util.js
+//	@Date Created:		2019-10-17
+//	@Last Modified:	2019-10-18
+//	@Details:
 //									Defines general utility functions.
-//	Dependencies:
+//	@Dependencies:
 //									n/a
 
 'use strict';

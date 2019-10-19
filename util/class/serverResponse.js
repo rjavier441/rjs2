@@ -1,12 +1,12 @@
-//	PROJECT:				rjs2
-//	Name:						R. Javier
-//	File:						serverResponse.js
-//	Date Created:		2019-10-13
-//	Last Modified:	2019-10-13
-//	Details:
+//	@PROJECT:				rjs2
+//	@Name:						R. Javier
+//	@File:						serverResponse.js
+//	@Date Created:		2019-10-13
+//	@Last Modified:	2019-10-13
+//	@Details:
 //									Defines a class from which server responses can be
 //	                consistently structured for the client side.
-//	Dependencies:
+//	@Dependencies:
 //									n/a
 
 'use strict';

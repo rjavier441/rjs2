@@ -1,11 +1,11 @@
-//	PROJECT: 		MEANserver
-// 	Name: 			Rolando Javier
-// 	File: 			datetimes.js
-// 	Date Created: 	January 31, 2018
-// 	Last Modified: 	January 31, 2018
-// 	Details:
+//	@PROJECT: 		MEANserver
+// 	@Name: 			Rolando Javier
+// 	@File: 			datetimes.js
+// 	@Date Created: 	January 31, 2018
+// 	@Last Modified: 	January 31, 2018
+// 	@Details:
 // 					This file contains a suite of utility functions meant to perform various manipulations and comparisons with datetimes (i.e. JavaScript date objects)
-// 	Dependencies:
+// 	@Dependencies:
 // 					n/a
 
 "use strict";

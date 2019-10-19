@@ -1,12 +1,12 @@
-//	PROJECT:				rjs2
-//	Name:						R. Javier
-//	File:						colorLogger.js
-//	Date Created:		2019-10-17
-//	Last Modified:	2019-10-17
-//	Details:
+//	@PROJECT:				rjs2
+//	@Name:					R. Javier
+//	@File:					colorLogger.js
+//	@Date Created:	2019-10-17
+//	@Last Modified:	2019-10-17
+//	@Details:
 //									Defines a color logger utility class to print color messages
 //	                to console.
-//	Dependencies:
+//	@Dependencies:
 //									NodeJS v8+
 
 'use strict';

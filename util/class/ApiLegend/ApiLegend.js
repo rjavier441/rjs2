@@ -1,11 +1,11 @@
-//	PROJECT: 		Core-v4
-// 	Name: 			Rolando Javier
-// 	File: 			ApiLegend.js
-// 	Date Created: 	September 1, 2018
-// 	Last Modified: 	September 1, 2018
-// 	Details:
+//	@PROJECT: 		Core-v4
+// 	@Name: 			Rolando Javier
+// 	@File: 			ApiLegend.js
+// 	@Date Created: 	September 1, 2018
+// 	@Last Modified: 	September 1, 2018
+// 	@Details:
 // 					This file houses the class definition of the ApiLegend object
-// 	Dependencies:
+// 	@Dependencies:
 // 					JavaScript ECMAScript 6 support
 //					EJS v2.6.1
 

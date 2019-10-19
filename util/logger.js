@@ -1,15 +1,15 @@
-//	PROJECT: 		rjs2
-// 	Name: 			R. Javier
-// 	File: 			logger.js
-// 	Date Created: 	2019-09-28
-// 	Last Modified: 	2019-10-13
-// 	Details:
+//	@PROJECT: 		rjs2
+// 	@Name: 			R. Javier
+// 	@File: 			logger.js
+// 	@Date Created: 	2019-09-28
+// 	@Last Modified: 	2019-10-13
+// 	@Details:
 // 					This file provides server.js with a means to log events to log files
 //					in the log directory. Note that this logger library is NOT
 //					compatible with RJS v1 and below.
-// 	Dependencies:
+// 	@Dependencies:
 // 					NodeJS (using ECMAscript 6 style JS)
-//	Note:
+//	@Note:
 //					It is important to note that the idea of a "const" in JS doesn't mean "is constant", but rather, that "it can only be assigned ONCE", and thus all references to the "logger" singleton are "constant" (i.e. referencing the exact same object in memory). The logger singleton is still, therefore, not immutable, unless frozen with object.freeze().
 
 "use strict"

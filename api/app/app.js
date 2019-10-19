@@ -1,13 +1,15 @@
-//	PROJECT: 		Core-v4
-// 	Name: 			Rolando Javier
-// 	File: 			api/app/app.js
-// 	Date Created: 	February 2, 2018
-// 	Last Modified: 	February 2, 2018
-// 	Details:
-// 					This file contains the SCE Core Admin sub-app used by SCE officers and administrators to perform administrative tasks with SCE. It is used by the main app in server.js
-// 	Dependencies:
-// 					ExpressJS 4.x
-// 					body-parser (NPM middleware req'd by ExpressJS 4.x to acquire POST data parameters: "npm install --save body-parser")
+//	@PROJECT:				rjs2
+//	@Name:					R. Javier
+//	@File:					api/app/app.js
+//	@Date Created:	2019-10-13
+//	@Last Modified:	2019-10-19
+//	@Details:
+//									This file contains the API sub-app used to map APIs in the
+//									'routes/' directory. It is used by the main app in server.js
+//	@Dependencies:
+//									ExpressJS 4.x
+//									body-parser (NPM middleware required by ExpressJS 4.x to
+//									read POST data parameters: 'npm install --save body-parser')
 
 "use strict"
 

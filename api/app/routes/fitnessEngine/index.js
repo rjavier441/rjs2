@@ -1,13 +1,13 @@
-//	PROJECT:				Core-v4
-//	Name:						R. Javier
-//	File:           api/app/routes/fitnessEngine/index.js
-//	Date Created:		September 03, 2019
-//	Last Modified:	September 03, 2019
-//	Details:
+//	@PROJECT:				Core-v4
+//	@Name:						R. Javier
+//	@File:           api/app/routes/fitnessEngine/index.js
+//	@Date Created:		September 03, 2019
+//	@Last Modified:	September 03, 2019
+//	@Details:
 //									This file contains routing logic to service all routes
 //									requested under the the
 //	            		"fitnessEngine" endpoint (a.k.a. the Fitness Engine Module)
-//	Dependencies:
+//	@Dependencies:
 //									n/a
 
 "use strict";

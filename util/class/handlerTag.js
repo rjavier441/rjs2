@@ -1,12 +1,12 @@
-//	PROJECT:				rjs2
-//	Name:						R.Javier
-//	File:						handlerTag.js
-//	Date Created:		2019-10-06
-//	Last Modified:	2019-10-06
-//	Details:
+//	@PROJECT:				rjs2
+//	@Name:						R.Javier
+//	@File:						handlerTag.js
+//	@Date Created:		2019-10-06
+//	@Last Modified:	2019-10-06
+//	@Details:
 //									Defines a class from which a logger module can extract
 //	                function details.
-//	Dependencies:
+//	@Dependencies:
 //									n/a
 //  NOTE: Creating functions as class prototypes allows them to be loaded only
 //        once in memory, thereby being more conservative on RAM

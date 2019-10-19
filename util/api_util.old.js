@@ -1,12 +1,12 @@
-//	PROJECT: 		rjs2
-// 	Name: 			R. Javier
-// 	File: 			api_util.js
-// 	Date Created: 	2019-10-14
-// 	Last Modified: 	2019-10-14
-// 	Details:
+//	@PROJECT: 		rjs2
+// 	@Name: 			R. Javier
+// 	@File: 			api_util.js
+// 	@Date Created: 	2019-10-14
+// 	@Last Modified: 	2019-10-14
+// 	@Details:
 // 					This file contains utility functions that various APIs will need to perform
 //					basic tasks (i.e. session management, access control, etc.)
-// 	Dependencies:
+// 	@Dependencies:
 // 					ExpressJS 4.x
 // 					body-parser (NPM middleware req'd by ExpressJS 4.x to acquire POST data
 //					parameters: "npm install --save body-parser")

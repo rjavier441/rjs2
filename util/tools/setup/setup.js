@@ -1,11 +1,11 @@
-//	PROJECT:				rjs2
-//	Name:						R. Javier
-//	File:						setup.js
-//	Date Created:		2019-10-16
-//	Last Modified:	2019-10-18
-//	Details:
+//	@PROJECT:				rjs2
+//	@Name:						R. Javier
+//	@File:						setup.js
+//	@Date Created:		2019-10-16
+//	@Last Modified:	2019-10-18
+//	@Details:
 //									A setup utility to enable server setup
-//	Dependencies:
+//	@Dependencies:
 //									NodeJS v8+
 
 'use strict';

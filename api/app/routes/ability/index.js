@@ -1,11 +1,11 @@
-//	PROJECT: 		Core-v4
-// 	Name: 			Rolando Javier
-// 	File: 			api/app/routes/ability/index.js
-// 	Date Created: 	September 1, 2018
-// 	Last Modified: 	September 1, 2018
-// 	Details:
+//	@PROJECT: 		Core-v4
+// 	@Name: 			Rolando Javier
+// 	@File: 			api/app/routes/ability/index.js
+// 	@Date Created: 	September 1, 2018
+// 	@Last Modified: 	September 1, 2018
+// 	@Details:
 // 					This file contains routing logic to service all routes requested under the the "/api/ability" endpoint (a.k.a. the Ability Module)
-// 	Dependencies:
+// 	@Dependencies:
 // 					ExpressJS 4.x
 // 					body-parser (NPM middleware req'd by ExpressJS 4.x to acquire POST data parameters: "npm install --save body-parser")
 

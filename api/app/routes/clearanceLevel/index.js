@@ -1,12 +1,12 @@
-//	PROJECT: 		Core-v4
-// 	Name: 			Rolando Javier
-// 	File: 			api/routes/clearanceLevel/index.js
-// 	Date Created: 	October 13, 2018
-// 	Last Modified: 	October 13, 2018
-// 	Details:
+//	@PROJECT: 		Core-v4
+// 	@Name: 			Rolando Javier
+// 	@File: 			api/routes/clearanceLevel/index.js
+// 	@Date Created: 	October 13, 2018
+// 	@Last Modified: 	October 13, 2018
+// 	@Details:
 // 					This file contains routing logic to service all routes requested under the the
 //                  "clearanceLevel" endpoint (a.k.a. the Clearance Level Module)
-// 	Dependencies:
+// 	@Dependencies:
 // 					ExpressJS 4.x
 // 					body-parser	(NPM middleware req'd by ExpressJS 4.x to acquire POST data
 //								parameters: "npm install --save body-parser")

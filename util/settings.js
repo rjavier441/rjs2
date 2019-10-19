@@ -1,11 +1,11 @@
-//	PROJECT:				rjs2
-//	Name:						R. Javier
-//	File:						settings.js
-//	Date Created:		2019-10-06
-//	Last Modified:	2019-10-06
-//	Details:
+//	@PROJECT:				rjs2
+//	@Name:						R. Javier
+//	@File:						settings.js
+//	@Date Created:		2019-10-06
+//	@Last Modified:	2019-10-06
+//	@Details:
 //									Contains configuration settings for the entire project.
-//	Dependencies:
+//	@Dependencies:
 //									n/a
 
 "use strict";
