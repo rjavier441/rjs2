@@ -1,0 +1,3 @@
+{
+	"order": [ "checkForNodeJS.js", "checkForNpm.js" ]
+}

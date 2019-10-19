@@ -69,25 +69,26 @@ ColorLogger.styles = {	// Text Decoration Codes for Any Terminal;
 //																				message. This is typically used to add
 //																				breaks and spacing after the nicely
 //																				formatted message.
+//									(~string) color				A string code describing a color to
+//																				write text. Currently supported colors
+//																				include:
+//
+//																				"Black"
+//																				"Red"
+//																				"Green"
+//																				"Yellow"
+//																				"Blue"
+//																				"Magenta"
+//																				"Cyan"
+//																				"White"
+//
+//																				If theme is provided, this parameter
+//																				is ignored in favor of the theme.
 //									(~string) prepend			A string to prepend before the format-
 //																				ted message. This is useful if you
 //																				want to place some normal style text
 //																				before a nicely formatted message.
-//									(~string) theme				The type of message coloring theme to
-//																				apply. Currently supported message
-//																				themes include:
-//
-//																				"complete"		black bkg, green font
-//																				"danger"			red bkg, white font
-//																				"info"				cyan bkg, white font
-//																				"normal"			black bkg, white font
-//																				"primary"			blue bkg, white font
-//																				"success"			green bkg, white font
-//																				"warning"			yellow bkg, black font
-//
-//																				If omitted, the theme defaults to the
-//																				"normal" theme.
-//									(~string[]) styles		A list of strings as codes that apply
+//									(~string[]) style			A list of strings as codes that apply
 //																				font style effects to the text. The
 //																				currently supported text style codes
 //																				include:
@@ -98,71 +99,100 @@ ColorLogger.styles = {	// Text Decoration Codes for Any Terminal;
 //
 //																				Multiple styles can be added at once.
 //																				If omitted, no style is added to text.
+//									(~string) theme				The type of message coloring theme to
+//																				apply. Currently supported message
+//																				themes include:
+//
+//																				"complete"		black bkg, green font
+//																				"danger"			red bkg, white font
+//																				"info"				cyan bkg, white font
+//																				"normal"			black bkg, white font
+//																				"primary"			blue bkg, white font
+//																				"success"			green bkg, white font
+//																				"failure"			black bkg, red font
+//																				"warning"			yellow bkg, black font
+//
+//																				If omitted, the theme defaults to the
+//																				"normal" theme.
 // @returns				n/a
 ColorLogger.log = function( message, options = {} ) {
 
 	// Acquire theme customizations, if any
-	var theme = typeof options.theme === "undefined" ? "normal" : options.theme;
+	var color = typeof options.color === "undefined" ? false : options.color;
+	var theme = typeof options.theme === "undefined" ? false : options.theme;
 	var decor = typeof options.style === "undefined" ? [] : options.style;
 
 	// Acquire strings to append or prepend, if any
 	var prepend = typeof options.prepend === "undefined" ? "" : options.prepend;
 	var append = typeof options.append === "undefined" ? "" : options.append;
 
-	// Define base colors (defaults to "primary" theme) and styles
+	// Define base colors (defaults to "normal" theme) and styles
 	var fgColor = ColorLogger.colors.FgWhite;
-	var bgColor = ColorLogger.colors.BgBlue;
+	var bgColor = ColorLogger.colors.BgBlack;
 	var fontStyle = "";
 
 	// Make color changes by class, if necessary
-	switch ( theme ) {
-		case "complete": {
-			fgColor = ColorLogger.colors.FgGreen;
-			bgColor = ColorLogger.colors.BgBlack;
-			break;
+	if( theme ) {
+
+		// // DEBUG
+		// console.log( "theme:", theme );
+		switch ( theme ) {
+			case "complete": {
+				fgColor = ColorLogger.colors.FgGreen;
+				bgColor = ColorLogger.colors.BgBlack;
+				break;
+			}
+			case "danger": {
+				bgColor = ColorLogger.colors.BgRed;
+				break;
+			}
+			case "info": {
+				bgColor = ColorLogger.colors.BgCyan;
+				break;
+			}
+			case "normal": {
+				// do nothing; the normal color theme is already applied
+				break;
+			}
+			case "primary": {
+				fgColor = ColorLogger.colors.FgWhite;
+				bgColor = ColorLogger.colors.BgBlue;
+				break;
+			}
+			case "success": {
+				bgColor = ColorLogger.colors.BgGreen;
+				break;
+			}
+			case "failure": {
+				fgColor = ColorLogger.colors.FgRed
+				bgColor = ColorLogger.colors.BgBlack;
+				break;
+			}
+			case "warning": {
+				fgColor = ColorLogger.colors.FgBlack;
+				bgColor = ColorLogger.colors.BgYellow;
+				break;
+			}
 		}
-		case "danger": {
-			bgColor = ColorLogger.colors.BgRed;
-			break;
-		}
-		case "info": {
-			bgColor = ColorLogger.colors.BgCyan;
-			break;
-		}
-		case "normal": {
-			bgColor = ColorLogger.colors.BgBlack;
-			break;
-		}
-		case "primary": {
-			// do nothing; the primary color theme is already applied
-			break;
-		}
-		case "success": {
-			bgColor = ColorLogger.colors.BgGreen;
-			break;
-		}
-		case "warning": {
-			fgColor = ColorLogger.colors.FgBlack;
-			bgColor = ColorLogger.colors.BgYellow;
-			break;
-		}
+	} else if( color ) {
+		fgColor = ColorLogger.colors[ `Fg${color}` ];
 	}
 
 	// Make style changes if necessary
 	if ( decor.includes( "bold" ) ) {
 
 		// If bolding is requested, add bolding
-		fontStyle += styles.Bold;
+		fontStyle += ColorLogger.styles.Bold;
 	}
 	if ( decor.includes( "underline" ) ) {
 
 		// If underlining is requested, add underlines
-		fontStyle += styles.Underline;
+		fontStyle += ColorLogger.styles.Underline;
 	}
 	if ( decor.includes( "reverse" ) ) {
 
 		// If color reversing is requested, add color reversing
-		fontStyle += styles.Reverse;
+		fontStyle += ColorLogger.styles.Reverse;
 	}
 
 	// Compile the message into a template

@@ -22,6 +22,12 @@ const defaults = {
   
   // The directory under which the server stores its log files under
   logdir: __dirname + "/../log",
+
+  // Various metadata for the server
+  meta: {
+    serverEmail: "",
+    serverName: "rjserver2"
+  },
   
   // The port to run the server in
   port: 443,

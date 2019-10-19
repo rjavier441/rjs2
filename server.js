@@ -60,8 +60,8 @@ function main( argv ) {
 	// Create server instance
 	const express = require( 'express' );
 	const app = express();
-	app.locals.title = 'rjserver2';
-	app.locals.email = 'rjavier441@gmail.com';
+	app.locals.title = _lib.settings.meta.serverName;
+	app.locals.email = _lib.settings.meta.serverEmail;
 
 	// Set static asset locations
 	_lib.Logger.log( 'Preparing static assets...', ht.getTag() );

@@ -1,13 +1,26 @@
 SYNOPSIS
 
-  node setup.js [options]
+  node setup.js option
 
 DESCRIPTION
 
-  This script runs a setup routine to initialize the server.
+  This script runs a setup routine to initialize the server with the minimum
+  required components to operate.
 
 OPTIONS
 
   -h, --help
 
-    Runs this help prompt
+    Prints this help prompt
+  
+  -A
+
+    Runs a full setup routine from scratch. Ideal for initial installation
+
+  -D
+
+    Runs the directory setup routine only.
+  
+  -L
+
+    Runs the OS utility setup routine only.
