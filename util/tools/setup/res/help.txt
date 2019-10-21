@@ -20,7 +20,15 @@ OPTIONS
   -D
 
     Runs the directory setup routine only.
+
+  -F
+  
+    Runs the file setup routine only.
   
   -L
 
     Runs the OS utility setup routine only.
+  
+  -M
+
+    (Under Development) Runs miscellaneous setups

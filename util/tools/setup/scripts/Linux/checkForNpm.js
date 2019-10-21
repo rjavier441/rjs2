@@ -1,7 +1,7 @@
 //	@PROJECT:				rjs2
-//	@Name:						R. Javier
-//	@File:						checkForNpm.js
-//	@Date Created:		2019-10-19
+//	@Name:					R. Javier
+//	@File:					checkForNpm.js
+//	@Date Created:	2019-10-19
 //	@Last Modified:	2019-10-19
 //	@Details:
 //									Defines a Node Package Manager verification routine for
@@ -26,7 +26,10 @@ var _lib = require( '../../../../_lib.js' );
 function script() {
   var result = true;
 
-  _lib.ColorLogger.log( "[Describe script's main purpose]..." );
+  _lib.ColorLogger.log( "Checking Node Package Manager...", {
+    theme: 'primary',
+    style: ['bold']
+  } );
   try {
 
     // Begin script source code here...

@@ -1,3 +1,7 @@
 {
-	"order": [ "checkForNodeJS.js", "checkForNpm.js" ]
+	"order": [
+		"setupRequiredDirs.js",
+		"checkForNodeJS.js",
+		"checkForNpm.js"
+	]
 }

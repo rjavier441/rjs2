@@ -1,7 +1,7 @@
 //	@PROJECT:				rjs2
-//	@Name:						R. Javier
-//	@File:						checkForNodeJS.js
-//	@Date Created:		2019-10-19
+//	@Name:					R. Javier
+//	@File:					checkForNodeJS.js
+//	@Date Created:	2019-10-19
 //	@Last Modified:	2019-10-19
 //	@Details:
 //									Defines a NodeJS verification routine for Linux.
@@ -25,7 +25,10 @@ var cp = require( 'child_process' );
 function script() {
   var result = true;
 
-  _lib.ColorLogger.log( 'Checking for NodeJS...' );
+  _lib.ColorLogger.log( 'Checking for NodeJS...', {
+    theme: 'primary',
+    style: ['bold']
+  } );
   try {
   
     // // DEBUG

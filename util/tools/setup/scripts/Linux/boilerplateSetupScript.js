@@ -1,7 +1,7 @@
 //	@PROJECT:				rjs2
-//	@Name:						[author]
-//	@File:						[filename]
-//	@Date Created:		[dateCreated]
+//	@Name:				  [author]
+//	@File:					[filename]
+//	@Date Created:	[dateCreated]
 //	@Last Modified:	[dateCreated]
 //	@Details:
 //									[desc]

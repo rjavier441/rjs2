@@ -1,7 +1,7 @@
 //	@PROJECT:				rjs2
-//	@Name:						R. Javier
-//	@File:						setup.js
-//	@Date Created:		2019-10-16
+//	@Name:					R. Javier
+//	@File:					setup.js
+//	@Date Created:	2019-10-16
 //	@Last Modified:	2019-10-18
 //	@Details:
 //									A setup utility to enable server setup
@@ -12,10 +12,8 @@
 
 // BEGIN includes
 var _lib = require( '../../_lib.js' );
-var cp = require( 'child_process' );
 var fs = require( 'fs' );
 var minimist = require( 'minimist' );
-var req = require( './res/required.json' );
 // END includes
 
 // BEGIN globals
@@ -61,15 +59,20 @@ function pushError( emsg ) {
 //	              given OS name
 // @parameters		(string) os           The name of the `scripts/` subdirectory
 //	                                    housing the setup scripts for the
-//	                                    corresponding operating system
+//	                                    corresponding operating system.
+//	              (string[]) scriptList A list of script names to run. If given,
+//	                                    the scripts in the list are executed in
+//	                                    order.
 // @returns				n/a
-function runScripts( os ) {
+function runScripts( os, scriptList = false ) {
   var scriptsDir = `${__dirname}/scripts/${os}`;
   var scriptSequence = false;
 
   // Read script directory to determine list of scripts to run
   var files = fs.readdirSync( scriptsDir );
-  if( files.includes( 'order.json' ) ) {
+  if( scriptList ) {
+    scriptSequence = scriptList;
+  } else if( files.includes( 'order.json' ) ) {
     scriptSequence = JSON.parse(
       fs.readFileSync( `${scriptsDir}/order.json` )
     ).order;
@@ -79,99 +82,28 @@ function runScripts( os ) {
 
   // Traverse script sequence in order
   scriptSequence.forEach( function( filename ) {
-    var scriptResult = ( require( `${scriptsDir}/${filename}` ) )();
-    if( scriptResult instanceof _lib.Class.ServerError ) {
-      pushError( scriptResult.message );
+
+    // Skip the boilerplate
+    if( filename === 'boilerplateSetupScript.js' ) {
+      return;
+    }
+
+    // Ensure script exists
+    var filepath = `${scriptsDir}/${filename}`;
+    if( !fs.existsSync( filepath ) ) {
+
+      pushError( `"${filepath}" not found!` );
+    } else {
+
+      var scriptResult = ( require( filepath ) )();
+      if( scriptResult instanceof _lib.Class.ServerError ) {
+        pushError( scriptResult.message );
+      }
     }
   } );
 
   // DEBUG
   // _lib.ColorLogger.log( scriptSequence.toString(), );
-}
-
-// @function			setupDirs()
-// @description		This function ensures the mandatory server directories exist.
-// @parameters		n/a
-// @returns				n/a
-function setupDirs() {
-
-  // DEBUG
-  _lib.ColorLogger.log( 'Setting up server file system', logStyle.stepHeader );
-
-  // Check all required directories
-  req.dir.forEach( function( pathFromServerRoot ) {
-
-    var fullpath = `${_lib.settings.serverPath}/${pathFromServerRoot}`;
-    _lib.ColorLogger.log( `Checking ${fullpath}...` );
-    if( !fs.existsSync(fullpath) ) {
-      
-      _lib.ColorLogger.log( `\tCreating ${fullpath}...` );
-      fs.mkdirSync( fullpath );
-    }
-    _lib.ColorLogger.log( '\tDone' );
-  } );
-}
-
-// @function			setupFiles
-// @description		This function ensures the existence and configuration of all
-//	              required files. This routine should be run after setup of
-//	              OS utilities and directories.
-// @parameters		n/a
-// @returns				n/a
-function setupFiles() {
-
-  // DEBUG
-  _lib.ColorLogger.log( 'Setting up required files', logStyle.stepHeader );
-
-  // TODO: Check all required files exist
-}
-
-// @function			setupOSUtils()
-// @description		This function installs and sets up required libraries based
-//	              on the platform that this server runs on.
-// @parameters		n/a
-// @returns				(bool) success        True on success, false otherwise.
-function setupOSUtils() {
-
-  var success = true;
-
-  // DEBUG
-  _lib.ColorLogger.log( 'Setting up system utilities', logStyle.stepHeader );
-
-  // For each OS:
-  // TODO: Ensure Node is installed and is an appropriate version
-  // TODO: Ensure npm is installed and is an appropriate version
-  // TODO: Run an npm install to acquire all required node packages
-  switch( _lib.Util.getPlatform() ) {
-    case "MacOS": {
-      _lib.ColorLogger.log( 'MacOS is not yet supported' , logStyle.failure );
-      break;
-    }
-    case "Windows": {
-      _lib.ColorLogger.log( 'Windows is not yet supported' , logStyle.failure );
-      break;
-    }
-    case "Linux": {
-      // TODO: Consolidate these steps into an iterative routine that scans the
-      // script dir and runs all scripts for Linux setup
-      // // Check for NodeJS
-      // scriptResult = ( require( checkForNodeJSPath ) )();
-      // if( scriptResult instanceof _lib.Class.ServerError ) {
-      //   pushError( scriptResult.message );
-      //   success = false;
-      // } else {
-      //   _lib.ColorLogger.log( '\tDone' );
-      // }
-      runScripts( 'Linux' );
-      break;
-    }
-    default: {
-      _lib.ColorLogger.log( 'This OS is not yet supported', logStyle.failure );
-      break;
-    }
-  }
-
-  return success
 }
 
 // @function			help()
@@ -209,18 +141,23 @@ function main( argv ) {
   }
 
   // Run setup routine based on user input
+  var executionList = false;
   _lib.Util.printEmblem();
-  if( doAll || doLibOnly ) {
-    setupOSUtils();
+  if( doLibOnly ) {
+    executionList = [
+      'checkForNodeJS.js',
+      'checkForNpm.js'
+    ];
   }
-  if( doAll || doDirOnly ) {
-    setupDirs();
+  if( doDirOnly ) {
+    executionList = [ 'setupRequiredDirs.js' ];
   }
-  if( doAll || doFilesOnly ) {
-    setupFiles();
+  if( doFilesOnly ) {
+    executionList = [ 'asdf.js' ];
   }
+  runScripts( _lib.Util.getPlatform(), executionList );
 
-  // TODO: Run aftermath summary report (show successes/failues/next steps)
+  // Run aftermath summary report (show successes/failues/next steps)
   printSummary();
 }
 
