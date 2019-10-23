@@ -1,6 +1,6 @@
 //	@PROJECT: 		Core-v4
-// 	@Name: 			Rolando Javier
-// 	@File: 			api/app/routes/ability/index.js
+// 	@Name: 				Rolando Javier
+// 	@File: 				api/app/routes/ability/index.js
 // 	@Date Created: 	September 1, 2018
 // 	@Last Modified: 	September 1, 2018
 // 	@Details:
@@ -12,20 +12,20 @@
 "use strict";
 
 // Includes
+var _lib = require( '../../../../util/_lib.js' );
+var fs = require("fs");
 var express = require("express");
 var https = require("https");
-var fs = require("fs");
 var router = express.Router();
-var settings = require("../../../../util/settings");	// import server system settings
-var al = require(`${settings.util}/api_legend.js`);		// import API Documentation Module
-// var dt = require(`${settings.util}/datetimes`);		// import datetime utilities
+var settings = _lib.settings;	// import server system settings
+var al = _lib.ApiLegend;		// import API Documentation Module
 var rf = require(`${settings.util}/response_formats`);	// import response formatter
 var ef = require(`${settings.util}/error_formats`);		// import error formatter
 // var crypt = require(`${settings.util}/cryptic`);		// import custom sce crypto wrappers
 var ssl = require(settings.security);					// import https ssl credentials
 var credentials = require(settings.credentials);		// import server system credentials
 var www = require(`${settings.util}/www`);			// import custom https request wrappers
-var logger = require(`${settings.util}/logger`);		// import event log system
+var logger = _lib.Logger;		// import event log system
 var au = require(`${settings.util}/api_util.js`);		// import API Utility Functions
 
 // Options

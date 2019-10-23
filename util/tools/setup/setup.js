@@ -39,8 +39,8 @@ function printSummary() {
     }
   );
 
-  errorList.forEach( function( emsg ) {
-    _lib.ColorLogger.log( `\t${emsg}`, logStyle.failure );
+  errorList.forEach( function( emsg, index ) {
+    _lib.ColorLogger.log( `${index + 1}.)\t${emsg}`, logStyle.failure );
   } );
 }
 
@@ -83,8 +83,11 @@ function runScripts( os, scriptList = false ) {
   // Traverse script sequence in order
   scriptSequence.forEach( function( filename ) {
 
-    // Skip the boilerplate
-    if( filename === 'boilerplateSetupScript.js' ) {
+    // Skip the boilerplate and any invalid files
+    if(
+      filename === 'boilerplateSetupScript.js' ||
+      filename.substring( filename.length - 3 ) !== '.js'
+    ) {
       return;
     }
 
@@ -153,7 +156,7 @@ function main( argv ) {
     executionList = [ 'setupRequiredDirs.js' ];
   }
   if( doFilesOnly ) {
-    executionList = [ 'asdf.js' ];
+    executionList = [ 'setupRequiredFiles.js' ];
   }
   runScripts( _lib.Util.getPlatform(), executionList );
 

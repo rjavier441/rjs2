@@ -30,6 +30,7 @@ const _Lib = {
     ServerResponse: require( './class/serverResponse.js' )
   }
 };
+Object.freeze( _Lib );
 // END _Lib (Singleton)
 
 module.exports = _Lib;

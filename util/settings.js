@@ -29,7 +29,7 @@ const defaults = {
     serverName: "rjserver2"
   },
   
-  // The port to run the server in
+  // The default port to run the server in
   port: 443,
   
   // The public content root directory where publicly accessible content will be
@@ -38,6 +38,9 @@ const defaults = {
 
   // The server's directory
   serverPath: __dirname.substring( 0, __dirname.indexOf( '/util' ) ),
+
+  // The server's SSL/HTTPS config file
+  ssl: __dirname + "/common/security.json",
 
   // The directory under which the server can find its utility classes/libraries
   util: __dirname

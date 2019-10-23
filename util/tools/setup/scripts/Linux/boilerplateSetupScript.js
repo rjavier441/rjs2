@@ -25,26 +25,26 @@ var _lib = require( '../../../../_lib.js' );
 function script() {
   var result = true;
 
-  _lib.ColorLogger.log( "[Describe script's main purpose]..." );
+  _lib.ColorLogger.log( '[Describe script\'s main purpose]...' );
   try {
 
     // Begin script source code here...
+    _lib.ColorLogger.log( '\tDone' );
 
   } catch( exception ) {  // instanceof Error = true
   
     // DEBUG
-    _lib.ColorLogger.log( "exception keys: " + Object.keys( exception ) );
-    _lib.ColorLogger.log( "status:" + exception.status );
-    _lib.ColorLogger.log( "signal:" + exception.signal );
-    _lib.ColorLogger.log( "output:" + exception.output );
-    _lib.ColorLogger.log( "pid:" + exception.pid );
-    _lib.ColorLogger.log( "stdout:" + exception.stdout );
-    _lib.ColorLogger.log( "stderr:" + exception.stderr );
+    _lib.ColorLogger.log( 'exception keys: ' + Object.keys( exception ) );
+    _lib.ColorLogger.log( 'status:' + exception.status );
+    _lib.ColorLogger.log( 'signal:' + exception.signal );
+    _lib.ColorLogger.log( 'output:' + exception.output );
+    _lib.ColorLogger.log( 'pid:' + exception.pid );
+    _lib.ColorLogger.log( 'stdout:' + exception.stdout );
+    _lib.ColorLogger.log( 'stderr:' + exception.stderr );
 
     // Return ServerError
-    result = new _lib.Class.ServerError( 'NodeJS is not installed!' );
+    result = new _lib.Class.ServerError( '[Describe script\'s error]...' );
   }
-  _lib.ColorLogger.log( '\tDone' );
 
   return result;
 }

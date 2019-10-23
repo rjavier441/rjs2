@@ -15,5 +15,6 @@
     "public"
   ],
   "file": [
+    "util/common/security.json"
   ]
 }
