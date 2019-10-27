@@ -14,6 +14,7 @@
 var _lib = require( './util/_lib.js' );
 var bp = require( 'body-parser' );
 var fs = require( 'fs' );
+var https = require( 'https' );
 var minimist = require( 'minimist' );
 // END includes
 
@@ -79,10 +80,20 @@ function main( argv ) {
 	// Autoload APIs
 	_lib.AutoLoader.route.load( app );
 
-	// DEBUG
-	console.log( 'handlerTag:', ht.getTag() );
-	console.log( 'args:', args );
-	console.log( 'settings:', _lib.settings );
+	// TODO: Run server
+	var port = _lib.settings.port;
+	var server = https.createServer( _lib.SslManager.serverContext, app );
+	if( args.p || args.port ) {
+		port = args.p ? args.p : args.port;
+	}
+	server.listen( port, function() {
+		_lib.Logger.log( `Now listening on port ${port}`, ht.getTag() );
+	} );
+
+	// // DEBUG
+	// console.log( 'handlerTag:', ht.getTag() );
+	// console.log( 'args:', args );
+	// console.log( 'settings:', _lib.settings );
 }
 
 // Run main()

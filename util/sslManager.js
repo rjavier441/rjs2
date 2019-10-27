@@ -11,7 +11,9 @@
 
 'use strict';
 var fs = require( 'fs' );
+var https = require( 'https' );
 var settings = require( './settings.js' );
+var util = require( './util.js' );
 
 // BEGIN class SslManager
 class SslManager{
@@ -42,21 +44,31 @@ class SslManager{
   //	                'cert' is provided along with both 'prvkey' and 'pubkey',
   //	                use of a self-signed certificate is assumed.
   constructor( options ) {
-    this.privateKey = _lib.Util.isset( options.prvkey ) ?
+    this.privateKey = ( options.prvkey && util.isset( options.prvkey ) ) ?
       fs.readFileSync( options.prvkey, 'utf8' ) : false;
-    this.publicKey = _lib.Util.isset( options.pubkey ) ?
+    this.publicKey = ( options.pubkey && util.isset( options.pubkey ) ) ?
       fs.readFileSync( options.pubkey, 'utf8' ) : false;
-    this.caCertificate = _lib.Util.isset( options.cert ) ?
+    this.caCertificate = ( options.cert && util.isset( options.cert ) ) ?
       fs.readFileSync( options.cert, 'utf8' ) : false;
-    this.caChain = _lib.Util.isset( options.chain ) ?
+    this.caChain = ( options.chain && util.isset( options.chain ) ) ?
       fs.readFileSync( options.chain, 'utf8' ) : false;
-    this.passphrase = _lib.Util.isset( options.pass ) ? options.pass : false;
+    this.passphrase = ( options.pass && util.isset( options.pass ) ) ? 
+      options.pass : false;
 
     // Create user agent for SSL/HTTPS APIs
     this.sslUserAgent = new https.Agent( {
-      'port': _lib.settings.port,
+      'port': settings.port,
       'ca': this.caCertificate
     } );
+
+    // // DEBUG
+    // console.log( 'security.json:', JSON.parse( fs.readFileSync( settings.ssl, 'utf8' ) ) );
+    // console.log( 'util:', util );
+    // console.log( 'options:', options );
+    // console.log( 'typeof options.prvkey:', typeof options.prvkey );
+    // console.log( 'hasPrvKey:', options.prvkey );
+    // console.log( 'isset(options.prvkey)?:', util.isset( options.prvkey ) );
+    // console.log( 'SslManager before:', util.isset( options.prvkey ) );
   }
 
   // @function			serverContext()
@@ -84,6 +96,9 @@ class SslManager{
       ctx.passphrase = this.passphrase;
     }
 
+    // // DEBUG
+    // console.log( 'SslManager after:', this );
+
     // Custom options
     ctx.requestCert = false;          // If true, clients will be verified via
                                       // CA cert.
@@ -105,8 +120,9 @@ class SslManager{
 // END class SslManager
 
 // Container (Singleton)
-// TODO: Create ssl json file containing all req'd params for SslManager ctor
-const instance = new SslManager( fs.readFileSync( _lib.settings.ssl, 'utf8' ) );
+const instance = new SslManager(
+  JSON.parse( fs.readFileSync( settings.ssl, 'utf8' ) )
+);
 Object.freeze( instance );
 module.exports = instance;
 

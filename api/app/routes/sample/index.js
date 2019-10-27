@@ -12,27 +12,11 @@
 
 'use strict';
 
-// Includes (include as many as you need; the bare essentials are included here)
+// BEGIN includes
 var _lib = require( '../../../../util/_lib.js' );
-var fs = require('fs');
 var express = require('express');
-var https = require('https');
 var router = express.Router();
-// var ssl = require(_lib.settings.security);	// import https ssl credentials
-
-// Required Endpoint Options
-var options = {
-	root: _lib.settings.root,	// Server root directory (i.e. where server.js is located)
-	dotfiles: 'deny',
-	headers: {
-		'x-timestamp': Date.now(),
-		'x-sent': true
-	}
-};
-var ssl_user_agent = new https.Agent({
-	'port': _lib.settings.port,
-	'ca': fs.readFileSync(ssl.cert)
-});
+// END includes
 
 // Example API Documentation Arguments
 var api = _lib.ApiLegend.createLegend(

@@ -21,6 +21,7 @@ const _Lib = {
   ColorLogger: require( './colorLogger.js' ),
   DateTimes: require( './datetimes.js' ),
   Logger: require( './logger.js' ),
+  SslManager: require( './sslManager.js' ),
   Util: require( './util.js' ),
   
   // rjs Classes
