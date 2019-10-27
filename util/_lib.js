@@ -1,7 +1,7 @@
 //	@PROJECT:				rjs2
-//	@Name:						R. Javier
-//	@File:						_lib.js
-//	@Date Created:		2019-10-16
+//	@Name:					R. Javier
+//	@File:					_lib.js
+//	@Date Created:	2019-10-16
 //	@Last Modified:	2019-10-16
 //	@Details:
 //									A convenience file that bundles all library functions

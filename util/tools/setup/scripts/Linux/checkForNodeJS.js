@@ -11,7 +11,24 @@
 'use strict';
 
 // BEGIN includes
-var _lib = require( '../../../../_lib.js' );
+const _lib_optin = require( '../../../../_lib_optin.js' );
+const _lib = {
+  // Top-Level Libraries
+  settings: require( _lib_optin.settings ),
+  ApiLegend: require( _lib_optin.ApiLegend ),
+  AutoLoader: require( _lib_optin.AutoLoader ),
+  ColorLogger: require( _lib_optin.ColorLogger ),
+  DateTimes: require( _lib_optin.DateTimes ),
+  Logger: require( _lib_optin.Logger ),
+  Util: require( _lib_optin.Util ),
+  
+  // rjs Classes
+  Class: {
+    HandlerTag: require( _lib_optin.Class.HandlerTag ),
+    ServerError: require( _lib_optin.Class.ServerError ),
+    ServerResponse: require( _lib_optin.Class.ServerResponse )
+  }
+};
 var cp = require( 'child_process' );
 // END includes
 

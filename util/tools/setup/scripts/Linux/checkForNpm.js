@@ -12,8 +12,25 @@
 'use strict';
 
 // BEGIN includes
-var _lib = require( '../../../../_lib.js' );
-// Include other libraries here...
+const _lib_optin = require( '../../../../_lib_optin.js' );
+const _lib = {
+  // Top-Level Libraries
+  settings: require( _lib_optin.settings ),
+  ApiLegend: require( _lib_optin.ApiLegend ),
+  AutoLoader: require( _lib_optin.AutoLoader ),
+  ColorLogger: require( _lib_optin.ColorLogger ),
+  DateTimes: require( _lib_optin.DateTimes ),
+  Logger: require( _lib_optin.Logger ),
+  Util: require( _lib_optin.Util ),
+  
+  // rjs Classes
+  Class: {
+    HandlerTag: require( _lib_optin.Class.HandlerTag ),
+    ServerError: require( _lib_optin.Class.ServerError ),
+    ServerResponse: require( _lib_optin.Class.ServerResponse )
+  }
+};
+const cp = require( 'child_process' );
 // END includes
 
 // BEGIN script
@@ -32,21 +49,30 @@ function script() {
   } );
   try {
 
-    // Begin script source code here...
-
+    // Check for NPM v6+
+    var versionStr = cp.execSync( 'npm -v', {
+      encoding: 'utf8',
+      timeout: 10000  // 10 sec
+    } );
+    var majorVersion = parseInt( versionStr.split( '.' )[0] );
+    _lib.ColorLogger.log( `\t${versionStr}`, {color: 'Yellow'} );
+    if( majorVersion < 6 ) {
+      result = new _lib.Class.ServerError( `NPM v6+ is required` );
+    }
   } catch( exception ) {  // instanceof Error = true
   
-    // DEBUG
-    _lib.ColorLogger.log( "exception keys: " + Object.keys( exception ) );
-    _lib.ColorLogger.log( "status:" + exception.status );
-    _lib.ColorLogger.log( "signal:" + exception.signal );
-    _lib.ColorLogger.log( "output:" + exception.output );
-    _lib.ColorLogger.log( "pid:" + exception.pid );
-    _lib.ColorLogger.log( "stdout:" + exception.stdout );
-    _lib.ColorLogger.log( "stderr:" + exception.stderr );
+    // // DEBUG
+    // _lib.ColorLogger.log( "exception keys: " + Object.keys( exception ) );
+    // _lib.ColorLogger.log( "status:" + exception.status );
+    // _lib.ColorLogger.log( "signal:" + exception.signal );
+    // _lib.ColorLogger.log( "output:" + exception.output );
+    // _lib.ColorLogger.log( "pid:" + exception.pid );
+    // _lib.ColorLogger.log( "stdout:" + exception.stdout );
+    // _lib.ColorLogger.log( "stderr:" + exception.stderr );
+    // console.log( exception );
 
     // Return ServerError
-    result = new _lib.Class.ServerError( 'NodeJS is not installed!' );
+    result = new _lib.Class.ServerError( 'NPM is not installed!' );
   }
   _lib.ColorLogger.log( '\tDone' );
 

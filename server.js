@@ -80,7 +80,7 @@ function main( argv ) {
 	// Autoload APIs
 	_lib.AutoLoader.route.load( app );
 
-	// TODO: Run server
+	// Run server
 	var port = _lib.settings.port;
 	var server = https.createServer( _lib.SslManager.serverContext, app );
 	if( args.p || args.port ) {

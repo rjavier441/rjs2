@@ -11,7 +11,7 @@
 'use strict';
 
 // BEGIN includes
-var _lib = require( '../../../../_lib.js' );
+const _lib = require( '../../../../_lib.js' );
 // Include other libraries here...
 // END includes
 
