@@ -40,7 +40,7 @@ const defaults = {
   serverPath: __dirname.substring( 0, __dirname.indexOf( '/util' ) ),
 
   // The server's SSL/HTTPS config file
-  ssl: __dirname + "/common/security.json",
+  ssl: __dirname + "/common/security/security.json",
 
   // The directory under which the server can find its utility classes/libraries
   util: __dirname
