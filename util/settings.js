@@ -33,10 +33,10 @@ const defaults = {
   port: 443,
   
   // The public content root directory where publicly accessible content will be
-  // stored
+  // stored (a.k.a. the "Server Root")
   root: __dirname + "/../public",
 
-  // The server's directory
+  // The server's directory (a.k.a. the "Server Path")
   serverPath: __dirname.substring( 0, __dirname.indexOf( '/util' ) ),
 
   // The server's SSL/HTTPS config file

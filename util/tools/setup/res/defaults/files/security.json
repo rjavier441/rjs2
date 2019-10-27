@@ -1,0 +1,7 @@
+{
+	"cert": "%cert",
+	"chain": "%chain",
+	"pass": "%pass",
+	"prvkey": "%prvkey",
+	"pubkey": "%pubkey"
+}

@@ -2,7 +2,7 @@
 //	@Name:				  R. Javier
 //	@File:					setupRequiredFiles.js
 //	@Date Created:	2019-10-22
-//	@Last Modified:	2019-10-22
+//	@Last Modified:	2019-10-25
 //	@Details:
 //									Defines a setup script that creates the required files to
 //	                enable the server to run on a Linux OS. This script SHOULD
@@ -13,8 +13,8 @@
 'use strict';
 
 // BEGIN includes
-var _lib = require( '../../../../_lib.js' );
-var fs = require( 'fs' );
+const _lib = require( '../../../../_lib.js' );
+const fs = require( 'fs' );
 // END includes
 
 // BEGIN script
@@ -28,7 +28,10 @@ function script() {
   var logStyle = {
     h1: { theme: 'primary', style: [ 'bold' ] }
   };
-  var defaultTemplateDir = '../../res/defaults/files';
+  var customTemplateDir =
+    `${_lib.settings.util}/tools/setup/res/custom/files`;
+  var defaultTemplateDir =
+    `${_lib.settings.util}/tools/setup/res/defaults/files`;
   var req = require( '../../res/required.json' );
   var result = true;
 
@@ -39,23 +42,38 @@ function script() {
   try {
     
     // Check all required files
-    req.file.forEach( function( filepathFromServerRoot ) {
+    req.file.forEach( function( filepathFromServerPath ) {
 
-      var fullpath = `${_lib.settings.serverPath}/${filepathFromServerRoot}`;
-      var filename = filepathFromServerRoot.split('/').pop();
+      var fullpath = `${_lib.settings.serverPath}/${filepathFromServerPath}`;
+      var filename = filepathFromServerPath.split('/').pop();
+      var customTemplateFilePath = `${customTemplateDir}/${filename}`;
       var defaultTemplateFilePath = `${defaultTemplateDir}/${filename}`;
       _lib.ColorLogger.log( `Checking ${fullpath}...`);
       if( !fs.existsSync( fullpath ) ) {
 
+        // // DEBUG
+        // _lib.ColorLogger.log(
+        //   `defaultTemplateFilePath: ${defaultTemplateFilePath}`
+        // );
+
         // Ensure default template file exists
-        if( !fs.existsSync( defaultTemplateFilePath ) ) {
+        var foundCustom = false;
+        var sourcePath = '';
+        if( fs.existsSync( customTemplateFilePath ) ) {
+          sourcePath = customTemplateFilePath;
+          foundCustom = true;
+        }
+        else if( fs.existsSync( defaultTemplateFilePath ) ) {
+          sourcePath = defaultTemplateFilePath;
+        } else {
           throw `Default template file '${defaultTemplateFilePath}' not found!`;
         }
 
         // Create file only if it doesn't already exist
-        _lib.ColorLogger.log(`\tCreating ${fullpath} from default template...`);
+        _lib.ColorLogger.log( `\tCreating ${fullpath} from ${ foundCustom ?
+          'custom' : 'default' } template...`);
         fs.copyFileSync(
-          defaultTemplateFilePath,
+          sourcePath,
           fullpath,
           fs.constants.COPYFILE_EXCL
         );

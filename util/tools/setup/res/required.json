@@ -12,9 +12,11 @@
   ],
   "dir": [
     "log",
-    "public"
+    "public",
+    "util/tools/setup/res/custom",
+    "util/common/security"
   ],
   "file": [
-    "util/common/security.json"
+    "util/common/security/security.json"
   ]
 }
