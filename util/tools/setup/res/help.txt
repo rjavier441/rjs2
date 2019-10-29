@@ -10,25 +10,19 @@ DESCRIPTION
 OPTIONS
 
   -h, --help
-
     Prints this help prompt
   
   -A
-
     Runs a full setup routine from scratch. Ideal for initial installation
 
   -D
-
     Runs the directory setup routine only.
+  
+  -e filename
+    Runs a single setup script specified by 'filename'.
 
   -F
-  
     Runs the file setup routine only.
   
   -L
-
     Runs the OS utility setup routine only.
-  
-  -M
-
-    (Under Development) Runs miscellaneous setups

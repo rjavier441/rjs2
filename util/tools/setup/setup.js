@@ -152,7 +152,9 @@ function main( argv ) {
   var doDirOnly = _lib.Util.isset( args.D );
   var doFilesOnly = _lib.Util.isset( args.F );
   var doLibOnly = _lib.Util.isset( args.L );
-  var missingReqdCmd = !doAll && !doDirOnly && !doLibOnly && !doFilesOnly;
+  var doOneOnly = _lib.Util.isset( args.e );
+  var missingReqdCmd = !doAll && !doDirOnly && !doLibOnly && !doFilesOnly &&
+    !doOneOnly;
   if( args.h || args.help || missingReqdCmd ) {
 
     // Show help prompt
@@ -175,6 +177,9 @@ function main( argv ) {
   }
   if( doFilesOnly ) {
     executionList = [ 'setupRequiredFiles.js' ];
+  }
+  if( doOneOnly ) {
+    executionList = [ args.e ];
   }
   runScripts( _lib.Util.getPlatform(), executionList );
 

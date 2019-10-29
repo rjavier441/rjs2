@@ -1,0 +1,29 @@
+{
+  "name": "rjs2",
+  "version": "0.0.0",
+  "description": "A web server framework running on top of the MERN stack, with plans for MEAN",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "ejs": "^2.7.1",
+    "express": "^4.17.1",
+    "minimist": "^1.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node server.js",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://rjavier441@bitbucket.org/rjavier441/rjs2.git"
+  },
+  "keywords": [
+    "web",
+    "server",
+    "nodejs"
+  ],
+  "author": "rjavier441",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/rjavier441/rjs2#readme"
+}
