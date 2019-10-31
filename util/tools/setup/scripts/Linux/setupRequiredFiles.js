@@ -62,9 +62,10 @@ function script() {
     req.file.forEach( function( filepathFromServerPath ) {
 
       var fullpath = `${_lib.settings.serverPath}/${filepathFromServerPath}`;
-      var filename = filepathFromServerPath.split('/').pop();
-      var customTemplateFilePath = `${customTemplateDir}/${filename}`;
-      var defaultTemplateFilePath = `${defaultTemplateDir}/${filename}`;
+      var customTemplateFilePath =
+        `${customTemplateDir}/${filepathFromServerPath}`;
+      var defaultTemplateFilePath =
+        `${defaultTemplateDir}/${filepathFromServerPath}`;
       _lib.ColorLogger.log( `Checking ${fullpath}...`);
       if( !fs.existsSync( fullpath ) ) {
 
