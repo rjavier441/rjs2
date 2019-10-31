@@ -83,7 +83,6 @@ typings/
 
 # gatsby files
 .cache/
-public
 
 # vuepress build output
 .vuepress/dist
@@ -109,4 +108,8 @@ util/common/security/*
 
 # Ignore setup's custom file templates
 util/tools/setup/res/custom/*
+
+# Ignore the public directory but not its template copy
+public/*
+util/tools/setup/res/default/files/public
 # END RJS2 Custom Git Ignores

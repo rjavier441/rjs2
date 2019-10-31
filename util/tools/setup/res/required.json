@@ -31,6 +31,33 @@
     "util/common/security"
   ],
   "file": [
+    "public/autoloader_alias.json",
+    "public/autoloader_ignore.json",
+    "public/home/index.html",
+    "public/home/app/app.js",
+    "public/home/app/routes/index.js",
+    "public/home/css/index.css",
+    "public/home/js/index.js",
+    "public/lib/utility.js",
+    "public/lib/font/DejaVuSans.ttf",
+    "public/lib/font/Lato_400.woff",
+    "public/lib/font/Syncopate-Regular.ttf",
+    "public/lib/font/fontawesome-webfont.ttf",
+    "public/lib/font/FontAwesome.otf",
+    "public/lib/font/Lato_700.woff",
+    "public/lib/font/fontawesome-webfont.eot",
+    "public/lib/font/fontawesome-webfont.woff",
+    "public/lib/font/Lato_300.woff",
+    "public/lib/font/Syncopate-Bold.ttf",
+    "public/lib/font/fontawesome-webfont.svg",
+    "public/lib/font/glyphicons-halflings-regular.woff",
+    "public/skeleton/skeleton.html",
+    "public/skeleton/app/app.js",
+    "public/skeleton/app/routes/index.js",
+    "public/skeleton/css/skeleton.css",
+    "public/skeleton/js/skeleton.js",
+    "public/skeleton/res/placeholder",
+    "public/skeleton/res/img/512px-Skull-Icon.svg.png",
     "util/common/security/security.json"
   ]
 }
