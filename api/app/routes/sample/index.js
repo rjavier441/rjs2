@@ -69,13 +69,16 @@ api.register(
 	function ( request, response ) {
 
 		var args = request.method === 'GET' ? request.params : request.body;
-		var ht = {
-			src: `(${request.method}) /api/sample/ping`
-		};
+		var ht = new _lib.Class.HandlerTag( this, 'api' );
 
 		response.set( "Content-Type", "application/json" );
-		response.send( new _lib.Class.ServerResponse( 'Ping!' ) ).status( 200 ).end();
-		_lib.Logger.log( `Sending 'Ping!' to client @ ip ${request.ip}`, ht );
+		response.send(
+			new _lib.Class.ServerResponse( 'Ping!' )
+		).status( 200 ).end();
+		_lib.Logger.log(
+			`Sending 'Ping!' to client @ ip ${request.ip}`,
+			ht.getTag()
+		);
 	}
 );
 
@@ -118,16 +121,15 @@ api.register(
 	function( request, response ) {
 
 		var args = request.method === 'GET' ? request.params : request.body;
-		var ht = {
-			src: `(${request.method}) /api/sample/data/:id`
-		};
+		var ht = new _lib.Class.HandlerTag( this, 'api' );
 
 		response.set( 'Content-Type', 'application/json' );
 		response.send(
 			new _lib.Class.ServerResponse( `Got '${args.id}' back!` )
 		).status( 200 ).end();
 		_lib.Logger.log(
-			`Sending data for id '${args.id}' to client @ ip ${request.ip}`, ht
+			`Sending data for id '${args.id}' to client @ ip ${request.ip}`,
+			ht.getTag()
 		);
 	}
 );

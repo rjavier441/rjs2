@@ -1,13 +1,14 @@
-//	@PROJECT: 		Core-v4
-// 	@Name: 			Rolando Javier
-// 	@File: 			ApiLegend.js
-// 	@Date Created: 	September 1, 2018
+//	@PROJECT: 				rjs2
+// 	@Name: 						Rolando Javier
+// 	@File: 						ApiLegend.js
+// 	@Date Created: 		September 1, 2018
 // 	@Last Modified: 	September 1, 2018
 // 	@Details:
-// 					This file houses the class definition of the ApiLegend object
+// 										This file houses the class definition of the ApiLegend
+//										object.
 // 	@Dependencies:
-// 					JavaScript ECMAScript 6 support
-//					EJS v2.6.1
+// 										JavaScript ECMAScript 6 support
+//										EJS v2.6.1
 
 "use strict";
 
@@ -79,7 +80,7 @@ ApiLegend.prototype.register = function ( name, method, route, desc, args, retur
 	var handlerTag = { "src": "ApiLegend.register" };
 	
 	try {
-
+		
 		// Create an endpoint descriptor object
 		var endpoint = {
 			"name": name,
@@ -89,6 +90,15 @@ ApiLegend.prototype.register = function ( name, method, route, desc, args, retur
 			"args": args,
 			"returnVal": returnVal
 		};
+
+		// Add autoloader metadata to the callback
+		cb._meta = {
+			endpoint: endpoint,
+			apilegend: this
+		};
+
+		// Force cb to have it's this pointer set to the function
+		cb = cb.bind(cb);
 
 		// Catalog the endpoint's information and resort the array by endpoint name
 		this.endpoints.push( endpoint );
