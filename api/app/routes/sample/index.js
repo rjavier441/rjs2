@@ -2,7 +2,7 @@
 //	@Name:					R. Javier
 //	@File:					api/app/routes/sample/index.js
 //	@Date Created:	2019-10-21
-//	@Last Modified:	2019-10-21
+//	@Last Modified:	2019-11-01
 //	@Details:
 //									This file contains routing logic to service all routes
 //									requested under the 'Sample' endpoint (a.k.a. the
@@ -34,6 +34,14 @@ var apiInfo = {
 // BEGIN Sample Routes
 
 // Example API route
+// @endpoint			(GET) /ping
+// @description		This endpoint allows the client to ping this API
+// @parameters		(object) request			The web request object provided by
+//																			express.js. The request body has no
+//																			members.
+//								(object) response			The web response object provided by
+//																			express.js.
+// @returns				n/a
 apiInfo.args.sample = [
 	{
 		'name': 'API argument #1',
@@ -44,7 +52,7 @@ apiInfo.args.sample = [
 apiInfo.rval.sample = [
 	{
 		'condition': 'On success',
-		'desc': 'This function returns true'
+		'desc': 'This function returns a code 200 and a ping message.'
 	},
 	{
 		'condition': 'On failure',
@@ -53,7 +61,7 @@ apiInfo.rval.sample = [
 ];
 api.register(
 	'Example API Endpoint Name',
-	'GET',							// http request type string
+	'GET',									// http request type string
 	'/ping',
 	'Pings the Sample API',
 	apiInfo.args.sample,		// the API's request arguments (i.e. body/querystring)
@@ -61,7 +69,7 @@ api.register(
 	function ( request, response ) {
 
 		response.set( "Content-Type", "application/json" );
-		response.send( new _lib.ServerResponse( 'Ping!' ) ).status( 200 ).end();
+		response.send( new _lib.Class.ServerResponse( 'Ping!' ) ).status( 200 ).end();
 	}
 );
 
