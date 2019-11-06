@@ -10,13 +10,13 @@
 //									NodeJS v8+
 
 'use strict';
-var fs = require( 'fs' );
-var https = require( 'https' );
-var settings = require( './settings.js' );
-var util = require( './util.js' );
+const fs = require( 'fs' );
+const https = require( 'https' );
+const settings = require( './settings.js' );
+const util = require( './util.js' );
 
 // BEGIN class SslManager
-class SslManager{
+class SslManager {
 
   // @ctor
   // @parameters		(object) options    An object containing any of the
