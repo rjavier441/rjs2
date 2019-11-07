@@ -10,11 +10,12 @@
     "express": "^4.17.1",
     "minimist": "^1.2.0",
     "mocha": "^6.2.2",
-    "mongodb": "^3.3.3"
+    "mongodb": "^3.3.3",
+    "sinon": "^7.5.0"
   },
   "devDependencies": {},
   "scripts": {
-		"unit": "mocha",
+    "unit": "mocha",
     "test": "node server.js",
     "start": "node server.js"
   },
