@@ -22,6 +22,9 @@
 //	                );
 //	@Dependencies:
 //									n/a
+//	@Note           Some libraries (e.g. SslManager) cause issues during loading
+//	                of the library outside a running server process (e.g. a unit
+//	                test, the setup script, etc.).
 
 'use strict';
 
@@ -43,9 +46,67 @@ const _Lib = {
     HandlerTag: __dirname + '/class/handlerTag.js',
     ServerError: __dirname + '/class/serverError.js',
     ServerResponse: __dirname + '/class/serverResponse.js'
+  },
+
+  // Metadata
+  _meta: {
+    _ignore: [ '_optin', '_meta' ]
   }
 };
 // END _Lib (const reference)
+
+
+// BEGIN _Lib utilities
+// @function			_optin()
+// @description		Automatically opts in the specified libraries and utilities.
+// @parameters		(~string[]) libs      A list of the desired libraries to
+//	                                    opt into. Must be a valid key within
+//	                                    the existing set of library names
+//	                                    above. If omitted, all libraries are
+//	                                    opted into.
+// @returns				n/a
+_Lib._optin = function( libs = false ) {
+  
+  // Determine list of libraries to include
+  var whitelist = [];
+  if( libs && Array.isArray(libs) ) {
+    whitelist = libs;
+  } else {
+    whitelist = Object.keys(_Lib);
+
+    // Remove keys to ignore
+    this._meta._ignore.forEach( function( libToIgnore ) {
+
+      if( whitelist.includes( libToIgnore ) ) {
+        whitelist.splice( whitelist.indexOf( libToIgnore ), 1 );
+      }
+    } );
+  }
+
+  // Generate requested library collection
+  var libraryCollection = {};
+  whitelist.forEach( function( libToInclude ) {
+
+    // Handle nested class object
+    if( libToInclude === 'Class' ) {
+
+      if( typeof libraryCollection.Class === 'undefined' ) {
+        libraryCollection.Class = {};
+      }
+
+      Object.keys(_Lib.Class).forEach( function( classToInclude ) {
+        libraryCollection[libToInclude][classToInclude] = require(
+          _Lib[libToInclude][classToInclude]
+        );
+      } );
+    } else {
+      libraryCollection[libToInclude] = require( _Lib[libToInclude] );
+    }
+  } );
+
+  return libraryCollection;
+};
+// END _Lib utilities
 
 module.exports = _Lib;
 

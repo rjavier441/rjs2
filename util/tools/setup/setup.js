@@ -11,24 +11,16 @@
 'use strict';
 
 // BEGIN includes
-const _lib_optin = require( '../../_lib_optin.js' );
-const _lib = {
-  // Top-Level Libraries
-  settings: require( _lib_optin.settings ),
-  ApiLegend: require( _lib_optin.ApiLegend ),
-  AutoLoader: require( _lib_optin.AutoLoader ),
-  ColorLogger: require( _lib_optin.ColorLogger ),
-  DateTimes: require( _lib_optin.DateTimes ),
-  Logger: require( _lib_optin.Logger ),
-  Util: require( _lib_optin.Util ),
-  
-  // rjs Classes
-  Class: {
-    HandlerTag: require( _lib_optin.Class.HandlerTag ),
-    ServerError: require( _lib_optin.Class.ServerError ),
-    ServerResponse: require( _lib_optin.Class.ServerResponse )
-  }
-};
+const _lib = require( '../../_lib_optin.js' )._optin( [
+  'settings',
+  'ApiLegend',
+  'AutoLoader',
+  'ColorLogger',
+  'DateTimes',
+  'Logger',
+  'Util',
+  'Class'
+] );
 const fs = require( 'fs' );
 const minimist = require( 'minimist' );
 // END includes

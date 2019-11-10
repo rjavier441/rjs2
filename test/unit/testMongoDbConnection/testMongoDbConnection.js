@@ -25,7 +25,7 @@ const MongoDbConnection = require(
 // BEGIN MongoDbConnection
 describe('Module MongoDbConnection', function () {
 
-	// @test					MongoDbConnection.constructor
+	// @test					MongoDbConnection.constructor()
 	// @description		Tests the constructor'setting properties.
 	describe( 'MongoDbConnection.constructor()', function() {
 

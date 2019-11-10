@@ -10,8 +10,8 @@
 //									ChaiJS v4.1.2+
 
 'use strict';
-var chai = require('chai');
-var assert = chai.assert;
+const chai = require('chai');
+const assert = chai.assert;
 // [Subject Under Test]	// import your test subject here
 
 
