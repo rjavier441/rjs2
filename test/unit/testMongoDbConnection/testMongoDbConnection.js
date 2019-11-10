@@ -12,6 +12,9 @@
 'use strict';
 const chai = require('chai');
 const assert = chai.assert;
+// const sinon = require('sinon');
+const MongoClient = require('../common/stubs/stubMongoClient.js');
+const Database = require('../../../util/dbi/class/database.js');
 const MongoDbConnection = require(
 	'../../../util/dbi/class/mongoDbConnection.js'
 );
@@ -20,8 +23,8 @@ const MongoDbConnection = require(
 
 
 // BEGIN MongoDbConnection
-describe('MongoDbConnection', function () {
-	
+describe('Module MongoDbConnection', function () {
+
 	// @test					MongoDbConnection.constructor
 	// @description		Tests the constructor'setting properties.
 	describe( 'MongoDbConnection.constructor()', function() {
@@ -34,6 +37,10 @@ describe('MongoDbConnection', function () {
 			password: 'somePassword'
 		}
 		var conn = new MongoDbConnection(
+			{
+				MongoClient: MongoClient,
+				Database: Database
+			},
 			input.database,
 			input.hostname,
 			input.port,

@@ -16,7 +16,7 @@ var assert = chai.assert;
 
 
 // BEGIN [Main Test Module Name]
-describe('[Main Test Module Name]', function () {
+describe('Module [Main Test Module Name]', function () {
 	// [insert unit tests here]
 });
 // END [Main Test Module Name]

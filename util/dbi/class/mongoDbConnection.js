@@ -7,17 +7,19 @@
 //									Defines a singleton class that allows the user to acquire a
 //	                single MongoDB client connection.
 //	@Dependencies:
-//									[dependencies]
+//									MongoClient
+//	                database.js
 
 'use strict';
-const assert = require( 'assert' );
-const MongoClient = require( 'mongodb' ).MongoClient;
-const Database = require( './database.js' );
+const DependencyInjectee = require('../../class/dependencyInjectee.js');
 
 // BEGIN class MongoDbConnection
-class MongoDbConnection {
+class MongoDbConnection extends DependencyInjectee {
   // @ctor
-  // @parameters		(string) database     The name of the database to connect
+  // @parameters		(object) deps         An object containing the dependencies
+  //	                                    required by the object instance. This
+  //	                                    supports dependency injection.
+  //	              (string) database     The name of the database to connect
   //	                                    to.
   //	              (string) hostname     The hostname to connect to.
   //	              (number) port         The port to connect to. This defaults
@@ -30,8 +32,19 @@ class MongoDbConnection {
   //	                                    authenticating. If omitted, it is
   //	                                    assumed that you are connecting to an
   //	                                    unsecured database.
-  constructor( database, hostname, port = 27017, user = false, pwd = false ) {
+  constructor(
+    deps,
+    database,
+    hostname,
+    port = 27017,
+    user = false,
+    pwd = false
+  ) {
 
+    // Load dependencies
+    super( deps );
+
+    // Generate credential string if required
     var credentialStr = '';
     if( user && pwd ) {
       credentialStr = 
@@ -41,7 +54,7 @@ class MongoDbConnection {
     // Define properties
     this.client = false;
     this.connection = false;
-    this.dbInfo = new Database(
+    this.dbInfo = new this._dep.Database(
       database,
       'docstore',
       `mongodb://${credentialStr}${hostname}:${port}/${database}`
@@ -62,7 +75,7 @@ class MongoDbConnection {
   connect( cb ) {
 
     // Create new client instance
-    this.client = new MongoClient( this.dbInfo.url );
+    this.client = new this._dep.MongoClient( this.dbInfo.url );
     this.client.connect( function( error ) {
 
       if( error === null ) {
