@@ -2,7 +2,9 @@
 	"order": [
 		"checkForNodeJS.js",
 		"checkForNpm.js",
+		"installNodeModules.js",
 		"setupRequiredDirs.js",
-		"setupRequiredFiles.js"
+		"setupRequiredFiles.js",
+		"setupSymbolicLinks.js"
 	]
 }

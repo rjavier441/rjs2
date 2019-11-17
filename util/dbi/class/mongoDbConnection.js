@@ -7,8 +7,8 @@
 //									Defines a singleton class that allows the user to acquire a
 //	                single MongoDB client connection.
 //	@Dependencies:
-//									MongoClient
-//	                database.js
+//									class MongoClient (mongodb)
+//	                class Database (database.js)
 
 'use strict';
 const DependencyInjectee = require('../../class/dependencyInjectee.js');
@@ -17,8 +17,10 @@ const DependencyInjectee = require('../../class/dependencyInjectee.js');
 class MongoDbConnection extends DependencyInjectee {
   // @ctor
   // @parameters		(object) deps         An object containing the dependencies
-  //	                                    required by the object instance. This
-  //	                                    supports dependency injection.
+  //	                                    required by the object instance (this
+  //	                                    supports dependency injection). Each
+  //	                                    key must be the name of a dependency
+  //	                                    class (see Dependencies above).
   //	              (string) database     The name of the database to connect
   //	                                    to.
   //	              (string) hostname     The hostname to connect to.

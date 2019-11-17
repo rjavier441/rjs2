@@ -59,5 +59,8 @@
     "public/skeleton/res/placeholder",
     "public/skeleton/res/img/512px-Skull-Icon.svg.png",
     "util/common/security/security.json"
+  ],
+  "symlink": [
+    { "name": "mocha", "destination": "node_modules/mocha/bin/mocha" }
   ]
 }

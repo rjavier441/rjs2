@@ -26,3 +26,6 @@ OPTIONS
   
   -L
     Runs the OS utility setup routine only.
+
+  -S
+    Runs the symbolic link/shortcut setup routine only.

@@ -143,10 +143,11 @@ function main( argv ) {
   var doAll = _lib.Util.isset( args.A );
   var doDirOnly = _lib.Util.isset( args.D );
   var doFilesOnly = _lib.Util.isset( args.F );
+  var doSymlinksOnly = _lib.Util.isset( args.S );
   var doLibOnly = _lib.Util.isset( args.L );
   var doOneOnly = _lib.Util.isset( args.e );
   var missingReqdCmd = !doAll && !doDirOnly && !doLibOnly && !doFilesOnly &&
-    !doOneOnly;
+    !doOneOnly && !doSymlinksOnly;
   if( args.h || args.help || missingReqdCmd ) {
 
     // Show help prompt
@@ -169,6 +170,9 @@ function main( argv ) {
   }
   if( doFilesOnly ) {
     executionList = [ 'setupRequiredFiles.js' ];
+  }
+  if( doSymlinksOnly ) {
+    executionList = [ 'setupSymbolicLinks.js' ];
   }
   if( doOneOnly ) {
     executionList = [ args.e ];

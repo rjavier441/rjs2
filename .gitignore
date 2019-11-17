@@ -112,4 +112,8 @@ util/tools/setup/res/custom/*
 # Ignore the public directory but not its template copy
 public/*
 util/tools/setup/res/default/files/public
+
+# Ignore mocha symlink in server path
+mocha
 # END RJS2 Custom Git Ignores
+
