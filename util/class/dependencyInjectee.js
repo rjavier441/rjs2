@@ -15,11 +15,11 @@
 class DependencyInjectee {
 
   // @ctor
-  // @parameters		(object) deps         An object containing references to the
+  // @parameters		(~object) deps        An object containing references to the
   //	                                    class's dependencies. See the child
   //	                                    class's file header for a list of
   //	                                    dependencies.
-  constructor( deps ) {
+  constructor( deps = {} ) {
     
     // Set dependencies
     this._dep = {};

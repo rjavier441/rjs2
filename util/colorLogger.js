@@ -10,13 +10,14 @@
 //									NodeJS v8+
 
 'use strict';
+const DependencyInjectee = require( './class/dependencyInjectee.js' );
 
 // BEGIN class ColorLogger
-class ColorLogger {
+class ColorLogger extends DependencyInjectee {
   
   // @ctor
   constructor() {
-
+		super();
   }
 }
 

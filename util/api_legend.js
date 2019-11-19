@@ -19,8 +19,6 @@ const ApiLegend = require( `${settings.util}/class/ApiLegend/ApiLegend.js` );		/
 // Containers
 var al = {};
 
-
-
 // BEGIN member functions
 
 // @function		createLegend()
