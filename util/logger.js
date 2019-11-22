@@ -13,81 +13,92 @@
 //					It is important to note that the idea of a "const" in JS doesn't mean "is constant", but rather, that "it can only be assigned ONCE", and thus all references to the "logger" singleton are "constant" (i.e. referencing the exact same object in memory). The logger singleton is still, therefore, not immutable, unless frozen with object.freeze().
 
 "use strict"
-var fs = require("fs");
-var util = require("util");
-var settings = require("./settings");
+const fs = require("fs");
+const DependencyInjectee = require( './class/dependencyInjectee.js' );
+const util = require("util");
+const settings = require("./settings");
 
 
 
 // Container (Singleton)
-const logger = {};
+// const logger = {};
 
+// BEGIN class Logger
+class Logger extends DependencyInjectee {
 
+	// @ctor
+	// @parameters		(object) deps					An object containing the dependencies
+  //	                                    required by the object instance (this
+  //	                                    supports dependency injection). Each
+  //	                                    key must be the name of a dependency
+  //	                                    class (see class Dependencies above).
+	constructor( deps ) {
+		super( deps );
+	}
+}
 
-// Members
-/*
-	@member 	logger.logHeader
-	@details 	This member defines the heading prepended to each logfile's filename.
-*/
-logger.logHeader = "rjs2-log_";
+// @property			Logger.prototype.logHeader
+// @description		This member defines the heading prepended to each logfile's
+//								filename.
+Logger.prototype.logHeader = "rjs2-log_";
 
-/*
-	@member 	logger.fileMutex
-	@details 	This member signals when a file is being written to.
-*/
-logger.fileMutex = true;
+// @property			Logger.prototype.fileMutex
+// @description		This member signals when a file is being written to.
+Logger.prototype.fileMutex = true;
 
-/*
-	@member 	logger.dataQueue
-	@details 	This member is used as a queue for log data if a log was attempted while another log or process had the mutex
-*/
-logger.dataQueue = ["\n****\nInitializing event log system...\n****\n"];	// queue for data to be written, if logs were requested while a logger.fileMutex was unavailable
+// @property			Logger.prototype.dataQueue
+// @description		This member is used as a queue for log data if a log was
+//								attempted while another log or process had the mutex.
+Logger.prototype.dataQueue = ["\n****\nInitializing event log system...\n****\n"];	// queue for data to be written, if logs were requested while a Logger.prototype.fileMutex was unavailable
 
-/*
-	@member 	logger.logToConsole
-	@details 	If true, this member will force the logger to log its message to both the logfile and the console. Defaults to true.
-*/
-logger.logToConsole = true;
+// @property			Logger.prototype.logToConsole
+// @description		If true, this member will force the logger to log its message 
+//								to both the logfile and the console. Defaults to true.
+Logger.prototype.logToConsole = true;
 
-// @member			logger.blacklist
-// @details			This member is used to list which handlers' messages should be ignored
-logger.blacklist = [];
+// @property			Logger.prototype.blacklist
+// @description		This member is used to list which handlers' messages should 
+//								be ignored.			
+Logger.prototype.blacklist = [];
 
-
-
-// Methods
-// @function		logger.ignore()
-// @description		This function tells the logger module to ignore certain messages for logging (both to
-//					console and to log file). If an message has a handler tag with a "src" attribute
-//					whose name is specified within the tagName(s), that message is ignored and not logged
-//					This function has a contextual usage. If no arguments are given, this function returns
-//					the current blacklist. If parameter tagNames is given, the specified tagName is added to
-//					the message black list, and this function then returns the new blacklist.
-// @parameters		(~array) tagNames		An (optional) array listing the handler tag names to ignore
-// @returns			(array) blacklist		The current message tags blacklist
-logger.ignore = function ( tagNames = [] ) {
+// @function			Logger.prototype.ignore()
+// @description		This function tells the logger module to ignore certain
+//								messages for logging (both to console and to log file). If an
+//								message has a handler tag with a "src" attribute whose name
+//								is specified within the tagName(s), that message is ignored
+//								and not logged.
+//								This function has a contextual usage. If no arguments are
+//								given, this function returns the current blacklist. If
+//								parameter tagNames is given, the specified tagName is added to
+//								the message black list, and this function then returns the new
+//								blacklist.
+// @parameters		(~string[]) tagNames	An (optional) array listing the handler
+//																			tag names to ignore.
+// @returns				(string[]) blacklist	The current message tags blacklist.
+Logger.prototype.ignore = function ( tagNames = [] ) {
 
 	// Add tag names to the current blacklist if they don't already exist in it
 	tagNames.forEach( function ( tag ) {
 
 		// Check if the tag already exists. If not, then add it
-		if ( !logger.blacklist.includes( tag ) ) {
+		if ( !Logger.prototype.blacklist.includes( tag ) ) {
 
-			logger.blacklist.push( tag )
+			Logger.prototype.blacklist.push( tag )
 		}
 	} );
 
 	// Return the latest version of the blacklist
-	return logger.blacklist;
+	return Logger.prototype.blacklist;
 }
 
-// @function		logger.interpret()
-// @description		This function tells the logger to interpret certain messages for logging (both
-//					to console and to log file) by removing it from the blacklist (if it exists).
-// @parameter		(array) tagNames		An array listing the handler tag names to remove from
-//											the blacklist
-// @returns			n/a
-logger.interpret = function ( tagNames ) {
+// @function			Logger.prototype.interpret()
+// @description		This function tells the logger to interpret certain messages
+//								for logging (both to console and to log file) by removing it
+//								from the blacklist (if it exists).
+// @parameters		(string[]) tagNames		An array listing the handler tag names
+//																			to remove from the blacklist.
+// @returns				n/a
+Logger.prototype.interpret = function ( tagNames ) {
 
 	// If tagNames is not an array, convert it to one
 	if ( !Array.isArray( tagNames ) ) {
@@ -100,17 +111,17 @@ logger.interpret = function ( tagNames ) {
 	tagNames.forEach( function ( tagName ) {
 
 		// Check if the tagName exists within the array
-		var index = logger.blacklist.indexOf( tagName );
+		var index = Logger.prototype.blacklist.indexOf( tagName );
 		if ( index !== -1 ) {
 
 			// Remove the index from the blacklist
-			logger.blacklist.splice( index, 1 );
+			Logger.prototype.blacklist.splice( index, 1 );
 		}
 	} );
 }
 
 /*
-	@function	logger.log
+	@function	Logger.prototype.log
 	@parameter	msg - the string message to log
 	@parameter	options - (optional) JSON object of formatting options to customize how @parameter msg is written to the logfile
 	@returns	An object detailing the message that was logged (i.e. placed in log queue), and its log settings:
@@ -122,7 +133,7 @@ logger.interpret = function ( tagNames ) {
 					"src": [message's source]
 				}
 	@details 	
-				This function is used to record server events in daily logfiles within the log directory (defined in settings.js). The function places the messages in a queue and processes them as they come along. As previously implied, this function will store the message in the log file corresponding to current date that @function logger.log was called. If a logfile with today's date does not exist, that log file will be automatically created and piped the message.
+				This function is used to record server events in daily logfiles within the log directory (defined in settings.js). The function places the messages in a queue and processes them as they come along. As previously implied, this function will store the message in the log file corresponding to current date that @function Logger.prototype.log was called. If a logfile with today's date does not exist, that log file will be automatically created and piped the message.
 				Whenever @function log is called, it automatically tags @parameter msg with a timestamp in front, and places it at the end of the logfile. If options is specified, it may contain any or all of the following:
 
 					{
@@ -131,10 +142,10 @@ logger.interpret = function ( tagNames ) {
 						"src": [string]	// if defined, adds this string before writing the msg; useful for indicating where the message is being logged from
 					}
 	@notes
-				The logfiles will be named in this format: [logger.logHeader][current_date].
+				The logfiles will be named in this format: [Logger.prototype.logHeader][current_date].
 				In contrast to log file logging, all console.log() calls may or may not appear in the server console in the order they are written
 */
-logger.log = function (msg, options = {
+Logger.prototype.log = function (msg, options = {
 	"addNL": true,
 	"pad": 0,
 	"src": undefined
@@ -158,13 +169,13 @@ logger.log = function (msg, options = {
 	sourceTag = (typeof options.src !== "undefined") ? `<${options.src}> ` : "";
 
 	// Determine if the message source is in the blacklist
-	var srcIsBlacklisted = logger.blacklist.includes( options.src );
+	var srcIsBlacklisted = Logger.prototype.blacklist.includes( options.src );
 
 	// Place msg in log queue if the log src is not blacklisted
 	if ( !srcIsBlacklisted ) {
 
 		// If the log src is not blacklisted, place the message on the queue
-		logger.dataQueue.push(padding + timestamp + sourceTag + msg);
+		Logger.prototype.dataQueue.push(padding + timestamp + sourceTag + msg);
 	}
 
 	// Set the message's detailed info
@@ -182,9 +193,9 @@ logger.log = function (msg, options = {
 	}
 
 	// If no other process is using the file, take the file mutex so that no other log call can write. Then, flush all messages.
-	if (logger.fileMutex === true && !srcIsBlacklisted ) {
+	if (Logger.prototype.fileMutex === true && !srcIsBlacklisted ) {
 		// Take mutex
-		logger.fileMutex = false;
+		Logger.prototype.fileMutex = false;
 
 		// Create date string for filename
 		var datestr = "";
@@ -193,20 +204,20 @@ logger.log = function (msg, options = {
 		datestr += "-" + ((day < 10) ? "0" + day.toString() : day.toString());
 
 		// Create (absolute) filepath to search for
-		var filename = `${logger.logHeader}${datestr}`;
+		var filename = `${Logger.prototype.logHeader}${datestr}`;
 		var filepath = `${settings.logdir}/${filename}`;
 
 		// Flush dataQueue message(s) to logfile
-		while (logger.dataQueue.length > 0) {
-			var msgFromQueue = logger.dataQueue.shift();	// removes from front of array
+		while (Logger.prototype.dataQueue.length > 0) {
+			var msgFromQueue = Logger.prototype.dataQueue.shift();	// removes from front of array
 			fs.appendFile(filepath, msgFromQueue, "utf8", function (error) {
 				if (error) {
-					if (logger.logToConsole === true) {
+					if (Logger.prototype.logToConsole === true) {
 						console.log(`(Log Error occurred for ${filename}) [UNLOGGED] ${msgFromQueue}`);
 						// console.log(error);
 					}
 				} else {
-					if (logger.logToConsole === true) {
+					if (Logger.prototype.logToConsole === true) {
 						console.log(`(Logged to ${filename} from queue) ${msgFromQueue}`);
 					}
 				}
@@ -214,13 +225,14 @@ logger.log = function (msg, options = {
 		}
 
 		// Return mutex
-		logger.fileMutex = true;
+		Logger.prototype.fileMutex = true;
 	}
 
 	// Return background information about this log message
 	return detailedInfo;
 }
+// END class Logger
 
+module.exports = new Logger();
 
-module.exports = logger;
 // END logger.js
