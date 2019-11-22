@@ -2,7 +2,7 @@
 //	@Name:					R. Javier
 //	@File:					colorLogger.js
 //	@Date Created:	2019-10-17
-//	@Last Modified:	2019-10-17
+//	@Last Modified:	2019-10-18
 //	@Details:
 //									Defines a color logger utility class to print color messages
 //	                to console.
@@ -23,7 +23,7 @@ class ColorLogger extends DependencyInjectee {
 
 // @property			colors
 // @description		Defines byte codes for fancy text coloring.
-ColorLogger.colors = {		// Text Color Codes for Any Terminal; based
+ColorLogger.prototype.colors = {		// Text Color Codes for Any Terminal; based
 	"Reset": "\x1b[0m",               // on the ANSI standard
 	"Bright": "\x1b[1m",
 	"Dim": "\x1b[2m",
@@ -53,7 +53,7 @@ ColorLogger.colors = {		// Text Color Codes for Any Terminal; based
 
 // @property			styles
 // @description		Defines byte codes for fancy text styleing.
-ColorLogger.styles = {	// Text Decoration Codes for Any Terminal;
+ColorLogger.prototype.styles = {	// Text Decoration Codes for Any Terminal;
 	"Bold": "\u001b[1m",            // based on the ANSI standard
 	"Underline": "\u001b[4m",
 	"Reverse": "\u001b[7m"
@@ -116,7 +116,7 @@ ColorLogger.styles = {	// Text Decoration Codes for Any Terminal;
 //																				If omitted, the theme defaults to the
 //																				"normal" theme.
 // @returns				n/a
-ColorLogger.log = function( message, options = {} ) {
+ColorLogger.prototype.log = function( message, options = {} ) {
 
 	// Acquire theme customizations, if any
 	var color = typeof options.color === "undefined" ? false : options.color;
@@ -128,8 +128,8 @@ ColorLogger.log = function( message, options = {} ) {
 	var append = typeof options.append === "undefined" ? "" : options.append;
 
 	// Define base colors (defaults to "normal" theme) and styles
-	var fgColor = ColorLogger.colors.FgWhite;
-	var bgColor = ColorLogger.colors.BgBlack;
+	var fgColor = ColorLogger.prototype.colors.FgWhite;
+	var bgColor = ColorLogger.prototype.colors.BgBlack;
 	var fontStyle = "";
 
 	// Make color changes by class, if necessary
@@ -139,16 +139,16 @@ ColorLogger.log = function( message, options = {} ) {
 		// console.log( "theme:", theme );
 		switch ( theme ) {
 			case "complete": {
-				fgColor = ColorLogger.colors.FgGreen;
-				bgColor = ColorLogger.colors.BgBlack;
+				fgColor = ColorLogger.prototype.colors.FgGreen;
+				bgColor = ColorLogger.prototype.colors.BgBlack;
 				break;
 			}
 			case "danger": {
-				bgColor = ColorLogger.colors.BgRed;
+				bgColor = ColorLogger.prototype.colors.BgRed;
 				break;
 			}
 			case "info": {
-				bgColor = ColorLogger.colors.BgCyan;
+				bgColor = ColorLogger.prototype.colors.BgCyan;
 				break;
 			}
 			case "normal": {
@@ -156,54 +156,54 @@ ColorLogger.log = function( message, options = {} ) {
 				break;
 			}
 			case "primary": {
-				fgColor = ColorLogger.colors.FgWhite;
-				bgColor = ColorLogger.colors.BgBlue;
+				fgColor = ColorLogger.prototype.colors.FgWhite;
+				bgColor = ColorLogger.prototype.colors.BgBlue;
 				break;
 			}
 			case "success": {
-				bgColor = ColorLogger.colors.BgGreen;
+				bgColor = ColorLogger.prototype.colors.BgGreen;
 				break;
 			}
 			case "failure": {
-				fgColor = ColorLogger.colors.FgRed
-				bgColor = ColorLogger.colors.BgBlack;
+				fgColor = ColorLogger.prototype.colors.FgRed
+				bgColor = ColorLogger.prototype.colors.BgBlack;
 				break;
 			}
 			case "warning": {
-				fgColor = ColorLogger.colors.FgBlack;
-				bgColor = ColorLogger.colors.BgYellow;
+				fgColor = ColorLogger.prototype.colors.FgBlack;
+				bgColor = ColorLogger.prototype.colors.BgYellow;
 				break;
 			}
 		}
 	} else if( color ) {
-		fgColor = ColorLogger.colors[ `Fg${color}` ];
+		fgColor = ColorLogger.prototype.colors[ `Fg${color}` ];
 	}
 
 	// Make style changes if necessary
 	if ( decor.includes( "bold" ) ) {
 
 		// If bolding is requested, add bolding
-		fontStyle += ColorLogger.styles.Bold;
+		fontStyle += ColorLogger.prototype.styles.Bold;
 	}
 	if ( decor.includes( "underline" ) ) {
 
 		// If underlining is requested, add underlines
-		fontStyle += ColorLogger.styles.Underline;
+		fontStyle += ColorLogger.prototype.styles.Underline;
 	}
 	if ( decor.includes( "reverse" ) ) {
 
 		// If color reversing is requested, add color reversing
-		fontStyle += ColorLogger.styles.Reverse;
+		fontStyle += ColorLogger.prototype.styles.Reverse;
 	}
 
 	// Compile the message into a template
-	var template = `%s${fgColor}${bgColor}${fontStyle}%s${ColorLogger.colors.Reset}%s`;
+	var template = `%s${fgColor}${bgColor}${fontStyle}%s${ColorLogger.prototype.colors.Reset}%s`;
 
 	// Log to console
 	console.log( template, prepend, message, append );
 };
 // END class ColorLogger
 
-module.exports = ColorLogger;
+module.exports = new ColorLogger();
 
 // END colorLogger.js
