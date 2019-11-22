@@ -1,7 +1,7 @@
-//	@PROJECT:				rjs2
+//	@PROJECT:					rjs2
 // 	@Name:						R. Javier
 // 	@File:						route_autoloader.js
-// 	@Date Created: 	2019-10-13
+// 	@Date Created: 		2019-10-13
 // 	@Last Modified: 	2019-10-13
 // 	@Details:
 // 					This file contains a convenient route autoloader for both APIs and 

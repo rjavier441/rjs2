@@ -11,31 +11,37 @@
 
 'use strict';
 const fs = require( 'fs' );
+const DependencyInjectee = require( './class/dependencyInjectee.js' );
 const https = require( 'https' );
 const settings = require( './settings.js' );
 const util = require( './util.js' );
 
 // BEGIN class SslManager
-class SslManager {
+class SslManager extends DependencyInjectee {
 
   // @ctor
-  // @parameters		(object) options    An object containing any of the
-  //	                                  following keys to configure SSL:
-  //	                (string) cert       Full path to the CA certificate in PEM
-  //	                                    format. If omitted, this defaults to
-  //	                                    false.
-  //	                (~string) chain     Full path to the CA authentication
-  //	                                    chain file, which overrides the
-  //	                                    default chain of trusted CAs (read
-  //	                                    NodeJS documentation for the method
-  //	                                    'tls.createSecureContext()'). If
-  //	                                    omitted, this defaults to false.
-  //	                (~string) pass      The optional 'prvkey' passphrase. If
-  //	                                    omitted, this defaults to false.
-  //	                (~string) prvkey    Full path to the private key file. If
-  //	                                    omitted, this defaults to false.
-  //	                (~string) pubkey    Full path to the public key file. If
-  //	                                    omitted, this defaults to false.
+  // @parameters		(object) deps					An object containing the dependencies
+  //	                                    required by the object instance (this
+  //	                                    supports dependency injection). Each
+  //	                                    key must be the name of a dependency
+  //	                                    class (see class Dependencies above).
+  //	              (object) options      An object containing any of the
+  //	                                    following keys to configure SSL:
+  //	                (string) cert         Full path to the CA certificate in
+  //	                                      PEM format. If omitted, this
+  //	                                      defaults to false.
+  //	                (~string) chain       Full path to the CA authentication
+  //	                                      chain file, which overrides the
+  //	                                      default chain of trusted CAs (read
+  //	                                      NodeJS documentation for the method
+  //	                                      'tls.createSecureContext()'). If
+  //	                                      omitted, this defaults to false.
+  //	                (~string) pass        The optional 'prvkey' passphrase. If
+  //	                                      omitted, this defaults to false.
+  //	                (~string) prvkey      Full path to the private key file.
+  //	                                      If omitted, this defaults to false.
+  //	                (~string) pubkey      Full path to the public key file. If
+  //	                                      omitted, this defaults to false.
   // @note            TODO: Depending on the context, SslManager can use either
   //	                self-signed certificates or official CA certificates.
   //	                If 'cert' and 'chain' are provided, the SslManager assumes
@@ -43,7 +49,9 @@ class SslManager {
   //	                by the CA(s) described by the CA chain file 'chain'. If
   //	                'cert' is provided along with both 'prvkey' and 'pubkey',
   //	                use of a self-signed certificate is assumed.
-  constructor( options ) {
+  constructor( deps, options ) {
+    super( deps );
+
     this.privateKey = ( options.prvkey && util.isset( options.prvkey ) ) ?
       fs.readFileSync( options.prvkey, 'utf8' ) : false;
     this.publicKey = ( options.pubkey && util.isset( options.pubkey ) ) ?
@@ -121,6 +129,7 @@ class SslManager {
 
 // Container (Singleton)
 const instance = new SslManager(
+  {},
   JSON.parse( fs.readFileSync( settings.ssl, 'utf8' ) )
 );
 Object.freeze( instance );
