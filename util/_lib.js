@@ -12,25 +12,7 @@
 'use strict';
 
 // BEGIN _Lib (Singleton)
-const _Lib = {
-
-  // Top-Level Libraries
-  settings: require( './settings.js' ),
-  ApiLegend: require( './api_legend.js' ),
-  AutoLoader: require( './route_autoloader.js' ),
-  ColorLogger: require( './colorLogger.js' ),
-  DateTimes: require( './datetimes.js' ),
-  Logger: require( './logger.js' ),
-  SslManager: require( './sslManager.js' ),
-  Util: require( './util.js' ),
-  
-  // rjs Classes
-  Class: {
-    HandlerTag: require( './class/handlerTag.js' ),
-    ServerError: require( './class/serverError.js' ),
-    ServerResponse: require( './class/serverResponse.js' )
-  }
-};
+const _Lib = require( './_lib_optin.js' )._optin();
 Object.freeze( _Lib );
 // END _Lib (Singleton)
 

@@ -9,43 +9,52 @@
 //									n/a
 
 "use strict";
+const DependencyInjectee = require( './class/dependencyInjectee.js' );
 
-const defaults = {
-  // Sets the time to live (in minutes) for cookies/tokens before expiration
-  cookieLifetime: 60 * 6,   // 6 hours
+class ServerSettings extends DependencyInjectee {
 
-  // Toggles the availability of development features
-  devMode: true,
+  // @ctor
+  // @parameters		n/a
+  constructor() {
+    super();
 
-  // The hostname for the server
-  hostname: "",
-  
-  // The directory under which the server stores its log files under
-  logdir: __dirname + "/../log",
+    // Sets the time to live (in minutes) for cookies/tokens before expiration
+    this.cookieLifetime = 60 * 6;   // 6 hours
 
-  // Various metadata for the server
-  meta: {
-    serverEmail: "",
-    serverName: "rjserver2"
-  },
-  
-  // The default port to run the server in
-  port: 443,
-  
-  // The public content root directory where publicly accessible content will be
-  // stored (a.k.a. the "Server Root")
-  root: __dirname + "/../public",
+    // Toggles the availability of development features
+    this.devMode = true;
 
-  // The server's directory (a.k.a. the "Server Path")
-  serverPath: __dirname.substring( 0, __dirname.indexOf( '/util' ) ),
+    // The hostname for the server
+    this.hostname = "";
+    
+    // The directory under which the server stores its log files under
+    this.logdir = __dirname + "/../log";
 
-  // The server's SSL/HTTPS config file
-  ssl: __dirname + "/common/security/security.json",
+    // Various metadata for the server
+    this.meta = {
+      serverEmail: "",
+      serverName: "rjserver2"
+    };
+    
+    // The default port to run the server in
+    this.port = 443;
+    
+    // The public content root directory where publicly accessible content will
+    // be stored (a.k.a. the "Server Root")
+    this.root = __dirname + "/../public";
 
-  // The directory under which the server can find its utility classes/libraries
-  util: __dirname
+    // The server's directory (a.k.a. the "Server Path")
+    this.serverPath = __dirname.substring( 0, __dirname.indexOf( '/util' ) );
+
+    // The server's SSL/HTTPS config file
+    this.ssl = __dirname + "/common/security/security.json";
+
+    // The directory under which the server can find its utility classes/
+    // libraries
+    this.util = __dirname;
+  }
 };
 
-module.exports = defaults;
+module.exports = new ServerSettings();
 
 // END settings.js

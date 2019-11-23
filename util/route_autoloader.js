@@ -21,11 +21,12 @@
 "use strict";
 
 // Includes
-var settings = require( "./settings.js" );
-var fs = require( "fs" );
-var logger = require( `${settings.util}/logger` );
-var ServerError = require( `${settings.util}/class/serverError.js` );
-var ServerResponse = require( `${settings.util}/class/serverResponse.js` );
+const settings = require( "./settings.js" );
+const DependencyInjectee = require( './class/dependencyInjectee.js' );
+const fs = require( "fs" );
+const logger = require( `${settings.util}/logger` );
+const ServerError = require( `${settings.util}/class/serverError.js` );
+const ServerResponse = require( `${settings.util}/class/serverResponse.js` );
 
 // Globals
 // n/a
