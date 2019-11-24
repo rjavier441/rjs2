@@ -13,9 +13,10 @@
 'use strict';
 
 // BEGIN includes
-var _lib = require( '../../../../util/_lib.js' );
-var express = require('express');
-var router = express.Router();
+const _lib = require( '../../../../util/_lib.js' );
+const express = require( 'express' );
+const mongodb = require( 'mongodb' );
+const router = express.Router();
 // END includes
 
 // Example API Documentation Arguments
@@ -131,6 +132,78 @@ api.register(
 			`Sending data for id '${args.id}' to client @ ip ${request.ip}`,
 			ht.getTag()
 		);
+	}
+);
+
+// Example API Route with DB Query
+// @endpoint			(GET) seeTestDb
+// @description		Gets the collections in the database.
+// @parameters		(object) request			The web request object provided by
+//																			express.js. The request has no memebers.
+//								(object) response			The web response object provided by
+//																			express.js.
+// @returns				n/a
+apiInfo.args.seeTestDb = [];
+apiInfo.rval.seeTestDb = [
+	{
+		condition: 'On success',
+		desc: 'Returns a code 200 and records found in the test collection'
+	},
+	{
+		condition: 'On failure',
+		desc: 'Returns a code 500'
+	}
+];
+api.register(
+	'Sample Endpoint with DB Query',
+	'GET',
+	'/seeTestDb',
+	'Gets the collections in the database',
+	apiInfo.args.collections,
+	apiInfo.rval.collections,
+	function( request, response ) {
+
+		var ht = new _lib.Class.HandlerTag( this, 'api' );
+
+		// Connection String URI Format (from MongoDB official website)
+		// mongodb://[username:password@]host1[:port1][,...hostN[:portN]][/[database][?options]]
+		const url = 'mongodb://scedb:%40sce123@localhost:27017/rjsdb';
+		const client = new mongodb.MongoClient( url, {
+			useUnifiedTopology: true
+		} );
+
+		client.connect( ( error, conn ) => {
+
+			response.set( 'Content-Type', 'application/json' );
+			if( error ) {
+				response.send(
+					new _lib.Class.ServerError( 'Db conn error', error )
+				).status(500).end();
+				_lib.Logger.log( `Db conn error: ${error}`, ht.getTag() );
+			} else {
+				
+				var db = conn.db();
+				db.collection( 'temp' ).find().limit(1000).toArray( (err, docs) => {
+
+					if( err ) {
+
+						response.send(
+							new _lib.Class.ServerError( 'Db query error', err )
+						).status(500).end();
+						_lib.Logger.log( `Db query error: ${err}`, ht.getTag() );
+					} else {
+
+						response.send(
+							new _lib.Class.ServerResponse( JSON.stringify(docs) )
+						).status(200).end();
+						_lib.Logger.log(
+							`Sending test db doc to client @ ip ${request.ip}`,
+							ht.getTag()
+						);
+					}
+				} );
+			}
+		} );
 	}
 );
 
