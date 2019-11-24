@@ -13,7 +13,10 @@
 const chai = require('chai');
 const assert = chai.assert;
 // const sinon = require('sinon');
-const MongoClient = require('../common/stubs/stubMongoClient.js');
+const MongoClient = require('../common/stubs/stubMongoClient.js').MongoClient;
+const MongoConnection = require(
+	'../common/stubs/stubMongoClient.js'
+).MongoConnection;
 const Database = require('../../../util/dbi/class/database.js');
 const MongoDbConnection = require(
 	'../../../util/dbi/class/mongoDbConnection.js'
@@ -55,6 +58,40 @@ describe('Module MongoDbConnection', function () {
 			assert.include( conn.dbInfo.url, input.password );
 			assert.include( conn.dbInfo.url, input.port );
 			done();
+		} );
+	} );
+
+	// @test					MongoDbConnection.connect()
+	// @description		Tests whether the client connects
+	describe( 'MongoDbConnection.connect()', function() {
+
+		var input = {
+			database: 'rjsdb',
+			hostname: 'localhost',
+			port: 27017,
+			username: 'someUsername',
+			password: 'somePassword'
+		}
+		var conn = new MongoDbConnection(
+			{
+				MongoClient: MongoClient,
+				Database: Database
+			},
+			input.database,
+			input.hostname,
+			input.port,
+			input.username,
+			input.password
+		);
+
+		it( 'should connect to the database properly', function( done ) {
+
+			conn.connect( function (connection, err ) {
+				console.log( 'connection:', connection );
+				assert.instanceOf( connection, MongoConnection );
+				assert.strictEqual( null, err );
+				done();
+			} );
 		} );
 	} );
 });

@@ -10,6 +10,10 @@
 
 'use strict';
 
+class MongoConnection {
+  constructor() {}
+}
+
 // BEGIN class MongoClient
 class MongoClient {
 
@@ -17,6 +21,7 @@ class MongoClient {
   // @parameters		(string) url          The URL to connect to.
   constructor( url ) {
     this.url = url;
+    this.connection = new MongoConnection();
   }
 
   // @function			connect()
@@ -37,11 +42,11 @@ class MongoClient {
   // @parameters		n/a
   // @returns				(object) connection   A MongoClient db object
   db() {
-    return {};  // return empty object as stub
+    return this.connection;  // return connection object as stub
   }
 }
 // END class MongoClient
 
-module.exports = MongoClient;
+module.exports = { MongoClient, MongoConnection };
 
 // END stubMongoClient.js

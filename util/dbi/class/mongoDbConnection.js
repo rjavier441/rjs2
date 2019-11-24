@@ -78,7 +78,7 @@ class MongoDbConnection extends DependencyInjectee {
 
     // Create new client instance
     this.client = new this._dep.MongoClient( this.dbInfo.url );
-    this.client.connect( function( error ) {
+    this.client.connect( ( error ) => {
 
       if( error === null ) {
         this.connection = this.client.db();
