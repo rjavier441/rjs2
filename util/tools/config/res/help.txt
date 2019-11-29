@@ -1,0 +1,16 @@
+SYNOPSIS
+
+  node config.js option
+
+DESCRIPTION
+
+  This script runs a routine to configure the server with settings prompted by
+  the user.
+
+OPTIONS
+
+  -h, --help
+    Prints this help prompt.
+
+  -A
+    Runs all scripts in the config directory.

@@ -87,9 +87,12 @@ _Lib._optin = function( libs = false ) {
   var libraryCollection = {};
   whitelist.forEach( function( libToInclude ) {
 
-    // Handle nested class object
+    // TODO: Add checks to make sure the libToInclude exists.
+
+    // Handle any nested library requests
     if( libToInclude === 'Class' ) {
 
+      // Handles general Class inclusion directive
       if( typeof libraryCollection.Class === 'undefined' ) {
         libraryCollection.Class = {};
       }
@@ -99,7 +102,17 @@ _Lib._optin = function( libs = false ) {
           _Lib[libToInclude][classToInclude]
         );
       } );
+    } else if( libToInclude.indexOf( 'Class.' ) === 0 ) {
+
+      // Handles individual Class inclusions
+      var className = libToInclude.substring( libToInclude.indexOf('.') + 1 );
+      if( typeof libraryCollection.Class === 'undefined' ) {
+        libraryCollection.Class = {};
+      }
+      libraryCollection.Class[className] = require( _Lib.Class[className] );
     } else {
+
+      // Handles top-level library inclusions
       libraryCollection[libToInclude] = require( _Lib[libToInclude] );
     }
   } );
