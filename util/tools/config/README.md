@@ -91,4 +91,5 @@ The following files can be added to each directory to configure script execution
 
 ## **Release Notes**
 
-n/a
+- **Alpha**
+  - Currently, `config.js` doesn't gracefully handle promise rejections. Development of a solution to this is in the backlog.

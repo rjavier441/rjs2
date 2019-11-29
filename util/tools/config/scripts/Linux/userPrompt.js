@@ -38,12 +38,12 @@ function script( resolve, reject ) {
     style: ['bold']
   } );
 
-  rl.question( 'Run next? (Y/n): ', ( answer ) => {
+  rl.question( 'Please select an option (Y/n): ', ( answer ) => {
 
     if( answer.toLowerCase() === 'y' ) {
       resolve();
     } else {
-      reject( 'Cancelled' );
+      reject( 'User selected "n"' );
     }
 
     // Close stream to avoid recursive stream reading.
