@@ -96,12 +96,11 @@ function main( argv ) {
 	if( secureMode ) {
 		server = https.createServer( _lib.SslManager.serverContext, app );
 	} else {
-		port = { port: port };
 		server = http.createServer( {}, app );
 	}
-	server.listen( port, function() {
+	server.listen( secureMode ? port : { port: port }, function() {
 		var msg = `Now listening on port ${port}`;
-		if( secureMode ) {
+		if( !secureMode ) {
 			msg += ' (insecure mode)';
 		}
 		_lib.Logger.log( msg, ht.getTag() );
