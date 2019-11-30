@@ -94,7 +94,14 @@ function main( argv ) {
 		port = args.p ? args.p : args.port;
 	}
 	if( secureMode ) {
-		server = https.createServer( _lib.SslManager.serverContext, app );
+		// Check for security configurations
+		if( !fs.existsSync( _lib.settings.ssl ) ) {
+			throw new Error( new _lib.Class.ServerError(
+				`SSL settings not found! Have you configured security settings?`
+			) );
+		} else {
+			server = https.createServer( _lib.SslManager.serverContext, app );
+		}
 	} else {
 		server = http.createServer( {}, app );
 	}
