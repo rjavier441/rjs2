@@ -56,6 +56,6 @@ Once setup is complete, the server package will have all resources it needs to r
 
 ## **Release Notes**
 
-- Current supports `Linux`. Plans for `Windows` and `MacOS` support are being developed.
+- Currently supports `Linux`. Plans for `Windows` and `MacOS` support are being developed.
 - 2019-11-27
-    - Currently working to create/document `util/tools/config/config.js`, which will allow user prompting for creation of security.js, as well as future configuration files.
+    - **(DONE)** ~~Currently working to create/document `util/tools/config/config.js`, which will allow user prompting for creation of security.js, as well as future configuration files.~~
