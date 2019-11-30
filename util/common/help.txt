@@ -12,6 +12,10 @@ OPTIONS
   -h, --help
   
     Runs this help prompt
+
+  -i, --http
+
+    Runs the server in HTTP mode (insecure)
   
   -p, --port [number]
 

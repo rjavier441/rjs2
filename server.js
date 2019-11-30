@@ -14,6 +14,7 @@
 var _lib = require( './util/_lib.js' );
 var bp = require( 'body-parser' );
 var fs = require( 'fs' );
+var http = require( 'http' );
 var https = require( 'https' );
 var minimist = require( 'minimist' );
 // END includes
@@ -80,14 +81,30 @@ function main( argv ) {
 	// Autoload APIs
 	_lib.AutoLoader.route.load( app );
 
+	// Check if server should run in secure mode
+	var secureMode = true;
+	if( args.i || args.http ) {
+		secureMode = false;
+	}
+
 	// Run server
 	var port = _lib.settings.port;
-	var server = https.createServer( _lib.SslManager.serverContext, app );
+	var server = false;
 	if( args.p || args.port ) {
 		port = args.p ? args.p : args.port;
 	}
+	if( secureMode ) {
+		server = https.createServer( _lib.SslManager.serverContext, app );
+	} else {
+		port = { port: port };
+		server = http.createServer( {}, app );
+	}
 	server.listen( port, function() {
-		_lib.Logger.log( `Now listening on port ${port}`, ht.getTag() );
+		var msg = `Now listening on port ${port}`;
+		if( secureMode ) {
+			msg += ' (insecure mode)';
+		}
+		_lib.Logger.log( msg, ht.getTag() );
 	} );
 
 	// // DEBUG
