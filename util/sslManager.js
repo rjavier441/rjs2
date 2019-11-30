@@ -128,10 +128,11 @@ class SslManager extends DependencyInjectee {
 // END class SslManager
 
 // Container (Singleton)
-const instance = new SslManager(
+var securityConfigured = fs.existsSync( settings.ssl );
+const instance = securityConfigured ? new SslManager(
   {},
   JSON.parse( fs.readFileSync( settings.ssl, 'utf8' ) )
-);
+) : {};
 Object.freeze( instance );
 module.exports = instance;
 
