@@ -2,7 +2,7 @@
 
 A complete redesign of RJS, a server package meant to run a MExN web stack. It comes fully equipped to run as either a Web Server or a RESTful API server, giving you the freedom to customize it to your needs.
 
-Current Version: v0.0.30 (Alpha)
+Current Version: v0.0.31 (Alpha)
 
 Last Updated: 2019-11-24
 
@@ -13,7 +13,9 @@ Last Updated: 2019-11-24
 - [Quick Start](#quick-start)
     - [Install Prerequesites](#install-prerequesites)
     - [Setup and Configuration](#setup-and-configuration)
+    - [Start Server](#start-server)
 - [Dependencies](#dependencies)
+- [Frequently Asked Questions](#frequently-asked-questions)
 - [Release Notes](#release-notes)
 
 ---
@@ -32,12 +34,33 @@ When acquired, the server needs to be setup with prerequesite libraries and conf
 
 ### **Setup and Configuration**
 
-1. Enter the `rjs2/util/tools/setup/` directory
-1. Run `node setup.js -A` _(You may read its documentation for more details)_
-1. (Optional) Enter the `rjs2/util/tools/config/` directory
-1. (Optional) Run `node config.js` and follow the prompts _(You may read its documentation for more details)_
+1. Main Setup Routine
+    1. Enter the `rjs2/util/tools/setup/` directory
+    1. Run `node setup.js -A` _(You may read its documentation for more details)_
+1. (Optional)* Secure Mode Configuration
+    1. Enter the `rjs2/util/tools/config/` directory
+    1. Run `node config.js -A` and follow the prompts _(You may read its documentation for more details)_
 
-Once setup is complete, the server package will have all resources it needs to run. Start the server using `node server.js` _(add option `-h` for more details)_.
+*: Optional configuration steps for Secure Mode (HTTPS/SSL) operation
+
+Once setup is complete, the server package will have all resources it needs to run in _**insecure mode**_ (i.e. without HTTPS/SSL). To enable the server to run in securely, you must obtain CA certificates and any other required SSL/PKI files form a valid Certificate Authority, then complete configuration by performing the optional steps above.
+
+### **Start the Server**
+
+You can start the server by running `rjs2/server.js` with NodeJS on the command line. By default, the server is set to run in _**secure mode**_ using HTTPS/SSL, but will not operate in this mode without proper configuration (see the [previous section](#setup-and-configuration)) and CA certification, which must be obtained separately from a Certificate Authority.
+
+Assuming you are in the `rjs2/` directory, below are some short-hand conventions to run the server in different contexts:
+
+- Run in Secure Mode (Default)
+    - `node server.js`
+- Run in Insecure Mode
+    - `node server.js -i`
+- Run with Verbose Logging (i.e. enables console output)
+    - `node server.js -v`
+- Run in a Custom Port
+    - `node server.js -p [some port number here...]`
+
+Run `node server.js -h` for more details.
 
 ---
 
@@ -53,6 +76,33 @@ Once setup is complete, the server package will have all resources it needs to r
 - MySQL NodeJS Driver v2.17.1+
 - NodeJS v8.9.1+
 - Sinon v7.5.0+
+
+---
+
+## **Frequently Asked Questions**
+
+## How To
+
+- _...change the default log file storage directory?_
+    - Open `rjs2/util/settings.js`
+    - Change `this.logdir` to a path you prefer
+- _...change the default port?_
+    - Open `rjs2/util/settings.js`
+    - Change `this.port` to any port number you desire
+- _...log stuff to console?_
+    - You can use the native JavaScript `console.log()` function to log to the console window, but it is recommended to use the `Logger.log()` function from `class Logger` instead. This class is accessible within your server backend code (or APIs) by:
+        - ...requiring `_lib.js` and accessing it indirectly (e.g. `var logger = require('...path to rjs2/util/...' + '_lib.js' ).Logger`), or by
+        - ...directly including it using its full path (e.g. `var logger = require( '...path to rjs/util/...' + 'logger.js' )`).
+    - You can read more about `class Logger` by reading the source-code documentation in the `rjs2/util/logger.js` file
+
+## General Questions
+
+- _If I don't run the server with Verbose Logging turned on, will the server still record console output?_
+    - Yes, as long as you use `class Logger` to output to console using `_lib.Logger.log("...")`. This class is accessible within your server backend code (or APIs) by:
+        - ...requiring `_lib.js` and accessing it indirectly (e.g. `var logger = require('...path to rjs2/util/...' + '_lib.js' ).Logger`), or by
+        - ...directly including it using its full path (e.g. `var logger = require( '...path to rjs/util/...' + 'logger.js' )`).
+        
+    - By using `_lib.Logger.log()` to log to console, console output may still be stored in log files under the log directory (default is `rjs2/log`; to customize, see the [previous section](#how-to)).
 
 ---
 
