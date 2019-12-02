@@ -2,7 +2,8 @@
 
 A complete redesign of RJS, a server package meant to run a MExN web stack. It comes fully equipped to run as either a Web Server or a RESTful API server, giving you the freedom to customize it to your needs.
 
-Current Version: v0.0.0 (Alpha)
+Current Version: v0.0.30 (Alpha)
+
 Last Updated: 2019-11-24
 
 ---
@@ -24,16 +25,17 @@ When acquired, the server needs to be setup with prerequesite libraries and conf
 ### **Install Prerequesites**
 
 1. Install `NodeJS` and `NPM` (`NPM` usually comes with `NodeJS`)
+1. Enter the server project's directory (e.g. `rjs2/`)
 1. Run `npm install` to install NPM Packages and Database Drivers
 1. (Optional) Install your desired database(s) _(MongoDB and MySQL drivers for NodeJS were included in `npm install`, but feel free to add others as desired)_
 1. (Optional) Setup/Configure your database(s) as desired
 
 ### **Setup and Configuration**
 
-1. Enter the `util/tools/setup/` directory
-1. Run `node setup.js` _(You may read its documentation for more details)_
-1. Enter the `util/tools/config/` directory
-1. Run `node config.js` and follow the prompts _(You may read its documentation for more details)_
+1. Enter the `rjs2/util/tools/setup/` directory
+1. Run `node setup.js -A` _(You may read its documentation for more details)_
+1. (Optional) Enter the `rjs2/util/tools/config/` directory
+1. (Optional) Run `node config.js` and follow the prompts _(You may read its documentation for more details)_
 
 Once setup is complete, the server package will have all resources it needs to run. Start the server using `node server.js` _(add option `-h` for more details)_.
 
