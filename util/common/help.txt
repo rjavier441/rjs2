@@ -23,4 +23,4 @@ OPTIONS
   
   -v, --verbose
 
-    Enables verbos logging to shell console window.
+    Enables verbose logging to shell console window.
