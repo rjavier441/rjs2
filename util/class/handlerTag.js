@@ -26,6 +26,7 @@ class HandlerTag {
   //
   //                                    'function'      For any normal function.
   //	                                  'api'           For an API Endpoint.
+  //	                                  'route'         For a Web Content Route.
   constructor( ref, type = 'function' ) {
 
     // Define Public Properties
@@ -45,6 +46,11 @@ class HandlerTag {
       }
       case 'function': {
         this.fname = ref.name;
+        break;
+      }
+      case 'route': {
+        // TODO: Complete the route content loading
+        this.fname = ref.src;
         break;
       }
       default: {
