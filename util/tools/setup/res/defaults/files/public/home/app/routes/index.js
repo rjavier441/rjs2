@@ -34,6 +34,7 @@ const options = {
 // TODO: Figure out why this is only needed for the requesting of the '/' endpoint's static files,
 // and not the other specifically defined endpoints
 router.use( '/css', express.static( `${ _lib.settings.root }/home/css` ) );
+router.use( '/favicon.ico', express.static( `${ _lib.settings.root }/home/favicon.ico` ) );
 
 
 
