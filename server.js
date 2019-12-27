@@ -14,6 +14,7 @@
 var _lib = require( './util/_lib.js' );
 var bp = require( 'body-parser' );
 var fs = require( 'fs' );
+var ejs = require( 'ejs' );
 var http = require( 'http' );
 var https = require( 'https' );
 var minimist = require( 'minimist' );
@@ -73,13 +74,23 @@ function main( argv ) {
 	app.use( bp.urlencoded( {
 		extended: true
 	} ) );
-	app.use( express.static( _lib.settings.root ) );
+	// app.use( express.static( _lib.settings.root ) );
 
-	// Initialize applications
+	// BEGIN rjTest
+	// Load and mount APIs under "/api" using the old API Autoloader
 	app.use( '/api', require( './api/app/app.js' ) );		// RESTful APIs
-
-	// Autoload APIs
-	_lib.AutoLoader.route.load( app );
+	
+	// Load and mount static content in the server root using the new Autoloader
+	( new _lib.AutoLoader( {
+		ejs: ejs,
+		fs: fs,
+		HandlerTag: _lib.Class.HandlerTag,
+		Logger: _lib.Logger,
+		ServerError: _lib.Class.ServerError,
+		ServerResponse: _lib.Class.ServerResponse,
+		TemplateManager: _lib.TemplateManager,
+		Util: _lib.Util,
+	} ) ).loadRootFrom( app, _lib.settings.root );
 
 	// Check if server should run in secure mode
 	var secureMode = true;
@@ -117,6 +128,8 @@ function main( argv ) {
 	// console.log( 'handlerTag:', ht.getTag() );
 	// console.log( 'args:', args );
 	// console.log( 'settings:', _lib.settings );
+
+	return;
 }
 
 // Run main()

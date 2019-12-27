@@ -1,5 +1,5 @@
 //	@PROJECT: 		MEANserver
-//	@Name: 			Rolando Javier
+//	@Name: 			R. Javier
 //	@File: 			utility.js
 //	@Date Created: 	October 18, 2017
 //	@Last Modified: 	November 5, 2017

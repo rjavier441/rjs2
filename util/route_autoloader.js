@@ -13,7 +13,8 @@
 // 	@Dependencies:
 //					NodeJS v6.9.1
 // 					ExpressJS 4.x
-// 					body-parser (NPM middleware req'd by ExpressJS 4.x to acquire POST data parameters: "npm install --save body-parser")
+// 					body-parser		(NPM middleware req'd by ExpressJS 4.x to acquire POST
+//												data parameters: "npm install --save body-parser")
 //	@Note:
 //					Libraries included in _Lib CANNOT use _Lib themselves; doing so will
 //					cause a circular dependency
@@ -23,6 +24,7 @@
 // Includes
 const settings = require( "./settings.js" );
 const DependencyInjectee = require( './class/dependencyInjectee.js' );
+const express = require( 'express' );
 const fs = require( "fs" );
 const logger = require( `${settings.util}/logger` );
 const ServerError = require( `${settings.util}/class/serverError.js` );
@@ -40,20 +42,25 @@ const autoloader = {
 
 
 // BEGIN autoloader config documentation
-// @config			autoloader_ignore.json
-// @description		A file that tells the autoloader which subapplications to ignore when mounting
-//					APIs or Server Routes. The appropriate location of this file is contextual:
-//						1.)	Seting API ignores: To set api directory ignores for API routes, this
-//							file must be within the "/api/app/routes" directory, i.e. at the same
-//							level as the api directory(ies) you wish to ignore.
-//						2.)	Setting Server Route ignores: To set server route directory ignores
-//							for server routes, this file must be within the same directory as
-//							the server route directory(ies) you wish to ignore, i.e. the specified
-//							"routes" directory given to autoloader.route.load() or the server root
-//							directory if the "routes" argument is omitted.
-// @parameters		(array) ignore			An array of strings whose contents are the directory
-//											names (NOT full paths) of the API or Server Route
-//											directories you wish to ignore.
+// @config				autoloader_ignore.json
+// @description		A file that tells the autoloader which subapplications to
+//								ignore when mounting APIs or Server Routes. The appropriate
+//								location of this file is contextual:
+//									1.)	Seting API ignores: To set api directory ignores for API
+//											routes, this file must be within the "/api/app/routes"
+//											directory, i.e. at the same level as the api
+//											directory(ies) you wish to ignore.
+//									2.)	Setting Server Route ignores: To set server route
+//											directory ignores for server routes, this file must be
+//											within the same directory as the server route
+//											directory(ies) you wish to ignore, i.e. the specified
+//											"routes" directory given to autoloader.route.load() or
+//											the server root directory if the "routes" argument is
+//											omitted.
+// @parameters		(array) ignore				An array of strings whose contents are
+//																			the directory names (NOT full paths) of
+//																			the API or Server Route directories you
+//																			wish to ignore.
 // @example
 //				"autoloader_ignore.json":
 //
@@ -66,34 +73,41 @@ const autoloader = {
 //						]
 //					}
 
-// @config			autoloader_alias.json
-// @description		A file that tells the autoloader which subapplications should be aliased, and
-//					what their mount path's alias should be. This is useful for mounting a subapp
-//					to a route whose name is different from the subapp's containing directory
-//					name. It can also be used to control the ordering or endpoint mounting by
-//					modifying the array position of each alias. Currently, this configuration file
-//					is only supported for use with server routes, NOT APIs. The appropriate
-//					location of this file is therefore within the same directory as the server
-//					route directory(ies) you wish to alias, i.e. the specified "routes" directory
-//					given to autoloader.route.load() or the server root directory if the "routes"
-//					argument is omitted.
-// @parameters		(array) alias			An array whose contents are objects. Each object will
-//											be a key:value pair where the key is the name of the
-//											route directory, and the value is the alias used to
-//											mount the route directory's subapp.
-//					(~object) options		An optional JSON object whose members dictate the
-//											behavior of alias generation. This object may take any
-//											of the following members
-//							(~bool) afterOthers		A boolean that controls the way ordering is
-//													performed if the provided aliases only cover
-//													a subset of the total amount of aliases. If
-//													"true", server routes without aliases will be
-//													mapped first, followed by the provided route
-//													aliases mapped in their array order. If
-//													"false", the provided route aliases will be
-//													mapped first, followed by any server routes
-//													that do not have an alias. If omitted, this
-//													defaults to false;
+// @config				autoloader_alias.json
+// @description		A file that tells the autoloader which subapplications should
+//								be aliased, and what their mount path's alias should be. This
+//								is useful for mounting a subapp to a route whose name is
+//								different from the subapp's containing directory name. It can
+//								also be used to control the ordering or endpoint mounting by
+//								modifying the array position of each alias. Currently, this
+//								configuration file is only supported for use with server
+//								routes, NOT APIs. The appropriate location of this file is
+//								therefore within the same directory as the server route
+//								directory(ies) you wish to alias, i.e. the specified "routes"
+//								directory given to autoloader.route.load() or the server root
+//								directory if the "routes" argument is omitted.
+// @parameters		(object[]) alias			An array whose contents are objects.
+//																			Each object will be a key:value pair
+//																			where the key is the name of the route
+//																			directory, and the value is the alias
+//																			used to mount the route directory's
+//																			subapp.
+//								(~object) options			An optional JSON object whose members
+//																			dictate the behavior of alias
+//																			generation. This object may take any of
+//																			the following members:
+//									(~bool) afterOthers		A boolean that controls the way
+//																				ordering is performed if the provided
+//																				aliases only cover a subset of the
+//																				total amount of aliases. If "true",
+//																				server routes without aliases will be
+//																				mapped first, followed by the
+//																				provided route aliases mapped in
+//																				their array order. If "false", the
+//																				provided route aliases will be
+//																				mapped first, followed by any server
+//																				routes that do not have an alias. If
+//																				omitted, this defaults to false;
 // @example
 //					Given the following directory structure:
 //
@@ -114,67 +128,79 @@ const autoloader = {
 //							"afterOthers": true
 //						}
 //
-//					The above alias JSON object will map the following directories to the
-//					following paths in the following order:
+//					The above alias JSON object will map the following directories to
+//					the following paths in the following order:
 //
-//					=============================================================================
-//					| order:	| path:						| alias:			| routed to:	|
-//					=============================================================================
-//					| 1			| /public/dir3/app/app.js	| n/a				| dir3			|
-//					-----------------------------------------------------------------------------
-//					| 2			| /public/dir4/app/app.js	| n/a				| dir4			|
-//					-----------------------------------------------------------------------------
-//					| 3			| /public/dir5/app/app.js	| n/a				| dir5			|
-//					-----------------------------------------------------------------------------
-//					| 4			| /public/dir1/app/app.js	| alias1			| alias1		|
-//					-----------------------------------------------------------------------------
-//					| 5			| /public/dir2/app/app.js	| alias2			| alias2		|
-//					-----------------------------------------------------------------------------
+//					=============================================================
+//					| order:	| path:										| alias:		| routed to:|
+//					=============================================================
+//					| 1				| /public/dir3/app/app.js	| n/a				| dir3			|
+//					-------------------------------------------------------------
+//					| 2				| /public/dir4/app/app.js	| n/a				| dir4			|
+//					-------------------------------------------------------------
+//					| 3				| /public/dir5/app/app.js	| n/a				| dir5			|
+//					-------------------------------------------------------------
+//					| 4				| /public/dir1/app/app.js	| alias1		| alias1		|
+//					-------------------------------------------------------------
+//					| 5				| /public/dir2/app/app.js	| alias2		| alias2		|
+//					-------------------------------------------------------------
 //
-//					Note that the un-aliased directories are not ordered in any particular way;
-//					it should be assumed that their mapping order is random
+//					Note that the un-aliased directories are not ordered in any
+//					particular way; it should be assumed that their mapping order is
+//					random
 // END autoloader config documentation
 
 
 
 // BEGIN autoloader logic
 
-// @function		api.load
-// @description		This function loads API endpoints. It has a contextual use and can be used in
-//					two ways:
-//						1.)	If "routes" argument is omitted, this function searches the "dir"
-//							directory for the first "/routes" folder and creates routes for each
-//							"index.js" within the "/routes" folder. These routes would be assigned
-//							to a parent route whose name matches its direct parent directory's
-//							name. For example, if the route_autoloader is launched from
-//							"/api/app/app.js" and finds the routing file "/api/app/routes/user/
-//							index.js", it will map the file's routes to a parent URL path
-//							"/api/user", a merger of both the app.js file's parent directory and
-//							the index.js file's parent directory.
-//						2.) If "routes" argument is given, this function uses the argument to
-//							determine where the router files (i.e. "index.js" files) are found,
-//							as well the parent URL path they will map to.
-// @parameters		(object) app			The ExpressJS app object to map endpoints to. This
-//											type of object is returned from a call to express().
-//					(mixed) routes			1.) If "routes" is a string, it is assumed to be a
-//											path to the directory containing "/routes" directory.
-//											2.) If "routes" is an array, it shall house the
-//											collection of routes that will be mounted onto the
-//											provided ExpressJS app object. Each member is an
-//											object representing a set of routes to map to the
-//											provided application. Each array member is an object
-//											taking all of the following members:
-//							(string) endpoint		The name of the route enpoint to associate
-//													with the provided index file
-//							(string) indexPath		The relative path to the desired "index.js"
-//													router file which houses the endpoints for
-//													this route
-// @returns			(object) result			A JSON object representing the result of the auto-
-//											loading operation. It has the following members
-//							(number) total			The total number of modules that were loaded
-//													successfully
-//							(array) unloaded		An array of API routes that were not loaded
-//													(i.e. the intended API route URL paths)
+// @function			api.load
+// @description		This function loads API endpoints. It has a contextual use and
+//								can be used in two ways:
+//									1.)	If "routes" argument is omitted, this function searches
+//											the "dir" directory for the first "/routes" folder and
+//											creates routes for each "index.js" within the "/routes"
+//											folder. These routes would be assigned to a parent route
+//											whose name matches its direct parent directory's name.
+//											For example, if the route_autoloader is launched from
+//											"/api/app/app.js" and finds the routing file "/api/app/
+//											routes/user/ index.js", it will map the file's routes to
+//											a parent URL path "/api/user", a merger of both the
+//											app.js file's parent directory and the index.js file's
+//											parent directory.
+//									2.) If "routes" argument is given, this function uses the
+//											argument to determine where the router files (i.e.
+//											"index.js" files) are found, as well the parent URL path
+//											they will map to.
+// @parameters		(object) app					The ExpressJS app object to map
+//																			endpoints to. This type of object is
+//																			returned from a call to express().
+//								(mixed) routes				1.) If "routes" is a string, it is
+//																					assumed to be a path to the
+//																					directory containing "/routes"
+//																					directory.
+//																			2.) If "routes" is an array, it shall
+//																					house the collection of routes that
+//																					will be mounted onto the provided
+//																					ExpressJS app object. Each member is
+//																					an object representing a set of
+//																					routes to map to the provided
+//																					application. Each array member is an
+//																					object taking all of the following
+//																					members:
+//									(string) endpoint			The name of the route enpoint to
+//																				associate with the provided index file
+//									(string) indexPath		The relative path to the desired
+//																				"index.js" router file which houses
+//																				the endpoints for this route
+// @returns			(object) result					A JSON object representing the result of
+//																			the auto-loading operation. It has the
+//																			following members:
+//								(number) total					The total number of modules that were
+//																				loaded successfully
+//								(array) unloaded				An array of API routes that were not
+//																				loaded (i.e. the intended API route
+//																				URL paths)
 autoloader.api.load = function ( app, routes ) {
 
 	var handlerTag = { "src": "route_autoloader.api.load" };
@@ -240,23 +266,28 @@ autoloader.api.load = function ( app, routes ) {
 	}
 };
 
-// @function		api.linkRoutes
-// @description		This function links routes with index files located inside the given "/routes"
-//					directory's sub-folders. If the directory contains a "autoloader_ignore.json"
-//					file, it will ignore the directories specified in that file when routing.
-// @parameters		(object) app		The ExpressJS app object to map endpoints to. This type of
-//										object is returned from a call to express().
-//					(string) path		A string denoting the path of the nearest "/routes"
-//										directory. This is where the function begins its search
-//										for "index.js" file directories
-// @returns			(object) result		An object representing the outcome of the routing. It has
-//										the following members:
-//							(boolean) success	A boolean representing the success of the routing
-//												operation
-//							(array) loaded		An array of obsjects representing all routes that
-//												have been successfully linked
-//							(array) failed		An array of objects representing all routes that
-//												failed to link
+// @function			api.linkRoutes
+// @description		This function links routes with index files located inside the
+//								given "/routes" directory's sub-folders. If the directory
+//								contains a "autoloader_ignore.json" file, it will ignore the
+//								directories specified in that file when routing.
+// @parameters		(object) app					The ExpressJS app object to map
+//																			endpoints to. This type of object is
+//																			returned from a call to express().
+//								(string) path					A string denoting the path of the
+//																			nearest "/routes" directory. This is
+//																			where the function begins its search of
+//																			"index.js" file directories
+// @returns				(object) result				An object representing the outcome of
+//																			the routing. It has the following
+//																			members:
+//									(boolean) success			A boolean representing the success of
+//																				the routing operation
+//									(array) loaded				An array of obsjects representing all
+//																				routes that have been successfully
+//																				linked
+//									(array) failed				An array of objects representing all
+//																				routes that failed to link
 autoloader.api.linkRoutes = function ( app, path ) {
 
 	var handlerTag = { "src": "route_autoloader.api.linkRoutes" };
@@ -286,8 +317,11 @@ autoloader.api.linkRoutes = function ( app, path ) {
 		} catch( exception ) {
 
 			// If something went wrong, throw an error
-			var msg = new ServerError( 'Exception', exception );
-			logger.log( msg.asString(), handlerTag );
+			var msg = new ServerError( 'Exception', { exception: exception } );
+			logger.log(
+				`${msg.eobj.exception.name}: ${msg.eobj.exception.message}`,
+				handlerTag
+			);
 			throw msg;
 		}
 	}
@@ -331,24 +365,28 @@ autoloader.api.linkRoutes = function ( app, path ) {
 	
 }
 
-// @function		api.linkSingle
-// @description		This function links a single route explicitly, instead of searching for routes
-//					within a specified directory. This funciton is useful for directly mapping a
-//					route to a custom endpoint name instead of the default behavior where the
-//					autoloader assumes the endpoint name is the name of an "index.js" file's
-//					parent directory
-// @parameters		(object) app		The ExpressJS app object to map endpoints to. This type of
-//										object is returned from a call to express().
-//					(string) endpoint	The name of the route enpoint to associate with the
-//										provided index file
-//					(string) indexPath	The path to the "index.js" whose routes will be linked to
-//										the specified endpoint
-// @returns			(object) result		A JSON object representing the outcome of the routing. It
-//										has the following members:
-//							(boolean) success	A boolean representing the success of the routing
-//												operation
-//							(~object) response	An error object if any error or exception occurred
-//												Otherwise, a response object
+// @function			api.linkSingle
+// @description		This function links a single route explicitly, instead of
+//								searching for routes within a specified directory. This
+//								function is useful for directly mapping a route to a custom
+//								endpoint name instead of the default behavior where the
+//								autoloader assumes the endpoint name is the name of an
+//								"index.js" file's parent directory
+// @parameters		(object) app					The ExpressJS app object to map
+//																			endpoints to. This type of object is
+//																			returned from a call to express().
+//								(string) endpoint			The name of the route enpoint to
+//																			associate with the provided index file
+//								(string) indexPath		The path to the "index.js" whose routes
+//																			will be linked to the specified endpoint
+// @returns			(object) result					A JSON object representing the outcome
+//																			of the routing. It has the following
+//																			members:
+//								(boolean) success				A boolean representing the success of
+//																				the routing operation
+//								(~object) response			An error object if any error or
+//																				exception occurred Otherwise, a
+//																				response object
 autoloader.api.linkSingle = function( app, endpoint, indexPath ) {
 
 	var handlerTag = { "src": "route_autoloader.api.linkSingle" };
@@ -374,9 +412,9 @@ autoloader.api.linkSingle = function( app, endpoint, indexPath ) {
 			(new ServerError( 'Exception', { 'exception': exception } ) ).asString()
 		);
 		logger.log(
-			"Unable to route index \"" + indexPath +"\": " + JSON.stringify(
-				response.eobj.exception
-			),
+			"Unable to route index \"" + indexPath +"\": " +
+			exception.name + ": " +
+			exception.message,
 		handlerTag );
 	}
 
@@ -386,39 +424,51 @@ autoloader.api.linkSingle = function( app, endpoint, indexPath ) {
 	};
 };
 
-// @function		route.load
-// @description		This function loads Server Route endpoints. It has a contextual use and can be
-//					used in two ways:
-//						1.)	If "routes" argument is omitted, this function searches for a
-//							"/app/app.js" file in each directory within the server root. If the
-//							file cannot be found, the directory is ignored. If it is found, the
-//							file's express application will be mounted on a route whose endpoint
-//							name is "/a", where "a" is the directory name. For example, assume the
-//							server has the server root set to "/var/www/html/public", and its only
-//							content is the directory "/myApp", which has the app file 
-//							"/myApp/app/app.js". If the server file "/var/www/html/server.js"
-//							calls this function and omits "routes", this function will mount the
-//							app.js application to "http[s]://www.[your hostname].[domain]/myApp"
-//						2.) If "routes" is a string, it is assumed to be a custom server root
-//							directory (i.e. useful if you want to use a server root other than the
-//							default "/public"). This function will automatically search that
-//							directory for any subdirectories containing an "/app/app.js" file.
-//							Those that have one are mounted according to usage context 1 above.
-// @parameters		(object) app		The ExpressJS app object to map endpoints to. This type of
-//										object is returned from a call to express().
-//					(~mixed) routes		1.) If "routes" is a string, it is assumed to be a custom
-//											server root directory (i.e. useful if you want to
-//											use a server root other than the default "/public").
-//											This function will automatically search that directory
-//											for any subdirectories containing an "/app/app.js"
-//											file. Those that have one are mounted according to
-//											usage context 1 in the description.
-// @returns			(object) result			A JSON object representing the result of the auto-
-//											loading operation. It has the following members
-//							(number) total			The total number of modules that were loaded
-//													successfully
-//							(array) unloaded		An array of API routes that were not loaded
-//													(i.e. the intended API route URL paths)
+// @function			route.load
+// @description		This function loads Server Route endpoints. It has a
+//								contextual use and can be used in two ways:
+//									1.)	If "routes" argument is omitted, this function
+//											searches for a "/app/app.js" file in each directory
+//											within the server root. If the file cannot be found,
+//											the directory is ignored. If it is found, the file's
+//											express application will be mounted on a route whose
+//											endpoint name is "/a", where "a" is the directory
+//											name. For example, assume the server has the server
+//											root set to "/var/www/html/public", and its only
+//											content is the directory "/myApp", which has the app
+//											file "/myApp/app/app.js". If the server file "/var/www/
+//											html/server.js" calls this function and omits "routes",
+//											this function will mount the app.js application to
+//											"http[s]://www.[your hostname].[domain]/myApp"
+//									2.) If "routes" is a string, it is assumed to be a custom
+//											server root directory (i.e. useful if you want to use
+//											a server root other than the default "/public"). This
+//											function will automatically search that directory for
+//											any subdirectories containing an "/app/app.js" file.
+//											Those that have one are mounted according to usage
+//											context 1 above.
+// @parameters		(object) app					The ExpressJS app object to map
+//																			endpoints to. This type of object is
+//																			returned from a call to express().
+//								(~mixed) routes				1.) If "routes" is a string, it is
+//																					assumed to be a custom server root
+//																					directory (i.e. useful if you want
+//																					to use a server root other than
+//																					the default "/public"). This
+//																					function will automatically search
+//																					that directory for any
+//																					subdirectories containing an "/app/
+//																					app.js" file. Those that have one
+//																					are mounted according to usage
+//																					context 1 in the description.
+// @returns				(object) result				A JSON object representing the result
+//																			of the auto-loading operation. It has
+//																			the following members:
+//									(number) total				The total number of modules that were
+//																				loaded successfully
+//									(array) unloaded		An array of API routes that were not
+//																			loaded (i.e. the intended API route
+//																			URL paths)
 autoloader.route.load = function( app, routes ) {
 
 	var handlerTag = { "src": "route_autoloader.route.load" };
@@ -546,8 +596,8 @@ autoloader.route.load = function( app, routes ) {
 			} );
 
 			// DEBUG
-			// console.log( "Dirs:", dirs );
-			// console.log( "aliasMap:", aliasMap );
+			console.log( "Dirs:", dirs );
+			console.log( "aliasMap:", aliasMap );
 			// return;
 
 			// Finally, traverse the finalized aliasMap to route the directories to their
@@ -568,11 +618,18 @@ autoloader.route.load = function( app, routes ) {
 					// corresponding server route endpoint name
 					var endpointName = aliasObject[ dirname ];
 					autoloader.route.linkSingle( app, endpointName, assumedPath );
+
+					// Route Static Assets for this directory
+					// autoloader.route.linkStatics(
+					// 	app,
+					// 	endpointName,
+					// 	`${routes}/${dirname}`
+					// );
 				} catch( error ) {
 
 					// Send an error message, but continue to process other routes
 					var msg = new ServerError(
-						`Autoloader failed to access ${routes}/${dir}/app/app.js. Does ` +
+						`Autoloader failed to access ${routes}/${dirname}/app/app.js. Does ` +
 						'the file exist? Are your permissions correct?'
 					);
 					logger.log( msg.asString(), handlerTag );
@@ -595,19 +652,25 @@ autoloader.route.load = function( app, routes ) {
 	}
 };
 
-// @function		route.linkSingle
-// @description		This function links a single express application to a server route
-// @parameters		(object) app		The ExpressJS app object to map endpoints to. This type of
-//										object is returned from a call to express().
-//					(string) endpoint	The name of the server route endpoint to associate with
-//										the given express application file.
-//					(string) indexPath	The path to the app.js file housing the express application
-// @returns			(object) result		A JSON object representing the outcome of the routing. It
-//										has the following members:
-//							(boolean) success	A boolean representing the success of the routing
-//												operation
-//							(~object) response	An error object if any error or exception occurred
-//												Otherwise, a response object
+// @function			route.linkSingle
+// @description		This function links a single express application to a server
+//								route.
+// @parameters		(object) app					The ExpressJS app object to map
+//																			endpoints to. This type of object is
+//																			returned from a call to express().
+//								(string) endpoint			The name of the server route endpoint
+//																			to associate with the given express
+//																			application file.
+//								(string) indexPath		The path to the app.js file housing
+//																			the express application.
+// @returns				(object) result				A JSON object representing the outcome
+//																			of the routing. It has the following
+//																			members:
+//									(boolean) success			A boolean representing the success
+//																				of the routing operation.
+//									(~object) response		An error object if any error or
+//																				exception occurred. Otherwise, a
+//																				response object.
 autoloader.route.linkSingle = function( app, endpoint, indexPath ) {
 
 	var handlerTag = { "src": "route_autoloader.route.linkSingle" };
@@ -633,9 +696,9 @@ autoloader.route.linkSingle = function( app, endpoint, indexPath ) {
 			'exception': exception
 		} ) ).asString() );
 		logger.log(
-			"Unable to route index \"" + indexPath +"\": " + JSON.stringify(
-				response.eobj.exception
-			),
+			"Unable to route index \"" + indexPath +"\": " +
+			exception.name + ": " +
+			exception.message,
 		handlerTag );
 	}
 
@@ -643,6 +706,250 @@ autoloader.route.linkSingle = function( app, endpoint, indexPath ) {
 		"success": success,
 		"response": response
 	};
+};
+
+// @function			(OBSOLETE) route.linkStatics()
+// @description		This function links static assets to the given server route.
+// @parameters		(object) app					The ExpressJS app object to map the
+//																			endpoints to. This type of object is
+//																			returned from a call to express().
+//								(string) endpoint			The name of the server route endpoint
+//																			to associate with the given directory
+//																			and its resources
+//								(string) base					The path to the directory that contains
+//																			the resources to statically route. This
+//																			directory will be recursively traversed
+//																			to map each resource individually. This
+//																			directory will also be checked for the
+//																			autoloader_static.json file, whose
+//																			existence will further control which
+//																			resources are statically routed. See
+//																			the above config documentation for more
+//																			details.
+// @returns				(object) result				A JSON object representing the outcome
+//																			of the static asset routing. It has the
+//																			following members:
+//									(boolean) success			A boolean representing the success
+//																				of the static asset routing.
+//									(~object) response		An error object if any error or
+//																				exception occurred Otherwise, a
+//																				response object.
+// @note					With the current implementation, static assets are mapped and
+//								linked at the start of the server's initialization phase.
+//								There's a drawback with this method of linking static files.
+//								If a file is moved/renamed/deleted during server runtime, the
+//								static asset linking would be broken. A method needs to be
+//								devised to update the static asset linking for each directory
+//								at runtime.
+autoloader.route.linkStatics = function( app, endpoint, base ) {
+
+	var handlerTag = { "src": "route_autoloader.route.linkStatics" };
+
+	let success = true;
+	let response = null;
+	try {
+
+		// Check for any kind of static file access control list
+		let acl = false;
+		let staticConfigFile = 'autoloader_static.json';
+		if( fs.readdirSync( base ).includes( 'autoloader_static.json' ) ) {
+			
+			// Read file without caching its value (i.e. don't use "require()")
+			logger.log(
+				`Found autoloader_static.json in ${base}`,
+				handlerTag
+			);
+			if( base[ base.length-1 ] !== '/' ) {
+				staticConfigFile = '/autoloader_static.json';
+			}
+			acl = JSON.parse( fs.readFileSync( `${base}${staticConfigFile}` ) );
+		} else {
+
+			logger.log( `No autoloader_static.json in ${base}`, handlerTag );
+		}
+		
+		// Recursively go through each directory to map each file individually
+		logger.log(
+			`Linking static assets under "${base}" to endpoint "${endpoint}"`,
+			handlerTag
+		);
+		autoloader.route.recursivelyLinkStatic( app, endpoint, base, acl );
+	} catch( exception ) {
+
+		success = false;
+		var msg = new ServerError( 'Exception', {
+			exception: exception
+		} );
+		logger.log(
+			`Static resource link failed for path "${base}" to endpoint "${endpoint}": ` +
+			`${msg.eobj.exception.name}: ${msg.eobj.exception.message}`,
+			handlerTag
+		);
+		response = msg;
+	}
+
+	return {
+		success: success,
+		response: response
+	};
+};
+
+// @function			(OBSOLETE) route.recursivelyLinkStatic()
+// @description		This function recursively traverses the directory structure
+//								from the given directory point and maps all files as static
+//								resource.
+// @parameters		(object) app					The ExpressJS app object to map the
+//																			endpoints to. This type of object is
+//																			returned from a call to express().
+//								(string) mount				The mount path to map all static files
+//																			to.
+//								(string) dir					The directory to search.
+//								(~object[]) acl				An optional instance of the static
+//																			resource routing control configuration
+//																			file "autoloader_static.json" (see the
+//																			above config documentation for more
+//																			details). If omitted, this defaults to
+//																			false.
+// @returns				n/a
+autoloader.route.recursivelyLinkStatic = function(
+	app,
+	mount,
+	dir,
+	acl = false
+) {
+
+	var handlerTag = { "src": "route_autoloader.route.recursivelyLinkStatic" };
+
+	// Trim mount and dir of trailing forward-slashes
+	if( mount[ mount.length - 1 ] === '/' ) {
+		mount = mount.substring( 0, mount.length - 1 );
+	}
+	if( dir[ dir.length - 1 ] === '/' ) {
+		dir = dir.substring( 0, dir.length - 1 );
+	}
+
+	// Read directory contents
+	fs.readdirSync( dir ).forEach( ( entityName ) => {
+
+		// Get information about the entityName
+		let entityPath = `${dir}/${entityName}`;
+		let entityMountPath = `${mount}/${entityName}`;
+		let entityInfo = fs.lstatSync( entityPath );
+
+		// Check if this is a directory
+		if( !entityInfo.isSymbolicLink() && entityInfo.isDirectory() ) {
+
+			// Recursively link items under this directory
+			autoloader.route.recursivelyLinkStatic(
+				app,
+				entityMountPath,
+				entityPath,
+				acl
+			);
+		}
+
+		// Only mount this entity if it is a file (a leaf in the FS tree)
+		if( entityInfo.isFile() ) {
+
+			// DEBUG
+			// logger.log( `\nTEST:\nEntity: ${entityName}\nMount: ${mount}\nDir: ${dir}`, handlerTag );
+			
+			// TODO: Cross-reference the entity with a whitelist/blacklist if given one
+			let okToMap = true;
+			if( acl ) {
+				
+				// Entity the acl entity path in a form comparable to the entity path
+				// let aclEntityKey = `${mount}/${entityName}`;
+				let aclRelativePath = dir.substring( settings.root.length );
+				let aclEntityKey = `${aclRelativePath}/${entityName}`;
+				if( aclEntityKey[0] === '/' ) {
+					aclEntityKey = aclEntityKey.substring( 1 );
+				}
+				
+				// O(n^2), since it checks the whole list each time
+				if( typeof acl.include !== 'undefined' ) {
+
+					okToMap = acl.include.includes( aclEntityKey );
+				} else if( typeof acl.exclude !== 'undefined' ) {
+
+					okToMap = !acl.exclude.includes( aclEntityKey );
+				}
+				
+				// DEBUG
+				let debugmsg;
+				debugmsg += `\nACL: ${ JSON.stringify( acl ) }`;
+				debugmsg += `\nACL Entity: ${aclEntityKey}`;
+				debugmsg += `\n\nTEST:\nEntity: ${entityName}`;
+				debugmsg += `\nMount: ${mount} (${mount.length} chars)`;
+				debugmsg += `\nDir: ${dir}`;
+				debugmsg += `\nServer Root: ${settings.root}`;
+				debugmsg += `\n\nOk To Map: ${okToMap ? 'true' : 'false'}`;
+				logger.log( debugmsg, handlerTag );
+			}
+
+
+			// Mount the static asset to the specified mount path
+			if( okToMap ) {
+				
+				logger.log(
+					`Mounting "${entityPath}" to "${entityMountPath}"`,
+					handlerTag
+				);
+
+				// TEST
+				if( true ) {
+
+					// app.use( entityMountPath, express.static(
+					// 	entityPath,
+					// 	{
+					// 		dotfiles: "deny",	// reply with a 403 for dotfiles
+					// 		// maxAge: 1000 * 60 * 5
+					// 	}
+					// ) );
+					app.use( entityMountPath, ( request, response ) => {
+						response.status(200).send( "testing static loading" ).end();
+					} );
+				} else {
+
+					app.use( entityMountPath, ( request, response ) => {
+						let ht = {
+							src: `autoloader.route.recursivelyLinkStatic`
+						};
+	
+						// response.set( 'Content-Type', '?' );	// Content Type is automatic
+						response.sendFile(
+							entityPath,
+							{
+								dotfiles: 'deny',
+								headers: {
+									'x-timestamp': Date.now(),
+									'x-sent': true
+								}
+							},
+							( error ) => {
+								if( error ) {
+	
+									let errorPacket = new ServerError( error );
+									logger.log(
+										`Failed to send ${entityPath} to client @ ip ` +
+										`${request.ip}: ${errorPacket.asString()}`,
+										ht
+									);
+								} else {
+									
+									logger.log(
+										`Sent ${entityPath} to client @ ip ${request.ip}`,
+										ht
+									);
+									response.status(200).end();
+								}
+							}
+						);
+					} );
+				}
+			}
+		}
+	} );
 };
 // END autoloader logic
 

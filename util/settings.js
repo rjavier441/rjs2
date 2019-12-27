@@ -49,6 +49,9 @@ class ServerSettings extends DependencyInjectee {
     // The server's SSL/HTTPS config file
     this.ssl = __dirname + "/common/security/security.json";
 
+    // The directory where EJS templates for the TemplateManager class are kept
+    this.templateDir = __dirname + "/common/template";
+
     // The directory under which the server can find its utility classes/
     // libraries
     this.util = __dirname;

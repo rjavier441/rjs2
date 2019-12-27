@@ -1,0 +1,20 @@
+<!-- error.ejs -->
+<%# @args:  (string) errorCode          The HTTP error code to display %>
+<%#         (string) errorTitle         A title for the HTTP error %>
+<%#         (string) errorMessage       The HTTP error message to display %>
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- CSS includes -->
+    <!-- <link rel="stylesheet" href="error.css"> -->
+    <style>
+      <%= locals.templateCss %>
+    </style>
+  </head>
+  <body>
+    <h1><%= locals.errorCode %></h1>
+    <h3><%= locals.errorTitle %></h3>
+    <p><%= locals.errorMessage %></p>
+  </body>
+</html>
