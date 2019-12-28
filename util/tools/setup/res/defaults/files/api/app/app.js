@@ -28,7 +28,7 @@ var handlerTag = { "src": "apiRouter" };
 
 
 // API App
-logger.log( `Initializing SCE Core-v4 API...`, handlerTag );
+logger.log( `Initializing rjs2 APIs...`, handlerTag );
 var app = express();
 app.use(bodyParser.json({			// support JSON-encoded request bodies
 	strict: true
