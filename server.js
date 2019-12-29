@@ -117,6 +117,8 @@ function main( argv ) {
 	// console.log( 'handlerTag:', ht.getTag() );
 	// console.log( 'args:', args );
 	// console.log( 'settings:', _lib.settings );
+
+	return;
 }
 
 // Run main()
