@@ -21,13 +21,15 @@ const router = express.Router();
 
 // Options
 const options = {
-	root: _lib.settings.root,	// Server root directory (i.e. where server.js is located)
+	// root: _lib.settings.root,	// Server root directory (i.e. where server.js is located)
+	root: __dirname.substring( 0, __dirname.indexOf( '/app/routes' ) ),
 	dotfiles: "deny",
 	headers: {
 		"x-timestamp": Date.now(),
 		"x-sent": true
 	}
 };
+var parentAppRoute = "/skeleton";
 
 
 
@@ -42,8 +44,7 @@ const options = {
 				directory "/skeleton", this endpoint requires a path offset to cover the
 				"/skeleton" directory,
 */
-var pathOffset = "/skeleton";
-router.get( "/", function ( request, response ) {
+router.get( "/", function SLASH( request, response ) {
 
 	// Log the access to this endpoint
 	var handlerTag = { "src": "skeletonRootHandler" };
@@ -52,7 +53,7 @@ router.get( "/", function ( request, response ) {
 
 	// Send a response to the request
 	response.set( "Content-Type", "text/html" );
-	response.sendFile( `${ pathOffset }/skeleton.html`, options, function ( error ) {
+	response.sendFile( `skeleton.html`, options, function ( error ) {
 		if ( error ) {
 			_lib.Logger.log( error, handlerTag );
 			response.status( 500 ).send(
@@ -67,6 +68,11 @@ router.get( "/", function ( request, response ) {
 // END Main Routes
 
 
+// Use the StaticAutoLoader to automatically mount static resources to routes
+let relativeMountPoint = '/';	// "/" is in reference to the parent app route.
+let appRoot = __dirname.substring( 0, __dirname.indexOf('/app/routes') );
+_lib.StaticAutoLoader.load( router, relativeMountPoint, appRoot );
+
 
 // BEGIN Error Handling Routes
 /*
@@ -75,10 +81,10 @@ router.get( "/", function ( request, response ) {
 	@returns 	n/a
 	@details 	This function handles any endpoint requests that do not exist under the "/skeleton" endpoint
 */
-router.use(function (request, response) {
+router.use(function NOTFOUND(request, response) {
 
 	// Log 404 error
-	var handlerTag = {"src": "/NOTFOUND"};
+	var handlerTag = {"src": `/NOTFOUND (${parentAppRoute})`};
 	_lib.Logger.log(`Non-existent endpoint "${request.path}" requested from client @ ip ${request.ip}\nRaw Headers:${ request.rawHeaders }` ,handlerTag);
 
 	// Send 404 response
@@ -93,11 +99,11 @@ router.use(function (request, response) {
 	@returns 	n/a
 	@details 	This function sends an error status (500) if an error occurred forcing the other methods to not run.
 */
-router.use(function (err, request, response) {
+router.use(function ERROR(err, request, response) {
 	
 	// Log 500 error
-	var handlerTag = {"src": "/ERROR"};
-	_lib.Logger.log(`Error occurred with request from client @ ip ${request.ip}\nRaw Headers:${ request.rawHeaders }`);
+	var handlerTag = {"src": `/ERROR (${parentAppRoute})`};
+	_lib.Logger.log(`Error occurred with request from client @ ip ${request.ip}: ${err.toString()}\nRaw Headers:${ request.rawHeaders }`);
 
 	// Send 500 response
 	response.status( 500 ).send(

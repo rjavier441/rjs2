@@ -38,6 +38,7 @@ const _Lib = {
   ColorLogger: __dirname + '/colorLogger.js',
   DateTimes: __dirname + '/datetimes.js',
   Logger: __dirname + '/logger.js',
+  StaticAutoLoader: __dirname + '/static_autoloader.js',
   SslManager: __dirname + '/sslManager.js',
   Util: __dirname + '/util.js',
   

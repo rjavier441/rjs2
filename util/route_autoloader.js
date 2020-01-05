@@ -86,7 +86,7 @@ const autoloader = {
 //								directory(ies) you wish to alias, i.e. the specified "routes"
 //								directory given to autoloader.route.load() or the server root
 //								directory if the "routes" argument is omitted.
-// @parameters		(array) alias					An array whose contents are objects.
+// @parameters		(object[]) alias			An array whose contents are objects.
 //																			Each object will be a key:value pair
 //																			where the key is the name of the route
 //																			directory, and the value is the alias
@@ -96,17 +96,18 @@ const autoloader = {
 //																			dictate the behavior of alias
 //																			generation. This object may take any of
 //																			the following members:
-//							(~bool) afterOthers			A boolean that controls the way ordering
-//																			is performed if the provided aliases
-//																			only cover a subset of the total amount
-//																			of aliases. If "true", server routes
-//																			without aliases will be mapped first,
-//																			followed by the provided route aliases
-//																			mapped in their array order. If "false",
-//																			the provided route aliases will be
-//																			mapped first, followed by any server
-//																			routes that do not have an alias. If
-//																			omitted, this defaults to false;
+//									(~bool) afterOthers		A boolean that controls the way
+//																				ordering is performed if the provided
+//																				aliases only cover a subset of the
+//																				total amount of aliases. If "true",
+//																				server routes without aliases will be
+//																				mapped first, followed by the
+//																				provided route aliases mapped in
+//																				their array order. If "false", the
+//																				provided route aliases will be
+//																				mapped first, followed by any server
+//																				routes that do not have an alias. If
+//																				omitted, this defaults to false;
 // @example
 //					Given the following directory structure:
 //
@@ -618,12 +619,12 @@ autoloader.route.load = function( app, routes ) {
 					var endpointName = aliasObject[ dirname ];
 					autoloader.route.linkSingle( app, endpointName, assumedPath );
 
-					// IN PROGRESS: Route Static Assets for this directory
-					autoloader.route.linkStatics(
-						app,
-						endpointName,
-						`${routes}/${dirname}`
-					);
+					// Route Static Assets for this directory
+					// autoloader.route.linkStatics(
+					// 	app,
+					// 	endpointName,
+					// 	`${routes}/${dirname}`
+					// );
 				} catch( error ) {
 
 					// Send an error message, but continue to process other routes
@@ -707,7 +708,7 @@ autoloader.route.linkSingle = function( app, endpoint, indexPath ) {
 	};
 };
 
-// @function			route.linkStatics()
+// @function			(OBSOLETE) route.linkStatics()
 // @description		This function links static assets to the given server route.
 // @parameters		(object) app					The ExpressJS app object to map the
 //																			endpoints to. This type of object is
@@ -718,7 +719,13 @@ autoloader.route.linkSingle = function( app, endpoint, indexPath ) {
 //								(string) base					The path to the directory that contains
 //																			the resources to statically route. This
 //																			directory will be recursively traversed
-//																			to map each resource individually.
+//																			to map each resource individually. This
+//																			directory will also be checked for the
+//																			autoloader_static.json file, whose
+//																			existence will further control which
+//																			resources are statically routed. See
+//																			the above config documentation for more
+//																			details.
 // @returns				(object) result				A JSON object representing the outcome
 //																			of the static asset routing. It has the
 //																			following members:
@@ -741,13 +748,32 @@ autoloader.route.linkStatics = function( app, endpoint, base ) {
 	let success = true;
 	let response = null;
 	try {
+
+		// Check for any kind of static file access control list
+		let acl = false;
+		let staticConfigFile = 'autoloader_static.json';
+		if( fs.readdirSync( base ).includes( 'autoloader_static.json' ) ) {
+			
+			// Read file without caching its value (i.e. don't use "require()")
+			logger.log(
+				`Found autoloader_static.json in ${base}`,
+				handlerTag
+			);
+			if( base[ base.length-1 ] !== '/' ) {
+				staticConfigFile = '/autoloader_static.json';
+			}
+			acl = JSON.parse( fs.readFileSync( `${base}${staticConfigFile}` ) );
+		} else {
+
+			logger.log( `No autoloader_static.json in ${base}`, handlerTag );
+		}
 		
 		// Recursively go through each directory to map each file individually
 		logger.log(
 			`Linking static assets under "${base}" to endpoint "${endpoint}"`,
 			handlerTag
 		);
-		autoloader.route.recursivelyLinkStatic( app, endpoint, base );
+		autoloader.route.recursivelyLinkStatic( app, endpoint, base, acl );
 	} catch( exception ) {
 
 		success = false;
@@ -768,7 +794,7 @@ autoloader.route.linkStatics = function( app, endpoint, base ) {
 	};
 };
 
-// @function			route.recursivelyLinkStatic()
+// @function			(OBSOLETE) route.recursivelyLinkStatic()
 // @description		This function recursively traverses the directory structure
 //								from the given directory point and maps all files as static
 //								resource.
@@ -778,8 +804,19 @@ autoloader.route.linkStatics = function( app, endpoint, base ) {
 //								(string) mount				The mount path to map all static files
 //																			to.
 //								(string) dir					The directory to search.
+//								(~object[]) acl				An optional instance of the static
+//																			resource routing control configuration
+//																			file "autoloader_static.json" (see the
+//																			above config documentation for more
+//																			details). If omitted, this defaults to
+//																			false.
 // @returns				n/a
-autoloader.route.recursivelyLinkStatic = function( app, mount, dir ) {
+autoloader.route.recursivelyLinkStatic = function(
+	app,
+	mount,
+	dir,
+	acl = false
+) {
 
 	var handlerTag = { "src": "route_autoloader.route.recursivelyLinkStatic" };
 
@@ -806,21 +843,111 @@ autoloader.route.recursivelyLinkStatic = function( app, mount, dir ) {
 			autoloader.route.recursivelyLinkStatic(
 				app,
 				entityMountPath,
-				entityPath
+				entityPath,
+				acl
 			);
 		}
 
-		// Only mount this entity if it is a file
+		// Only mount this entity if it is a file (a leaf in the FS tree)
 		if( entityInfo.isFile() ) {
 
-			// TODO: Cross-reference the entity with a whitelist/blacklist
+			// DEBUG
+			// logger.log( `\nTEST:\nEntity: ${entityName}\nMount: ${mount}\nDir: ${dir}`, handlerTag );
+			
+			// TODO: Cross-reference the entity with a whitelist/blacklist if given one
+			let okToMap = true;
+			if( acl ) {
+				
+				// Entity the acl entity path in a form comparable to the entity path
+				// let aclEntityKey = `${mount}/${entityName}`;
+				let aclRelativePath = dir.substring( settings.root.length );
+				let aclEntityKey = `${aclRelativePath}/${entityName}`;
+				if( aclEntityKey[0] === '/' ) {
+					aclEntityKey = aclEntityKey.substring( 1 );
+				}
+				
+				// O(n^2), since it checks the whole list each time
+				if( typeof acl.include !== 'undefined' ) {
+
+					okToMap = acl.include.includes( aclEntityKey );
+				} else if( typeof acl.exclude !== 'undefined' ) {
+
+					okToMap = !acl.exclude.includes( aclEntityKey );
+				}
+				
+				// DEBUG
+				let debugmsg;
+				debugmsg += `\nACL: ${ JSON.stringify( acl ) }`;
+				debugmsg += `\nACL Entity: ${aclEntityKey}`;
+				debugmsg += `\n\nTEST:\nEntity: ${entityName}`;
+				debugmsg += `\nMount: ${mount} (${mount.length} chars)`;
+				debugmsg += `\nDir: ${dir}`;
+				debugmsg += `\nServer Root: ${settings.root}`;
+				debugmsg += `\n\nOk To Map: ${okToMap ? 'true' : 'false'}`;
+				logger.log( debugmsg, handlerTag );
+			}
+
 
 			// Mount the static asset to the specified mount path
-			logger.log(
-				`Mounting "${entityPath}" to "${entityMountPath}"`,
-				handlerTag
-			);
-			app.use( entityMountPath, express.static( entityPath ) );
+			if( okToMap ) {
+				
+				logger.log(
+					`Mounting "${entityPath}" to "${entityMountPath}"`,
+					handlerTag
+				);
+
+				// TEST
+				if( true ) {
+
+					// app.use( entityMountPath, express.static(
+					// 	entityPath,
+					// 	{
+					// 		dotfiles: "deny",	// reply with a 403 for dotfiles
+					// 		// maxAge: 1000 * 60 * 5
+					// 	}
+					// ) );
+					app.use( entityMountPath, ( request, response ) => {
+						response.status(200).send( "testing static loading" ).end();
+					} );
+				} else {
+
+					app.use( entityMountPath, ( request, response ) => {
+						let ht = {
+							src: `autoloader.route.recursivelyLinkStatic`
+						};
+	
+						// response.set( 'Content-Type', '?' );	// Content Type is automatic
+						response.sendFile(
+							entityPath,
+							{
+								dotfiles: 'deny',
+								headers: {
+									'x-timestamp': Date.now(),
+									'x-sent': true
+								}
+							},
+							( error ) => {
+								if( error ) {
+	
+									let errorPacket = new ServerError( error );
+									logger.log(
+										`Failed to send ${entityPath} to client @ ip ` +
+										`${request.ip}: ${errorPacket.asString()}`,
+										ht
+									);
+								} else {
+									
+									logger.log(
+										`Sent ${entityPath} to client @ ip ${request.ip}`,
+										ht
+									);
+									response.status(200).end();
+								}
+							}
+						);
+					} );
+				}
+			}
 		}
 	} );
 };

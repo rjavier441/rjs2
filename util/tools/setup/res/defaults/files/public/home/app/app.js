@@ -28,7 +28,7 @@ const ht = { src: 'homeRouter' };
 
 
 // Page App
-_lib.Logger.log(`Initializing rjs2 Home...`, ht );
+_lib.Logger.log(`Initializing SCE Home...`, ht );
 const app = express();
 app.use(bp.json({			// support JSON-encoded request bodies
 	strict: true

@@ -73,7 +73,7 @@ function main( argv ) {
 	app.use( bp.urlencoded( {
 		extended: true
 	} ) );
-	app.use( express.static( _lib.settings.root ) );
+	// app.use( express.static( _lib.settings.root ) );
 
 	// Initialize applications
 	app.use( '/api', require( './api/app/app.js' ) );		// RESTful APIs

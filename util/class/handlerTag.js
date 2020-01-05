@@ -17,16 +17,31 @@
 class HandlerTag {
 
   // @ctor
-  // @parameters    (function) ref      A reference to the function caller
+  // @parameters    (mixed) ref         This parameters is contextual:
+  //	                                    1.) If 'type' is set to 'string',
+  //	                                        'ref' is a string that will serve
+  //	                                        as the handler tag's 'fname'.
+  //	                                    2.) Else, a reference to the function
+  //	                                        caller
   //	              (~string) type      Indicates the type of entity from which
   //	                                  the handler tag is being generated,
   //	                                  enabling control over where tag members
   //	                                  are acquired. If omitted, this defaults
   //	                                  to 'function'. Supported types include:
   //
-  //                                    'function'      For any normal function.
+  //                                    'function'      For any normal
+  //	                                                  function.
   //	                                  'api'           For an API Endpoint.
-  //	                                  'route'         For a Web Content Route.
+  //	                                  'route'         For a Web Content
+  //	                                                  Route.
+  //	                                  'string'        For cases where the
+  //	                                                  handler tag cannot be
+  //	                                                  easily auto-generated.
+  //	                                                  Use this option if you
+  //	                                                  would like to manually
+  //	                                                  set the tag's fname to
+  //	                                                  the string value of
+  //	                                                  'ref'.
   constructor( ref, type = 'function' ) {
 
     // Define Public Properties
@@ -49,8 +64,11 @@ class HandlerTag {
         break;
       }
       case 'route': {
-        // TODO: Complete the route content loading
         this.fname = ref.src;
+        break;
+      }
+      case 'string': {
+        this.fname = ref;
         break;
       }
       default: {
