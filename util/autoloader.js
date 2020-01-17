@@ -24,13 +24,14 @@ const DependencyInjectee = require(
   `${settings.util}/class/dependencyInjectee.js`
 );
 
-// Dependencies (TODO: Comment out; they'll be injected via Dependency Injection)
-const fs = require( 'fs' );
-const HandlerTag = require( `${settings.util}/class/handlerTag.js` );
-const Logger = require( `${settings.util}/logger.js` );
-const ServerError = require( `${settings.util}/class/serverError.js` );
-const ServerResponse = require( `${settings.util}/class/serverResponse.js` );
-const Util = require( `${settings.util}/util.js` )
+// Dependencies
+// const ejs = require( 'ejs' );
+// const fs = require( 'fs' );
+// const HandlerTag = require( `${settings.util}/class/handlerTag.js` );
+// const Logger = require( `${settings.util}/logger.js` );
+// const ServerError = require( `${settings.util}/class/serverError.js` );
+// const ServerResponse = require( `${settings.util}/class/serverResponse.js` );
+// const Util = require( `${settings.util}/util.js` )
 
 // BEGIN Autoloader Config Documentation
 // @config        _alconfig.json
@@ -206,6 +207,8 @@ class Autoloader extends DependencyInjectee {
       this._dep.Logger.log( `Loading from "${root}"`, ht );
 
       this.traverse( app, '/', root );
+
+      this.mountNotFound( app );
     } catch( exception ) {
 
       let msg = new this._dep.ServerError( 'Exception', {
@@ -285,7 +288,15 @@ class Autoloader extends DependencyInjectee {
         // Send a 404 message in the appropriate manner
         response.status(404);
         if( request.accepts('html') ) {
-          response.render( '404', { url: request.url } ).end();
+          response.send( this._dep.TemplateManager.generate(
+            'error',
+            {
+              errorCode: 404,
+              errorTitle: 'Not Found   ◉_◉',
+              errorMessage: 'Uh Oh! Looks like we couldn\'t find what you ' +
+                            'were looking for...'
+            }
+          ) ).end();
           return;
         }
         if( request.accepts('json') ) {
@@ -322,8 +333,6 @@ class Autoloader extends DependencyInjectee {
   //	                                    "express()" or "express.Router()".
   //	              (string) mount        The endpoint to mount the asset under.
   //	              (string) file         The path to the file.
-  //	              ?(string) requestRoot  The root of the request (TBD: Should
-  //	                                    be the file's parent directory?)
   // @returns				n/a
   mountStaticContent( app, mount, file ) {
 
@@ -351,7 +360,7 @@ class Autoloader extends DependencyInjectee {
         response.sendFile(
           file,
           {
-            root: '/',  // TODO: What is the root of this request?
+            root: '/',  // specifies start path of 'file' (i.e. 'file' prefix)
             dotfiles: 'deny',
             headers: {
               'x-timestamp': Date.now(),
@@ -553,7 +562,7 @@ class Autoloader extends DependencyInjectee {
           // file before mounting it
           if( entityInfo.isFile() && !['.', '..'].includes( entityName ) ) {
 
-            // IN PROGRESS: Mount file here
+            // Mount static file here
             this.mountStaticContent( app, entityMount, entityPath );
           }
         }

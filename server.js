@@ -14,6 +14,7 @@
 var _lib = require( './util/_lib.js' );
 var bp = require( 'body-parser' );
 var fs = require( 'fs' );
+var ejs = require( 'ejs' );
 var http = require( 'http' );
 var https = require( 'https' );
 var minimist = require( 'minimist' );
@@ -82,11 +83,13 @@ function main( argv ) {
 	// // Autoload APIs
 	// _lib.AutoLoader.route.load( app );
 	( new _lib.AutoLoader( {
+		ejs: ejs,
 		fs: fs,
 		HandlerTag: _lib.Class.HandlerTag,
 		Logger: _lib.Logger,
 		ServerError: _lib.Class.ServerError,
 		ServerResponse: _lib.Class.ServerResponse,
+		TemplateManager: _lib.TemplateManager,
 		Util: _lib.Util,
 	} ) ).loadRootFrom( app, _lib.settings.root );
 	// END rjTest

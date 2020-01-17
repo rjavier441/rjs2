@@ -43,6 +43,7 @@ const _Lib = {
   Logger: __dirname + '/logger.js',
   StaticAutoLoader: __dirname + '/static_autoloader.js',
   SslManager: __dirname + '/sslManager.js',
+  TemplateManager: __dirname + '/templateManager.js',
   Util: __dirname + '/util.js',
   
   // rjs Classes

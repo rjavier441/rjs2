@@ -1,6 +1,0 @@
-{
-	"exclude": [
-		"app/app.js",
-		"app/routes/index.js"
-	]
-}
