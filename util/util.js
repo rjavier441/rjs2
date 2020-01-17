@@ -20,9 +20,10 @@ const Util = {
   // @function			getPlatform()
   // @description		This function determines which platform this server is on.
   // @parameters		n/a
-  // @returns				(string) os         The Operating System of this machine, or
-  //	                                  'unsupported' if the Operating System is
-  //	                                  not officially supported by rjs2.
+  // @returns				(string) os           The Operating System of this machine,
+  //	                                    or 'unsupported' if the Operating
+  //	                                    System is not officially supported by
+  //	                                    rjs2.
   getPlatform: function() {
 
     var osname = 'unsupported';
@@ -46,8 +47,8 @@ const Util = {
 
   // @function			isset()
   // @description		Determines if a value is set (i.e. type is not "undefined").
-  // @parameters		(mixed) target      The value whose definition is checked.
-  // @returns				(bool) result       The existence of the provided target.
+  // @parameters		(mixed) target        The value whose definition is checked.
+  // @returns				(bool) result         The existence of the provided target.
   isset: function( target ) {
     return typeof target !== 'undefined';
   },
@@ -58,6 +59,52 @@ const Util = {
   // @returns				n/a
   printEmblem: function() {
     console.log( '\n' + fs.readFileSync( `${settings.util}/common/emblem.txt` ).toString() );
+  },
+
+  // @function			trimLeadingSlash()
+  // @description		This function trims leading forward slashes from a string.
+  // @parameters		(string) input        The string to trim.
+  // @returns				(string) result       The resulting string.
+  trimLeadingSlash: function( input ) {
+
+    let result = input;
+    if( result.length > 0 && result[0] === '/' ) {
+      result = result.substring( 1 );
+    }
+
+    return result;
+  },
+
+  // @function			trimSlashes()
+  // @description		This function trims trailing and leading forward slashes
+  //	              from a string.
+  // @parameters		(string) input        The string to trim.
+  // @returns				(string) result       The resulting string.
+  trimSlashes: function( input ) {
+
+    let result = input;
+    if( result.length > 0 && result[0] === '/' ) {
+      result = result.substring( 1 );
+    }
+    if( result.length > 0 && result[result.length - 1] === '/' ) {
+      result = result.substring( 0, result.length - 1 );
+    }
+
+    return result;
+  },
+
+  // @function			trimTrailingSlash()
+  // @description		This function trims trailing forward slashes from a string.
+  // @parameters		(string) input        The string to trim.
+  // @returns				(string) result       The resulting string.
+  trimTrailingSlash: function( input ) {
+
+    let result = input;
+    if( result.length > 0 && result[result.length - 1] === '/' ) {
+      result = result.substring( 0, result.length - 1 );
+    }
+
+    return result;
   }
 };
 // END Util (Singleton)

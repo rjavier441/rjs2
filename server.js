@@ -75,11 +75,21 @@ function main( argv ) {
 	} ) );
 	// app.use( express.static( _lib.settings.root ) );
 
-	// Initialize applications
-	app.use( '/api', require( './api/app/app.js' ) );		// RESTful APIs
-
-	// Autoload APIs
-	_lib.AutoLoader.route.load( app );
+	// BEGIN rjTest
+	// // Initialize applications
+	// app.use( '/api', require( './api/app/app.js' ) );		// RESTful APIs
+	
+	// // Autoload APIs
+	// _lib.AutoLoader.route.load( app );
+	( new _lib.AutoLoader( {
+		fs: fs,
+		HandlerTag: _lib.Class.HandlerTag,
+		Logger: _lib.Logger,
+		ServerError: _lib.Class.ServerError,
+		ServerResponse: _lib.Class.ServerResponse,
+		Util: _lib.Util,
+	} ) ).loadRootFrom( app, _lib.settings.root );
+	// END rjTest
 
 	// Check if server should run in secure mode
 	var secureMode = true;
