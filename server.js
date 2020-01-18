@@ -77,11 +77,10 @@ function main( argv ) {
 	// app.use( express.static( _lib.settings.root ) );
 
 	// BEGIN rjTest
-	// // Initialize applications
-	// app.use( '/api', require( './api/app/app.js' ) );		// RESTful APIs
+	// Load and mount APIs under "/api" using the old API Autoloader
+	app.use( '/api', require( './api/app/app.js' ) );		// RESTful APIs
 	
-	// // Autoload APIs
-	// _lib.AutoLoader.route.load( app );
+	// Load and mount static content in the server root using the new Autoloader
 	( new _lib.AutoLoader( {
 		ejs: ejs,
 		fs: fs,
@@ -92,7 +91,6 @@ function main( argv ) {
 		TemplateManager: _lib.TemplateManager,
 		Util: _lib.Util,
 	} ) ).loadRootFrom( app, _lib.settings.root );
-	// END rjTest
 
 	// Check if server should run in secure mode
 	var secureMode = true;
