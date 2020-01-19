@@ -1,0 +1,134 @@
+/* Custom CSS Variables for the clock */
+/* :scope {
+  --widget-clock-radius: 5em;
+  --widget-clock-border-thickness: 2px;
+  --widget-clock-diameter: calc( var( --widget-clock-radius ) * 2 );
+  --widget-clock-rotor-diameter: calc( var( --widget-clock-diameter ) / 4 );
+  --widget-clock-rotor-radius: calc( var( --widget-clock-rotor-diameter ) / 2 );
+  --widget-clock-tick-length: 2em;
+  --widget-clock-tick-thickness: 5px;
+} */
+
+/* Clock Container Styles */
+/* .clock-container {
+  --widget-clock-radius: 5em;
+  --widget-clock-border-thickness: 2px;
+  --widget-clock-diameter: calc( var( --widget-clock-radius ) * 2 );
+  --widget-clock-rotor-diameter: calc( var( --widget-clock-diameter ) / 4 );
+  --widget-clock-rotor-radius: calc( var( --widget-clock-rotor-diameter ) / 2 );
+  --widget-clock-tick-length: 2em;
+  --widget-clock-tick-thickness: 5px;
+
+  display: inline-block;
+  height: var( --widget-clock-diameter );
+  width: var( --widget-clock-diameter );
+} */
+.clock-container {
+  display: inline-block;
+  height: var( --widget-clock-diameter );
+  width: var( --widget-clock-diameter );
+}
+
+/* Clock Styles */
+.clock-container .clock {
+  -moz-border-radius: var( --widget-clock-radius );
+  -webkit-border-radius: var( --widget-clock-radius );
+  background-color: white;
+  border-radius: var( --widget-clock-radius );
+  border: var( --widget-clock-border-thickness ) solid black;
+  position: relative; /* to enable children to use absolute positioning with respect to clock bounding box */
+  height: calc( 100% - ( 2 * var( --widget-clock-border-thickness ) ) );
+  width: calc( 100% - ( 2 * var( --widget-clock-border-thickness ) ) );
+}
+
+.clock-container .clock .clock-hand {
+  display: inline;
+  position: absolute;
+  transform-origin: bottom center;
+}
+
+.clock-container .clock .clock-hand.hour {
+  width: var( --widget-clock-tick-thickness );
+  height: calc( var(--widget-clock-radius) - var(--widget-clock-border-thickness) - 20% );
+  top: 20%;
+  left: calc( 50% - ( 0.5 * var( --widget-clock-tick-thickness ) ) - ( 0.5 * var( --widget-clock-border-thickness ) ) );
+  background-color: black;
+}
+
+.clock-container .clock .clock-hand.minute {
+  width: var(--widget-clock-tick-thickness);
+  height: calc( var(--widget-clock-radius) - var( --widget-clock-border-thickness ) - 5% );
+  top: 5%;
+  left: calc( 50% - ( 0.5 * var( --widget-clock-tick-thickness ) ) - ( 0.5 * var( --widget-clock-border-thickness ) ) );
+  background-color: gray;
+}
+
+.clock-container .clock .clock-hand.second {
+  width: var(--widget-clock-tick-thickness);
+  height: calc( var(--widget-clock-radius) - var( --widget-clock-border-thickness ) );
+  top: 0%;
+  left: calc( 50% - ( 0.5 * var( --widget-clock-tick-thickness ) ) - ( 0.5 * var( --widget-clock-border-thickness ) ) );
+  background-color: red;
+}
+
+.clock-container .clock .clock-rotor {
+  position: absolute;
+  display: inline;
+  z-index: 1;
+  border-radius: 50%;
+  background-color: black;
+  width: calc( var( --widget-clock-rotor-radius ) );
+  height: calc( var( --widget-clock-rotor-radius ) );
+  top: calc( 50% - ( var( --widget-clock-rotor-radius ) / 2 ) );
+  left: calc( 50% - ( var( --widget-clock-rotor-radius ) / 2 ) - ( var( --widget-clock-border-thickness ) / 2 ) );
+}
+
+.clock-container .clock .clock-tick {
+  position: relative;
+  height: var( --widget-clock-tick-thickness );
+  width: var( --widget-clock-tick-length );
+  background-color: black;
+  /* border: 1px solid black; */
+
+  transform-origin: top left;
+  display: block;
+}
+
+.clock-container .clock .clock-tick.horizontal-axis {
+  height: var( --widget-clock-tick-thickness );
+  width: calc( var( --widget-clock-diameter ) - 2 * var( --widget-clock-border-thickness ) );
+  position: absolute;
+  display: inline;
+  top: calc( 50% - ( 0.5 * var( --widget-clock-tick-thickness ) ) + ( 0.5 * var( --widget-clock-border-thickness ) ) );
+  left: 0%;
+  padding: 0;
+  margin: 0;
+}
+
+.clock-container .clock .clock-tick.horizontal-axis .separator {
+  background-color: white;
+  width: 80%;
+  height: 100%;
+  position: relative;
+  left: 10%;
+  /* transform: translate(0%, calc( 10% + var( --widget-clock-border-thickness ) ) ); */
+}
+
+.clock-container .clock .clock-tick.vertical-axis {
+  width: var( --widget-clock-tick-thickness );
+  height: calc( var( --widget-clock-diameter ) - 2 * var( --widget-clock-border-thickness ) );
+  position: absolute;
+  display: inline;
+  top: 0%;
+  left: calc( 50% - ( 0.5 * var( --widget-clock-tick-thickness ) ) - ( 0.5 * var( --widget-clock-border-thickness ) ) );
+  padding: 0;
+  margin: 0;
+}
+
+.clock-container .clock .clock-tick.vertical-axis .separator {
+  background-color: white;
+  width: 100%;
+  height: 80%;
+  position: relative;
+  top: 10%;
+}

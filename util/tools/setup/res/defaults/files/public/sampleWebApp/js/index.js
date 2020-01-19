@@ -17,58 +17,20 @@
 window.onload = ( event ) => {
   console.log( 'Completed loading of "sampleWebApp"' );
 
-  createClock();
-  // Insert additional post-load logic here...
-};
-
-// @function			createClock()
-// @description		This function creates the clock GUI element using plain JS.
-// @parameters		n/a
-// @returns				n/a
-function createClock() {
-
-  // Create HTML clock element
-  let clockElement = document.createElement( 'div' );
-  clockElement.id = 'clock';
-  clockElement.classList.add( 'clock' );
-
-  // Create HTML clock tick elements
-  let tickElement12 = document.createElement( 'div' );
-  tickElement12.classList.add( 'clock-tick' );
-  tickElement12.classList.add( 'tick-12' );
-
-  let tickElement6 = document.createElement( 'div' );
-  tickElement6.classList.add( 'clock-tick' );
-  tickElement6.classList.add( 'tick-6' );
-
-  let tickElement3 = document.createElement( 'div' );
-  tickElement3.classList.add( 'clock-tick' );
-  tickElement3.classList.add( 'tick-3' );
-
-  let tickElement9 = document.createElement( 'div' );
-  tickElement9.classList.add( 'clock-tick' );
-  tickElement9.classList.add( 'tick-9' );
-
-  // Create clock hands
-  let secondHand = document.createElement( 'div' );
-  secondHand.classList.add( 'clock-hand-second' );
-
-  // // Create HTML clock spine element
-  // let spine = document.createElement( 'div' );
-  // spine.classList.add( 'clock-spine' );
-
-  // Insert clock ticks into clock
-  clockElement.appendChild( tickElement12 );
-  clockElement.appendChild( tickElement6 );
-  clockElement.appendChild( tickElement3 );
-  clockElement.appendChild( tickElement9 );
-
-  // Insert clock hands into clock
-  clockElement.appendChild( secondHand );
+  // let clock = createClock();
+  let clock = new Clock( document );
 
   // Insert clock into the GUI
-  document.getElementById( 'clock-container' ).appendChild( clockElement );
-}
+  document.getElementById( 'clock-container' ).appendChild( clock.element );
+
+  // Immediately set time and create interval
+  clock.time = new Date( Date.now() );
+  setInterval( () => {
+    clock.time = new Date( Date.now() );
+  }, 1000 );
+
+  // Insert additional post-load logic here...
+};
 
 // BEGIN utility functions
 // ...
