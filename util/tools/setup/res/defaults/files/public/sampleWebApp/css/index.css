@@ -1,0 +1,86 @@
+/* Generic Styles */
+:root{
+  /* Custom CSS Variables (available from the global CSS document html root) */
+  --clock-radius: 20em;
+  --clock-diameter: calc( var( --clock-radius ) * 2 );
+  --clock-border-thickness: 2px;
+  --clock-tick-thickness: 5px;
+  --clock-tick-length: 2em;
+}
+
+body {
+  text-align: center;
+}
+
+h3 {
+  font-style: italic;
+}
+
+/* Clock Container Styles */
+.clock-container {
+  display: inline-block;
+  /* margin-top: calc(25% - var( --clock-radius ) ); */
+}
+
+/* Clock Styles */
+.clock {
+  /* margin-top: calc(25% - var( --clock-radius ) ); */
+  -moz-border-radius: var( --clock-radius );
+  -webkit-border-radius: var( --clock-radius );
+  background-color: white;
+  border-radius: var( --clock-radius );
+  border: var( --clock-border-thickness ) solid black;
+  height: var( --clock-diameter );
+  width: var( --clock-diameter );
+}
+
+.clock-hand-second {
+  display: inline-block;
+  background-color: red;
+  height: var( --clock-radius );
+  width: var( --clock-tick-thickness );
+  border: 1px solid black;
+
+  transform-origin: bottom;
+  transform: translate( calc( var( --clock-tick-thickness ) / 2 ), calc( -1 * var( --clock-tick-length ) ) ) rotate(2deg);
+}
+
+.clock-tick {
+  position: relative;
+  height: var( --clock-tick-thickness );
+  width: var( --clock-tick-length );
+  background-color: black;
+  border: 1px solid black;
+
+  transform-origin: top left;
+  display: block;
+}
+
+.clock-tick.tick-3 {
+  top: calc( 50% - ( 2 * var( --clock-tick-thickness ) ) );
+  left: calc( 100% - var( --clock-tick-thickness ) );
+  transform: rotate( 180deg );
+}
+
+.clock-tick.tick-6 {
+  top: calc( 100% - ( 2 * var( --clock-tick-thickness ) ) );
+  left: calc( 50% + ( 0.5 * var( --clock-tick-thickness ) ) );
+  transform: rotate( 270deg );
+}
+
+.clock-tick.tick-9 {
+  top: calc( 50% - ( 5 * var( --clock-tick-thickness ) ) );
+  left: calc( var( --clock-tick-thickness ) );
+  /* transform: rotate( 180deg ); */
+}
+
+.clock-tick.tick-12 {
+  top: calc( 0% + var( --clock-tick-thickness ) );
+  left: calc( 50% + ( 2 * var( --clock-tick-thickness ) ) );
+  transform: rotate( 90deg );
+}
+
+/* Text Container Styles */
+.text-container {
+  display: block;
+}

@@ -16,7 +16,7 @@ var DEBUG_VERBOSE = false;
 const KEY_ENTER = 13;
 
 // Settings
-var ROOT_OFFSET = "";	// Default: assumes this file is 2 directories below the server root
+var ROOT_OFFSET = "";
 /* END Constants & Globals */
 
 

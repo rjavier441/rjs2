@@ -3,6 +3,8 @@
 		"home": "/"
 	},
 	"exclude": {
-		"boilerplate": false
+		"api": false,
+		"lib": false,
+		"test": false
 	}
 }
