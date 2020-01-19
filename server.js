@@ -11,13 +11,14 @@
 'use strict';
 
 // BEGIN includes
-var _lib = require( './util/_lib.js' );
-var bp = require( 'body-parser' );
-var fs = require( 'fs' );
-var ejs = require( 'ejs' );
-var http = require( 'http' );
-var https = require( 'https' );
-var minimist = require( 'minimist' );
+const _lib = require( './util/_lib.js' );
+const bp = require( 'body-parser' );
+const fs = require( 'fs' );
+const path = require( 'path' );
+const ejs = require( 'ejs' );
+const http = require( 'http' );
+const https = require( 'https' );
+const minimist = require( 'minimist' );
 // END includes
 
 // BEGIN utility functions
@@ -76,14 +77,16 @@ function main( argv ) {
 	} ) );
 	// app.use( express.static( _lib.settings.root ) );
 
-	// BEGIN rjTest
+	// BEGIN DEPRECATED 2020-02-01: Replaced with new API creation scheme
 	// Load and mount APIs under "/api" using the old API Autoloader
-	app.use( '/api', require( './api/app/app.js' ) );		// RESTful APIs
+	// app.use( '/api', require( './api/app/app.js' ) );		// RESTful APIs
+	// END DEPRECATED 2020-02-01: Replaced with new API creation scheme
 	
 	// Load and mount static content in the server root using the new Autoloader
 	( new _lib.AutoLoader( {
 		ejs: ejs,
 		fs: fs,
+		path: path,
 		HandlerTag: _lib.Class.HandlerTag,
 		Logger: _lib.Logger,
 		ServerError: _lib.Class.ServerError,

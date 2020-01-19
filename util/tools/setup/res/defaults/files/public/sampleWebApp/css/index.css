@@ -1,0 +1,14 @@
+/* Generic Styles */
+body {
+  text-align: center;
+  font-family: Calibri, sans-serif;
+}
+
+h3 {
+  font-style: italic;
+}
+
+/* Text Container Styles */
+.text-container {
+  display: block;
+}

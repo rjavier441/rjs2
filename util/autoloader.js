@@ -24,15 +24,6 @@ const DependencyInjectee = require(
   `${settings.util}/class/dependencyInjectee.js`
 );
 
-// Dependencies
-// const ejs = require( 'ejs' );
-// const fs = require( 'fs' );
-// const HandlerTag = require( `${settings.util}/class/handlerTag.js` );
-// const Logger = require( `${settings.util}/logger.js` );
-// const ServerError = require( `${settings.util}/class/serverError.js` );
-// const ServerResponse = require( `${settings.util}/class/serverResponse.js` );
-// const Util = require( `${settings.util}/util.js` )
-
 // BEGIN Autoloader Config Documentation
 // @config        _alconfig.json
 // @description   A file that configures the way Autoloader handles the contents
@@ -177,7 +168,22 @@ const DependencyInjectee = require(
 class Autoloader extends DependencyInjectee {
 
   // @ctor
-  // @parameters		n/a
+  // @parameters		(object) deps         An object containing dependencies
+  //	                                    injected by the caller. The following
+  //	                                    dependencies are required:
+  // @dependencies
+  //                ejs = require( 'ejs' );
+  //                fs = require( 'fs' );
+  //                path = require( 'path' );
+  //                HandlerTag = require( `${settings.util}/class/handlerTag.js` );
+  //                Logger = require( `${settings.util}/logger.js` );
+  //                ServerError = require(
+  //                  `${settings.util}/class/serverError.js`
+  //                );
+  //                ServerResponse = require(
+  //	                `${settings.util}/class/serverResponse.js`
+  //	              );
+  //                Util = require( `${settings.util}/util.js` );
   constructor( deps ) {
     super( deps );
   }
@@ -207,19 +213,24 @@ class Autoloader extends DependencyInjectee {
       this._dep.Logger.log( `Loading from "${root}"`, ht );
 
       this.traverse( app, '/', root );
-
+      
       this.mountNotFound( app );
     } catch( exception ) {
+      
+      // DEBUG
+      // throw exception;
+      // console.log( 'loadFromRoot() exception:', exception );
+      // console.log( __line.toString().split( ',' ) );
 
-      let msg = new this._dep.ServerError( 'Exception', {
+      let msg = new this._dep.ServerError( `{"Exception (${ht.src})": ${JSON.stringify(exception.message)}}`, {
         exception: exception
       } );
       this._dep.Logger.log(
         `Failed to load root from ${root}: ` +
-        `${msg.eobj.exception.name}: ${msg.eobj.exception.message}`,
+        `${exception.name}: ${exception.message}`,
         ht
       );
-      throw msg.asString();
+      throw msg; // mark
     }
   }
 
@@ -248,15 +259,18 @@ class Autoloader extends DependencyInjectee {
       app.use( mount, require( file ) );
     } catch( exception ) {
       
-      let msg = new this._dep.ServerError( 'Exception', {
+      // DEBUG
+      // console.error( 'exception:', exception.message );
+
+      let msg = new this._dep.ServerError( `{"Exception (${ht.src})": ${JSON.stringify(exception.message)}}`, {
         exception: exception
       } );
       this._dep.Logger.log(
         `Failed to mount ${mount}: ` +
-        `${msg.eobj.exception.name}: ${msg.eobj.exception.message}`,
+        `${exception.name}: ${exception.message}`,
         ht
       );
-      throw msg.asString();
+      throw msg; // mark
     }
   }
 
@@ -312,15 +326,15 @@ class Autoloader extends DependencyInjectee {
       } );
     } catch( exception ) {
       
-      let msg = new this._dep.ServerError( 'Exception', {
+      let msg = new this._dep.ServerError( `{"Exception (${ht.src})": ${JSON.stringify(exception.message)}}`, {
         exception: exception
       } );
       this._dep.Logger.log(
         `Failed to mount "Not Found" general endpoint: ` +
-        `${msg.eobj.exception.name}: ${msg.eobj.exception.message}`,
+        `${exception.name}: ${exception.message}`,
         ht
       );
-      throw msg.asString();
+      throw msg; // mark
     }
   }
 
@@ -464,15 +478,15 @@ class Autoloader extends DependencyInjectee {
       } );
     } catch( exception ) {
 
-      let msg = new this._dep.ServerError( 'Exception', {
+      let msg = new this._dep.ServerError( `{"Exception (${ht.src})": ${JSON.stringify(exception.message)}}`, {
         exception: exception
       } );
       this._dep.Logger.log(
         `Failed to mount ${mount}: ` +
-        `${msg.eobj.exception.name}: ${msg.eobj.exception.message}`,
+        `${exception.name}: ${exception.message}`,
         ht
       );
-      throw msg.asString();
+      throw msg; // mark
     }
   }
 
@@ -550,9 +564,13 @@ class Autoloader extends DependencyInjectee {
         // Check if this entity is mapped to a middleware controller
         if( config && config.apps && config.apps[entityName] ) {
 
-          // TODO: Mount the entity as an middleware-controlled endpoint and
-          // stop all further processing for it.
-          
+          // TODO: Mount the entity as a middleware-controlled endpoint and stop
+          // all further processing for it.
+          this.mountMiddleware(
+            app,
+            entityMount,
+            `${dir}/${config.apps[entityName]}`
+          );
         } else {
 
           // Check if this entity is a directory
@@ -578,15 +596,19 @@ class Autoloader extends DependencyInjectee {
       } );
     } catch( exception ) {
 
-      let msg = new this._dep.ServerError( 'Exception', {
+      let msg = new this._dep.ServerError( `{"Exception (${ht.src})": ${JSON.stringify(exception.message)}}`, {
         exception: exception
       } );
       this._dep.Logger.log(
         `Failed to traverse ${dir}: ` +
-        `${msg.eobj.exception.name}: ${msg.eobj.exception.message}`,
+        `${exception.name}: ${exception.message}`,
         ht
       );
-      throw msg.asString();
+
+      // // DEBUG
+      // console.error( 'traverse() exception:', msg );
+
+      throw msg; // mark
     }
   }
 }

@@ -3,6 +3,10 @@
 		"home": "/"
 	},
 	"exclude": {
-		"boilerplate": false
+		"lib": false,
+		"test": false
+	},
+	"apps": {
+		"api": "api/app.js"
 	}
 }

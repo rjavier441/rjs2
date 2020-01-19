@@ -2,9 +2,9 @@
 
 An in-depth guide illustrating how to create web content in rjs2.
 
-Current Version: v0.0.0 (Alpha)
+Current Version: v0.0.4 (Alpha)
 
-Last Updated: 2020-01-26
+Last Updated: 2020-02-01
 
 ---
 
@@ -16,6 +16,11 @@ Last Updated: 2020-01-26
     - [Routing Process](#routing-process)
     - [Configure Routing Behavior](#configure-routing-behavior)
 - [Client-Side Content Referencing](#client-side-content-referencing)
+- [Using Middleware as APIs](#using-middleware-as-apis)
+    - [Routing Middleware](#routing-middleware)
+- [Creating Middleware](#creating-middleware)
+    - [Basic Structure](#basic-structure)
+    - [Creating API Endpoints](#creating-api-endpoints)
 
 ---
 
@@ -71,7 +76,7 @@ The rjs2 server routes web content under the following circumstances:
 
 ## Routing Process
 
-The rjs2 server starts its routing by entering the server root and recursively traverses each directory unless configured to do otherwise.
+The rjs2 server starts its routing by entering the server root (defaults to `rjs2/public`) and recursively traverses each directory unless configured to do otherwise.
 
 The rjs2 web content routing process follows the following behavior:
 
@@ -128,8 +133,8 @@ The following options are supported:
     - A map serving as a whitelist of file and/or directory names within the current directory. Keys represent the names of items to include. If provided alongside the "exclude" parameter, "exclude" is ignored.
 - `exclude`
     - A map serving as a blacklist of file and/or directory names within the current directory. Keys represent the names of items to exclude. If provided alongside the "include" parameter, this parameter is ignored.
-- `apps` _(Under Development)_
-    - A map of directory names to paths of app/router middleware files (relative to the current directory) that will handle all endpoints under the corresponding directory name. If this argument is omitted, content is treated as static web content and exposed to the public based on the provided alias, include and exclude parameters. If this argument is given, the specified app/router middleware file will be routed to the current endpoint, and no further depth-first traversal will occur for the current directory.
+- `apps`
+    - A map of directory names to paths of app/router middleware files (relative to the current directory) that will handle all endpoints under the corresponding directory name. This is the _**primary**_ way to create **APIs**. If this argument is omitted, content is treated as static web content and exposed to the public based on the provided alias, include and exclude parameters. If this argument is given, the specified app/router middleware file will be routed to the current endpoint, and no further depth-first traversal will occur for the current directory. Instead, control of deeper routing is fully transferred to the linked app/router middleware file. For more information on how to create APIs using this mechanism, see the [Using Middleware as APIs](#using-middleware-as-apis) section.
 
 To illustrate its usage, consider the following example. Suppose your server is mapped to the url `www.rjs2.com` and has the following directory structure:
 
@@ -287,5 +292,212 @@ Assume that `homepage2.html` also has the following content:
 ```
 
 When the above page loads, it will actually **SUCCEED** in "GET"-ting `file.css` and `file.js` because their respective paths take into account the full routing paths and aliases for the contents of the `dir/` directory. Since the `dir/` directory was aliased to `/`, its full path (relative to the server root) is `/`. The references `css/file.css` and `js/file.js` are equivalent to `/css/file.css` and `/js/file.js` respectively, and have the full path of the `dir/` directory's URI (`/`) accounted for, thus resulting in the successful reference.
+
+---
+
+## **Using Middleware as APIs**
+
+As mentioned previously, routing configuration can be used to create APIs with the server root's directory routing process. This is a relatively new way to create APIs within the rjs2 system, replacing the old compatibility method of API creation. ~~For information about the old way of making APIs, see the guide `rjs2/guides/LegacyCreatingAPIs.md`.~~ The legacy method of creating APIs has been _**deprecated**_, and shouldn't be used.
+
+## Routing Middleware
+
+To create an API using middleware, use the `"apps"` option when configuring the routing with `_alconfig.json` (see the section on [configuring router behavior](#configure-routing-behavior) for details).
+
+Unlike static content routing, middleware content routing _**does not**_ take advantage of include/exclude/alias features from the `_alconfig.json` file. Thus, you cannot use conventional methods to control the routing for the mapped middleware file. The following are equivalent methods of performing the same operations:
+
+1. `alias`
+    - Whereas `_alconfig.json` allowed you to specify an alias for a specific directory, using the `apps` option in the configuration will prevent you from doing this for linked middleware. Instead, you'd have to modify the app's containing directory to do this. consider the following example:
+
+    ```
+    rjs2/
+    +-  public/
+    |   +-  app/
+    |   |   +-  app.js
+    |   +-  dir2/
+    |       +-  page1.html
+    |       +-  page2.html
+    +-  ...
+    ```
+
+    The following will not reroute the `app` endpoint to `b`:
+
+    ```javascript
+    {
+        "alias": {
+            "app": "b"          // <-- That won't work!
+        },
+        "apps": {
+            "app": "app/app.js" // <-- Tells rjs2 to route "app/app.js" to "app"
+        }
+    }
+    ```
+
+    You'd have to rename the containing directory and update the `apps` entry:
+
+    ```
+    rjs2/
+    +-  public/
+    |   +-  b/              <-- Renamed directory to "b"
+    |   |   +-  app.js
+    |   +-  dir2/
+    |       +-  page1.html
+    |       +-  page2.html
+    +-  ...
+    ```
+
+    ```javascript
+    {
+        "apps": {
+            "b": "b/app.js" // <-- Tells rjs2 to route "b/app.js" to "b"
+        }
+    }
+    ```
+
+1. `include`/`exclude`
+    - This is relatively straightforward. If you want to include a middleware endpoint as an API, you must explicitly specify it in the `apps` option of `_alconfig.json`. Otherwise, it will not be routed as an API:
+
+    ```
+    rjs2/
+    +-  public/
+    |   +-  a/
+    |   |   +-  app.js
+    |   +-  b/
+    |       +-  app.js
+    +-  ...
+    ```
+
+    ```javascript
+    {
+        "exclude": {
+            "b": false      // Careful, don't forget that unless "b" is
+                            // explicity excluded like so, it will STILL get
+                            // routed as static content. Unless this is desired,
+                            // you must put it in this blacklist!!!
+        }
+        "apps": {
+            "a": "a/app.js" // <-- "a/app.js" will be routed as an API
+        }
+    }
+    ```
+
+---
+
+## **Creating Middleware**
+
+We've described how to route middleware using `_alconfig.json`, but haven't gone over how middleware should be constructed. This section aims to describe the different components of middleware and illustrate the creation of said middleware in a step-by-step fashion.
+
+## Basic Structure
+
+API middleware files in rjs2 have a basic fundamental structure that must be maintained. The following basic structure (i.e. all of the below contents) is _**REQUIRED**_ and _**NON-NEGOTIABLE**_, and each section's function is succinctly described by their respective comments:
+
+```javascript
+'use strict';   // Executes code body in Javascript Strict Mode
+
+// Includes
+const _lib = require( '/path/to/util/_lib.js' );    // *Change to a correct path
+const bodyParser = require( 'body-parser' );
+const express = require( 'express' );
+// Any other libraries/classes/functions you need can be included here...
+
+// Log initialization of API middleware to console and log files
+_lib.Logger.log( `Initializing app`, new _lib.Class.HandlerTab(
+    __filename.substring( _lib.settings.root.length ),
+    'string'
+).getTag() );
+
+// Create exportable API middleware ExpressJS app and router
+const app = express();
+const router = express.Router();
+
+// Configure app with content parsers
+app.use( bodyParser.json( { strict: true } ) );
+app.use( bodyParser.urlencoded( { extended: true } ) );
+
+// Place API creation logic here
+// ...
+// ...
+// ...
+
+// Mount router relative to this app
+app.use( '/', router );
+
+// Export app
+module.exports = app;
+```
+
+Typically, you can copy the above code _**as is**_ and place it in an `app.js` file in the desired API directory.
+
+## Creating API Endpoints
+
+While the previous section's content must not be changed (with the exception of the `const _lib` include path), your main area of concern as the API developer is in the section marked by the following:
+
+```javascript
+// Place API creation logic here
+// ...
+// ...
+// ...
+```
+
+To create API endpoints for rjs2, the following content must be placed in that section:
+
+1. `Creating an API Legend`
+    - The `class ApiLegend` can be used to initialize an API documentation generator that can create docs while routing endpoints to an associated router. The following is an example of its use:
+
+    ```javascript
+    // Create an API legend for this API middleware file and link its router
+    let api = _lib.ApiLegend.createLegend(
+        'API title',        // You can customize this to represent the API name
+        'API description',  // You can describe your API here
+        router
+    );
+    ```
+
+1. `Defining an API endpoint`
+    - An API endpoint can be linked to the router by using `ApiLegend.register()` on the previously created instance of `class ApiLegend`:
+
+    ```javascript
+    api.register(
+        'Do Thing', // A custom title for the API endpoint
+        'GET',      // The request type (supported: GET/POST/PUT/DELETE)
+        '/dothing', // API URI endpoint (subject to ExpressJS's endpoint rules)
+        'Does it',  // A description of what this API endpoint does
+        [...],      // API Argument Descriptor Array
+        [...],      // API Return Value Descriptor Array
+        doThing     // ExpressJS Endpoint Handler (or a ref to one)
+    );
+    ```
+
+    - The `API Argument Descriptor Array` contains objects called `API Argument Descriptors`. The contents of these objects are used to describe the arguments that are passed to the API (for documentation purposes only; they do not influence the API's behavior). An `API Argument Descriptor` takes the following form:
+
+    ```javascript
+    {
+        name: 'id',     // The name of the argument
+        type: 'string', // The argument's accepted datatype
+        desc: '...'     // the argument's description
+    }
+    ```
+
+    - The `API Return Value Descriptor Array` contains objects called `API Return Value Descriptors`. The contents of these objects are used to describe the possible return values/response that are given by the API (for documentation purposes only; they do not influence the API's behavior). An `API Return Value Descriptor` takes the following form:
+
+    ```javascript
+    {
+        condition: 'On success',    // The condition to receive this response
+        desc: 'Returns code 200'    // A description of the response
+    }
+    ```
+
+    - The `ExpressJS Endpoint Handler` is a function (or a reference to one) that defines how the API endpoint should behave. This is where you control what the API can do and how it should respond. For more details on how to create this function, see ExpressJS's [website](https://expressjs.com/en/guide/writing-middleware.html). It takes the following form:
+
+    ```javascript
+    function( request, response, next ) {
+
+        // Do thing(s) here...
+        // NOTE: The "next" parameter is optional; see ExpressJS Website for
+        // more details.
+    }
+    ```
+
+1. `Repeat`
+    - You may repeat step 2 for as many API endpoints as you like.
 
 ---
