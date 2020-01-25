@@ -2,7 +2,7 @@
 //	@Name:						R. Javier
 //	@File:						util.js
 //	@Date Created:		2019-10-17
-//	@Last Modified:	2019-10-18
+//	@Last Modified:	  2020-01-24
 //	@Details:
 //									Defines general utility functions.
 //	@Dependencies:
@@ -17,6 +17,33 @@ var fs = require( 'fs' );
 
 // BEGIN Util (Singleton)
 const Util = {
+  // @function			getCompatiblePath()
+  // @description		Transforms the given path string to a compatible path string
+  //	              for the given OS.
+  // @parameters		(string) path         The path string convert.
+  //	              (string) os           A string representing the machine's
+  //	                                    operating system. Taken from a call
+  //	                                    to Util.getPlatform().
+  // @returns				(string) result       A new string with path slashes changed
+  //	                                    to appropriate slashes for the given
+  //	                                    OS.
+  getCompatiblePath: function( path, os ) {
+
+    let result;
+    switch( os ) {
+      case 'Windows': {
+        result = path.replace( /\//gi, '\\' );
+        break;
+      }
+      default: {
+        result = path.replace( /\\/gi, '/' );
+        break;
+      }
+    }
+
+    return result;
+  },
+
   // @function			getPlatform()
   // @description		This function determines which platform this server is on.
   // @parameters		n/a
@@ -58,7 +85,9 @@ const Util = {
   // @parameters		n/a
   // @returns				n/a
   printEmblem: function() {
-    console.log( '\n' + fs.readFileSync( `${settings.util}/common/emblem.txt` ).toString() );
+    console.log( '\n' + fs.readFileSync(
+      `${settings.util ? settings.util : __dirname }/common/emblem.txt`
+    ).toString() );
   },
 
   // @function			trimLeadingSlash()

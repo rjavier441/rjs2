@@ -10,6 +10,7 @@
 
 "use strict";
 const DependencyInjectee = require( './class/dependencyInjectee.js' );
+const Util = require('./util.js');
 
 class ServerSettings extends DependencyInjectee {
 
@@ -17,6 +18,9 @@ class ServerSettings extends DependencyInjectee {
   // @parameters		n/a
   constructor() {
     super();
+
+    // Get the current platform
+    this.platform = Util.getPlatform();
 
     // Sets the time to live (in minutes) for cookies/tokens before expiration
     this.cookieLifetime = 60 * 6;   // 6 hours
@@ -55,6 +59,53 @@ class ServerSettings extends DependencyInjectee {
     // The directory under which the server can find its utility classes/
     // libraries
     this.util = __dirname;
+
+    // Apply any OS compability changes on the fly
+    this.resolveCompatibility( this.platform );
+  }
+
+  // @function			resolveCompatibility()
+  // @description		Modifies various settings for compatibility.
+  // @parameters		(string) os           The name of the system's OS acquired
+  //	                                    from a call to Util.getPlatform(). 
+  // @returns				n/a
+  resolveCompatibility( os ) {
+
+    let osSensitivePaths = [
+      'logdir',
+      'root',
+      'ssl',
+      'templateDir',
+      'util'
+    ];
+
+    // Apply compatibility changes
+    switch( os ) {
+      case 'Windows': {
+
+        // Handle OS-Sensitive Paths
+        Object.keys( this ).forEach( ( key ) => {
+
+          // Replace Windows path backslashes with Linux forward slashes
+          if( osSensitivePaths.includes( key ) ) {
+            this[key] = Util.getCompatiblePath( this[key], 'Linux' );
+          }
+        } );
+
+        // Handle serverPath
+        let tempDirname = Util.getCompatiblePath( __dirname, 'Linux' );
+        this.serverPath = tempDirname.substring(
+          0,
+          tempDirname.indexOf( '/util' )
+        );
+        break;
+      }
+      default: {
+
+        // Do nothing
+        break;
+      }
+    }
   }
 };
 
