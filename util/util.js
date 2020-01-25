@@ -2,7 +2,7 @@
 //	@Name:						R. Javier
 //	@File:						util.js
 //	@Date Created:		2019-10-17
-//	@Last Modified:	2019-10-18
+//	@Last Modified:	  2020-01-24
 //	@Details:
 //									Defines general utility functions.
 //	@Dependencies:

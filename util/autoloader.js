@@ -369,6 +369,10 @@ class Autoloader extends DependencyInjectee {
           },
           ( error ) => {
             if( error ) {
+
+              // DEBUG
+              console.log( 'ERROR:\n', error );
+              console.log( 'File:', file );
   
               let errorPacket = new this._dep.ServerError( error );
               this._dep.Logger.log(
@@ -561,6 +565,11 @@ class Autoloader extends DependencyInjectee {
           // After traversing recursively, check if the entity is a permitted
           // file before mounting it
           if( entityInfo.isFile() && !['.', '..'].includes( entityName ) ) {
+
+            // Windows Compatibility: Remove leading "C:/"
+            if( this._dep.Util.getPlatform() === 'Windows' ) {
+              entityPath = entityPath.substr(3);
+            }
 
             // Mount static file here
             this.mountStaticContent( app, entityMount, entityPath );
