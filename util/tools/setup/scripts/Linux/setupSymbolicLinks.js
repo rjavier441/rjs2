@@ -4,7 +4,7 @@
 //	@Date Created:	2019-11-17
 //	@Last Modified:	2019-11-17
 //	@Details:
-//									Script that setups up symbolic links
+//									Script that sets up symbolic links
 //	@Dependencies:
 //									NodeJS v8+
 

@@ -1,10 +1,10 @@
 //	@PROJECT:				rjs2
 //	@Name:					R. Javier
 //	@File:					checkForNodeJS.js
-//	@Date Created:	2019-10-19
-//	@Last Modified:	2019-10-19
+//	@Date Created:	2020-01-24
+//	@Last Modified:	2020-01-24
 //	@Details:
-//									Defines a NodeJS verification routine for Linux.
+//									Defines a NodeJS verification routine for Windows.
 //	@Dependencies:
 //									NodeJS v8+
 
