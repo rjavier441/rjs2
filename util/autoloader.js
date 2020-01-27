@@ -24,15 +24,6 @@ const DependencyInjectee = require(
   `${settings.util}/class/dependencyInjectee.js`
 );
 
-// Dependencies
-// const ejs = require( 'ejs' );
-// const fs = require( 'fs' );
-// const HandlerTag = require( `${settings.util}/class/handlerTag.js` );
-// const Logger = require( `${settings.util}/logger.js` );
-// const ServerError = require( `${settings.util}/class/serverError.js` );
-// const ServerResponse = require( `${settings.util}/class/serverResponse.js` );
-// const Util = require( `${settings.util}/util.js` )
-
 // BEGIN Autoloader Config Documentation
 // @config        _alconfig.json
 // @description   A file that configures the way Autoloader handles the contents
@@ -177,7 +168,22 @@ const DependencyInjectee = require(
 class Autoloader extends DependencyInjectee {
 
   // @ctor
-  // @parameters		n/a
+  // @parameters		(object) deps         An object containing dependencies
+  //	                                    injected by the caller. The following
+  //	                                    dependencies are required:
+  // @dependencies
+  //                ejs = require( 'ejs' );
+  //                fs = require( 'fs' );
+  //                path = require( 'path' );
+  //                HandlerTag = require( `${settings.util}/class/handlerTag.js` );
+  //                Logger = require( `${settings.util}/logger.js` );
+  //                ServerError = require(
+  //                  `${settings.util}/class/serverError.js`
+  //                );
+  //                ServerResponse = require(
+  //	                `${settings.util}/class/serverResponse.js`
+  //	              );
+  //                Util = require( `${settings.util}/util.js` );
   constructor( deps ) {
     super( deps );
   }
@@ -207,15 +213,16 @@ class Autoloader extends DependencyInjectee {
       this._dep.Logger.log( `Loading from "${root}"`, ht );
 
       this.traverse( app, '/', root );
-
+      
       this.mountNotFound( app );
     } catch( exception ) {
-
+      
       // DEBUG
       // throw exception;
-      // console.error( 'loadFromRoot() exception:', exception.eobj );
+      // console.log( 'loadFromRoot() exception:', exception );
+      // console.log( __line.toString().split( ',' ) );
 
-      let msg = new this._dep.ServerError( `{"Exception (${ht.src})": ${exception}}`, {
+      let msg = new this._dep.ServerError( `{"Exception (${ht.src})": ${JSON.stringify(exception.message)}}`, {
         exception: exception
       } );
       this._dep.Logger.log(
@@ -223,7 +230,7 @@ class Autoloader extends DependencyInjectee {
         `${exception.name}: ${exception.message}`,
         ht
       );
-      throw msg.message; // test
+      throw msg; // mark
     }
   }
 
@@ -255,7 +262,7 @@ class Autoloader extends DependencyInjectee {
       // DEBUG
       // console.error( 'exception:', exception.message );
 
-      let msg = new this._dep.ServerError( `{"Exception (${ht.src})": ${exception}}`, {
+      let msg = new this._dep.ServerError( `{"Exception (${ht.src})": ${JSON.stringify(exception.message)}}`, {
         exception: exception
       } );
       this._dep.Logger.log(
@@ -263,7 +270,7 @@ class Autoloader extends DependencyInjectee {
         `${exception.name}: ${exception.message}`,
         ht
       );
-      throw msg.message; // test
+      throw msg; // mark
     }
   }
 
@@ -319,7 +326,7 @@ class Autoloader extends DependencyInjectee {
       } );
     } catch( exception ) {
       
-      let msg = new this._dep.ServerError( `{"Exception (${ht.src})": ${exception}}`, {
+      let msg = new this._dep.ServerError( `{"Exception (${ht.src})": ${JSON.stringify(exception.message)}}`, {
         exception: exception
       } );
       this._dep.Logger.log(
@@ -327,7 +334,7 @@ class Autoloader extends DependencyInjectee {
         `${exception.name}: ${exception.message}`,
         ht
       );
-      throw msg.message; // test
+      throw msg; // mark
     }
   }
 
@@ -471,7 +478,7 @@ class Autoloader extends DependencyInjectee {
       } );
     } catch( exception ) {
 
-      let msg = new this._dep.ServerError( `{"Exception (${ht.src})": ${exception}}`, {
+      let msg = new this._dep.ServerError( `{"Exception (${ht.src})": ${JSON.stringify(exception.message)}}`, {
         exception: exception
       } );
       this._dep.Logger.log(
@@ -479,7 +486,7 @@ class Autoloader extends DependencyInjectee {
         `${exception.name}: ${exception.message}`,
         ht
       );
-      throw msg.message; // test
+      throw msg; // mark
     }
   }
 
@@ -589,7 +596,7 @@ class Autoloader extends DependencyInjectee {
       } );
     } catch( exception ) {
 
-      let msg = new this._dep.ServerError( `{"Exception (${ht.src})": ${exception}}`, {
+      let msg = new this._dep.ServerError( `{"Exception (${ht.src})": ${JSON.stringify(exception.message)}}`, {
         exception: exception
       } );
       this._dep.Logger.log(
@@ -601,7 +608,7 @@ class Autoloader extends DependencyInjectee {
       // // DEBUG
       // console.error( 'traverse() exception:', msg );
 
-      throw msg.message; // test
+      throw msg; // mark
     }
   }
 }
