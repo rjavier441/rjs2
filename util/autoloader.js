@@ -211,15 +211,19 @@ class Autoloader extends DependencyInjectee {
       this.mountNotFound( app );
     } catch( exception ) {
 
-      let msg = new this._dep.ServerError( 'Exception', {
+      // DEBUG
+      // throw exception;
+      // console.error( 'loadFromRoot() exception:', exception.eobj );
+
+      let msg = new this._dep.ServerError( `{"Exception (${ht.src})": ${exception}}`, {
         exception: exception
       } );
       this._dep.Logger.log(
         `Failed to load root from ${root}: ` +
-        `${msg.eobj.exception.name}: ${msg.eobj.exception.message}`,
+        `${exception.name}: ${exception.message}`,
         ht
       );
-      throw msg.asString();
+      throw msg.message; // test
     }
   }
 
@@ -248,15 +252,18 @@ class Autoloader extends DependencyInjectee {
       app.use( mount, require( file ) );
     } catch( exception ) {
       
-      let msg = new this._dep.ServerError( 'Exception', {
+      // DEBUG
+      // console.error( 'exception:', exception.message );
+
+      let msg = new this._dep.ServerError( `{"Exception (${ht.src})": ${exception}}`, {
         exception: exception
       } );
       this._dep.Logger.log(
         `Failed to mount ${mount}: ` +
-        `${msg.eobj.exception.name}: ${msg.eobj.exception.message}`,
+        `${exception.name}: ${exception.message}`,
         ht
       );
-      throw msg.asString();
+      throw msg.message; // test
     }
   }
 
@@ -312,15 +319,15 @@ class Autoloader extends DependencyInjectee {
       } );
     } catch( exception ) {
       
-      let msg = new this._dep.ServerError( 'Exception', {
+      let msg = new this._dep.ServerError( `{"Exception (${ht.src})": ${exception}}`, {
         exception: exception
       } );
       this._dep.Logger.log(
         `Failed to mount "Not Found" general endpoint: ` +
-        `${msg.eobj.exception.name}: ${msg.eobj.exception.message}`,
+        `${exception.name}: ${exception.message}`,
         ht
       );
-      throw msg.asString();
+      throw msg.message; // test
     }
   }
 
@@ -464,15 +471,15 @@ class Autoloader extends DependencyInjectee {
       } );
     } catch( exception ) {
 
-      let msg = new this._dep.ServerError( 'Exception', {
+      let msg = new this._dep.ServerError( `{"Exception (${ht.src})": ${exception}}`, {
         exception: exception
       } );
       this._dep.Logger.log(
         `Failed to mount ${mount}: ` +
-        `${msg.eobj.exception.name}: ${msg.eobj.exception.message}`,
+        `${exception.name}: ${exception.message}`,
         ht
       );
-      throw msg.asString();
+      throw msg.message; // test
     }
   }
 
@@ -550,9 +557,13 @@ class Autoloader extends DependencyInjectee {
         // Check if this entity is mapped to a middleware controller
         if( config && config.apps && config.apps[entityName] ) {
 
-          // TODO: Mount the entity as an middleware-controlled endpoint and
-          // stop all further processing for it.
-          
+          // TODO: Mount the entity as a middleware-controlled endpoint and stop
+          // all further processing for it.
+          this.mountMiddleware(
+            app,
+            entityMount,
+            `${dir}/${config.apps[entityName]}`
+          );
         } else {
 
           // Check if this entity is a directory
@@ -578,15 +589,19 @@ class Autoloader extends DependencyInjectee {
       } );
     } catch( exception ) {
 
-      let msg = new this._dep.ServerError( 'Exception', {
+      let msg = new this._dep.ServerError( `{"Exception (${ht.src})": ${exception}}`, {
         exception: exception
       } );
       this._dep.Logger.log(
         `Failed to traverse ${dir}: ` +
-        `${msg.eobj.exception.name}: ${msg.eobj.exception.message}`,
+        `${exception.name}: ${exception.message}`,
         ht
       );
-      throw msg.asString();
+
+      // // DEBUG
+      // console.error( 'traverse() exception:', msg );
+
+      throw msg.message; // test
     }
   }
 }
