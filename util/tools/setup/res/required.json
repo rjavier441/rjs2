@@ -15,6 +15,7 @@
   "dir": [
     "log",
     "public",
+    "public/api",
     "public/home",
     "public/home/app",
     "public/home/app/routes",
@@ -39,15 +40,11 @@
     "util/common/res",
     "util/common/res/img",
     "util/common/res/img/favicon_io rjsFavicon",
-    "util/common/res/img/favicon_io_rjsLogo",
-    "api",
-    "api/app",
-    "api/app/routes",
-    "api/app/routes/sample",
-    "api/app/routes/api_skeleton"
+    "util/common/res/img/favicon_io_rjsLogo"
   ],
   "file": [
     "public/_alconfig.json",
+    "public/api/app.js",
     "public/home/_alconfig.json",
     "public/home/favicon.ico",
     "public/home/index.html",
@@ -87,25 +84,18 @@
     "public/sampleWebApp/widget/clock/clock.css",
     "public/sampleWebApp/widget/clock/clock.js",
     "public/skeleton/favicon.ico",
-    "public/test/favicon.ico",
     "util/common/res/img/favicon_io rjsFavicon/android-chrome-192x192.png",
     "util/common/res/img/favicon_io rjsFavicon/android-chrome-512x512.png",
     "util/common/res/img/favicon_io rjsFavicon/apple-touch-icon.png",
     "util/common/res/img/favicon_io rjsFavicon/favicon-16x16.png",
     "util/common/res/img/favicon_io rjsFavicon/favicon-32x32.png",
     "util/common/res/img/favicon_io rjsFavicon/favicon.ico",
-    "util/common/res/img/favicon_io rjsFavicon/site.webmanifest",
     "util/common/res/img/favicon_io_rjsLogo/android-chrome-192x192.png",
     "util/common/res/img/favicon_io_rjsLogo/android-chrome-512x512.png",
     "util/common/res/img/favicon_io_rjsLogo/apple-touch-icon.png",
     "util/common/res/img/favicon_io_rjsLogo/favicon-16x16.png",
     "util/common/res/img/favicon_io_rjsLogo/favicon-32x32.png",
-    "util/common/res/img/favicon_io_rjsLogo/favicon.ico",
-    "util/common/res/img/favicon_io_rjsLogo/site.webmanifest",
-    "api/app/app.js",
-    "api/app/routes/autoloader_ignore.json",
-    "api/app/routes/api_skeleton/index.js",
-    "api/app/routes/sample/index.js"
+    "util/common/res/img/favicon_io_rjsLogo/favicon.ico"
   ],
   "symlink": [
     { "name": "mocha", "destination": "node_modules/mocha/bin/mocha" }

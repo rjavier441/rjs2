@@ -77,9 +77,10 @@ function main( argv ) {
 	} ) );
 	// app.use( express.static( _lib.settings.root ) );
 
-	// BEGIN rjTest
+	// BEGIN DEPRECATED 2020-02-01: Replaced with new API creation scheme
 	// Load and mount APIs under "/api" using the old API Autoloader
-	app.use( '/api', require( './api/app/app.js' ) );		// RESTful APIs
+	// app.use( '/api', require( './api/app/app.js' ) );		// RESTful APIs
+	// END DEPRECATED 2020-02-01: Replaced with new API creation scheme
 	
 	// Load and mount static content in the server root using the new Autoloader
 	( new _lib.AutoLoader( {

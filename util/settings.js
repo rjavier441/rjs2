@@ -32,7 +32,7 @@ class ServerSettings extends DependencyInjectee {
     this.hostname = "";
     
     // The directory under which the server stores its log files under
-    this.logdir = __dirname + "/../log";
+    this.logdir = (__dirname + "/../log").replace(/util\/\.\.\//gi,'');
 
     // Various metadata for the server
     this.meta = {
@@ -45,7 +45,7 @@ class ServerSettings extends DependencyInjectee {
     
     // The public content root directory where publicly accessible content will
     // be stored (a.k.a. the "Server Root")
-    this.root = __dirname + "/../public";
+    this.root = (__dirname + "/../public").replace(/util\/\.\.\//gi,'');
 
     // The server's directory (a.k.a. the "Server Path")
     this.serverPath = __dirname.substring( 0, __dirname.indexOf( '/util' ) );

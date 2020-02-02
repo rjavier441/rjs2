@@ -1,10 +1,10 @@
-# rjs2 User Guide: Creating APIs
+# (DEPRECATED) rjs2 User Guide: Creating APIs
 
-An in-depth guide explaining how to create APIs to mount on the server.
+~~An in-depth guide explaining how to create APIs to mount on the server.~~ This Guide has been _**deprecated**_, and should not be used.
 
-Current Version: v0.0.0 (Alpha)
+Current Version: v0.0.3 (Alpha)
 
-Last Updated: 2019-11-30
+Last Updated: 2020-02-01
 
 ---
 

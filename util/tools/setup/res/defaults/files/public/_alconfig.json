@@ -3,8 +3,10 @@
 		"home": "/"
 	},
 	"exclude": {
-		"api": false,
 		"lib": false,
 		"test": false
+	},
+	"apps": {
+		"api": "api/app.js"
 	}
 }
