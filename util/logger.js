@@ -225,13 +225,27 @@ Logger.prototype.log = function (msg, options = {
 					if (Logger.prototype.logToConsole === true) {
 						var contextMessage = Logger.prototype.logContextMessaging ? 
 							`(Log Error occurred for ${filename}) [UNLOGGED] ` : '';
-						console.log(`${contextMessage}${msgFromQueue}`);
+						var consoleMsgFromQueue = msgFromQueue.replace( '[', '[\x1b[31m')
+							.replace( ']', '\x1b[0m]');
+						
+						if( sourceTag.length > 0 ) {
+							consoleMsgFromQueue = consoleMsgFromQueue.replace(
+								' <', ' <\x1b[33m' ).replace( '>', '\x1b[0m>');
+						}
+						console.log(`${contextMessage}${consoleMsgFromQueue}`);
 					}
 				} else {
 					if (Logger.prototype.logToConsole === true) {
 						var contextMessage = Logger.prototype.logContextMessaging ?
-							`(Logged to ${filename} from queue) ` : '';
-						console.log(`${contextMessage}${msgFromQueue}`);
+						`(Logged to ${filename} from queue) ` : '';
+						var consoleMsgFromQueue = msgFromQueue.replace( '[', '[\x1b[32m')
+							.replace( ']', '\x1b[0m]');
+							
+						if( sourceTag.length > 0 ) {
+							consoleMsgFromQueue = consoleMsgFromQueue.replace(
+								' <', ' <\x1b[33m' ).replace( '>', '\x1b[0m>');
+						}
+						console.log(`${contextMessage}${consoleMsgFromQueue}`);
 					}
 				}
 			});

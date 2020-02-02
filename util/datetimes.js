@@ -46,6 +46,8 @@ datetimes.format = function( date = new Date( Date.now() ), format = 'ymd' ) {
 	let minutes = `${date.getMinutes() < 10 ? '0' : ''}${date.getMinutes()}`;
 	let seconds = `${date.getSeconds() < 10 ? '0' : ''}${date.getSeconds()}`;
 	let tzOffset = date.getTimezoneOffset();	// in minutes
+	let tzHours = Math.floor(tzOffset / 60);
+	let tzMinutes = tzOffset % 60;
 	
 	switch( format ) {
 		case 'ymd': {
@@ -59,8 +61,6 @@ datetimes.format = function( date = new Date( Date.now() ), format = 'ymd' ) {
 		case 'ymdhmso': {
 			str = `${year}-${month}-${day} ${hours}:${minutes}:${seconds} UTC`;
 			str += `${tzOffset < 0 ? '+' : '-'}`;
-			let tzHours = Math.floor(tzOffset / 60);
-			let tzMinutes = tzOffset % 60;
 			str += `${tzHours < 10 ? '0' : ''}${tzHours}:`;
 			str += `${tzMinutes < 10 ? '0' : ''}${tzMinutes}`;
 			break;
