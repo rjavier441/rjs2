@@ -1,27 +1,31 @@
-//	@PROJECT: 		rjs2
-// 	@Name: 			R. Javier
-// 	@File: 			logger.js
+//	@PROJECT: 			rjs2
+// 	@Name: 					R. Javier
+// 	@File: 					logger.js
 // 	@Date Created: 	2019-09-28
-// 	@Last Modified: 	2019-10-13
+// 	@Last Modified: 2020-02-01
 // 	@Details:
-// 					This file provides server.js with a means to log events to log files
-//					in the log directory. Note that this logger library is NOT
-//					compatible with RJS v1 and below.
+// 									This file provides server.js with a means to log events to
+//									log files in the log directory. Note that this logger library
+//									is NOT compatible with RJS v1 and below.
 // 	@Dependencies:
-// 					NodeJS (using ECMAscript 6 style JS)
+// 									NodeJS (using ECMAscript 6 style JS)
 //	@Note:
-//					It is important to note that the idea of a "const" in JS doesn't mean "is constant", but rather, that "it can only be assigned ONCE", and thus all references to the "logger" singleton are "constant" (i.e. referencing the exact same object in memory). The logger singleton is still, therefore, not immutable, unless frozen with object.freeze().
+//									It is important to note that the idea of a "const" in JS
+//									doesn't mean "is constant", but rather, that "it can only be
+//									assigned ONCE", and thus all references to the "logger"
+//									singleton are "constant" (i.e. referencing the exact same
+//									object in memory). The logger singleton is still, therefore,
+//									not immutable, unless frozen with object.freeze().
 
 "use strict"
 const fs = require("fs");
 const DependencyInjectee = require( './class/dependencyInjectee.js' );
-const util = require("util");
-const settings = require("./settings");
+const _lib = require( './_lib_optin.js' )._optin( [
+	'settings',
+	'DateTimes',
+	'Util'
+] );
 
-
-
-// Container (Singleton)
-// const logger = {};
 
 // BEGIN class Logger
 class Logger extends DependencyInjectee {
@@ -55,6 +59,12 @@ Logger.prototype.dataQueue = ["\n****\nInitializing event log system...\n****\n"
 // @description		If true, this member will force the logger to log its message 
 //								to both the logfile and the console. Defaults to true.
 Logger.prototype.logToConsole = true;
+
+// @property			Logger.prototype.logContextMessaging
+// @description		If true, log context messages and logger errors will be shown;
+//								in console. This flag has no effect if `logToConsole` is not
+//								true. This defaults to false
+Logger.prototype.logContextMessaging = false;
 
 // @property			Logger.prototype.blacklist
 // @description		This member is used to list which handlers' messages should 
@@ -146,7 +156,7 @@ Logger.prototype.interpret = function ( tagNames ) {
 				In contrast to log file logging, all console.log() calls may or may not appear in the server console in the order they are written
 */
 Logger.prototype.log = function (msg, options = {
-	"addNL": true,
+	"addNL": false,
 	"pad": 0,
 	"src": undefined
 }) {
@@ -155,7 +165,7 @@ Logger.prototype.log = function (msg, options = {
 	var month = date.getMonth() + 1;
 	var day = date.getDate();
 	var year = date.getFullYear();
-	var timestamp = "[" + date.toTimeString() + "] ";
+	var timestamp = "[" + _lib.DateTimes.format( date, 'ymdhmso' ) + "] ";
 	var padding = "";
 	var sourceTag = "";
 
@@ -205,20 +215,23 @@ Logger.prototype.log = function (msg, options = {
 
 		// Create (absolute) filepath to search for
 		var filename = `${Logger.prototype.logHeader}${datestr}`;
-		var filepath = `${settings.logdir}/${filename}`;
+		var filepath = `${_lib.settings.logdir}/${filename}`;
 
 		// Flush dataQueue message(s) to logfile
 		while (Logger.prototype.dataQueue.length > 0) {
 			var msgFromQueue = Logger.prototype.dataQueue.shift();	// removes from front of array
-			fs.appendFile(filepath, msgFromQueue, "utf8", function (error) {
+			fs.appendFile(filepath, msgFromQueue + '\n', "utf8", function (error) {
 				if (error) {
 					if (Logger.prototype.logToConsole === true) {
-						console.log(`(Log Error occurred for ${filename}) [UNLOGGED] ${msgFromQueue}`);
-						// console.log(error);
+						var contextMessage = Logger.prototype.logContextMessaging ? 
+							`(Log Error occurred for ${filename}) [UNLOGGED] ` : '';
+						console.log(`${contextMessage}${msgFromQueue}`);
 					}
 				} else {
 					if (Logger.prototype.logToConsole === true) {
-						console.log(`(Logged to ${filename} from queue) ${msgFromQueue}`);
+						var contextMessage = Logger.prototype.logContextMessaging ?
+							`(Logged to ${filename} from queue) ` : '';
+						console.log(`${contextMessage}${msgFromQueue}`);
 					}
 				}
 			});

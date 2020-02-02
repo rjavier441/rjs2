@@ -2,7 +2,7 @@
 //	@Name:						R.Javier
 //	@File:						handlerTag.js
 //	@Date Created:		2019-10-06
-//	@Last Modified:	  2019-11-01
+//	@Last Modified:	  2020-02-01
 //	@Details:
 //									  Defines a class from which a logger module can extract
 //	                  function details.
@@ -45,7 +45,7 @@ class HandlerTag {
   constructor( ref, type = 'function' ) {
 
     // Define Public Properties
-    this.addNL = true;
+    this.addNL = false;
     this.fname = null;
     this.padding = 0;   // newline padding between a comment and previous
                         // cursor
