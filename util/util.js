@@ -1,8 +1,8 @@
 //	@PROJECT:				rjs2
-//	@Name:						R. Javier
-//	@File:						util.js
-//	@Date Created:		2019-10-17
-//	@Last Modified:	  2020-01-24
+//	@Name:					R. Javier
+//	@File:					util.js
+//	@Date Created:	2019-10-17
+//	@Last Modified:	2020-02-01
 //	@Details:
 //									Defines general utility functions.
 //	@Dependencies:
@@ -11,8 +11,10 @@
 'use strict';
 
 // BEGIN includes
-var settings = require( './settings.js' );
-var fs = require( 'fs' );
+const _lib = require( './_lib_optin.js')._optin( [
+  'settings'
+] );
+const fs = require( 'fs' );
 // END includes
 
 // BEGIN Util (Singleton)
@@ -86,7 +88,7 @@ const Util = {
   // @returns				n/a
   printEmblem: function() {
     console.log( '\n' + fs.readFileSync(
-      `${settings.util ? settings.util : __dirname }/common/emblem.txt`
+      `${_lib.settings.util ? _lib.settings.util : __dirname }/common/emblem.txt`
     ).toString() );
   },
 
