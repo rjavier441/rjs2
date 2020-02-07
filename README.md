@@ -2,9 +2,9 @@
 
 A complete redesign of RJS, a server package meant to run a MExN web stack. It comes fully equipped to run as either a Web Server or a RESTful API server, giving you the freedom to customize it to your needs.
 
-Current Version: v0.0.32 (Alpha)
+Current Version: v1.0.66 (Alpha)
 
-Last Updated: 2020-01-26
+Last Updated: 2020-02-07
 
 ---
 
