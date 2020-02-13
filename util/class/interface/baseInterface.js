@@ -86,7 +86,7 @@ class BaseInterface extends Object {
       
       this.__$interfaceContract.methods.forEach( ( methodName ) => {
 
-        if( typeof this[methodName] === 'undefined' ) {
+        if( typeof this[methodName] !== 'function' ) {
           throw new Error( `Undefined interface method ${this.constructor.name}.${methodName}` );
         }
       } );
