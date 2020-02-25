@@ -1,0 +1,37 @@
+{
+  "dbs": {
+    "rjs2": {
+      "info": {},
+      "tables": {
+        "test_messages":{
+          "schema": {
+            "tableName": "test_messages",
+            "columns": {
+              "id": "int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT",
+              "userid": "varchar(100) NOT NULL",
+              "message": "varchar(500)"
+            },
+            "constraints": {}
+          },
+          "rows": [
+            { "id": 0, "userId": "user0", "message": "Hello World!Sat Feb 22 2020 10:41:32 GMT-0800 (Pacific Standard Time))" },
+            { "id": 1, "userId": "user1", "message": "Hello World!Sat Feb 22 2020 10:41:32 GMT-0800 (Pacific Standard Time))" },
+            { "id": 2, "userId": "user2", "message": "Hello World!Sat Feb 22 2020 10:41:32 GMT-0800 (Pacific Standard Time))" },
+            { "id": 3, "userId": "user3", "message": "Hello World!Sat Feb 22 2020 10:41:32 GMT-0800 (Pacific Standard Time))" },
+            { "id": 4, "userId": "user0", "message": "Hello World!Sat Feb 22 2020 10:41:32 GMT-0800 (Pacific Standard Time))" },
+            { "id": 5, "userId": "user1", "message": "Hello World!Sat Feb 22 2020 10:41:32 GMT-0800 (Pacific Standard Time))" },
+            { "id": 6, "userId": "user2", "message": "Hello World!Sat Feb 22 2020 10:41:32 GMT-0800 (Pacific Standard Time))" },
+            { "id": 7, "userId": "user3", "message": "Hello World!Sat Feb 22 2020 10:41:32 GMT-0800 (Pacific Standard Time))" },
+            { "id": 8, "userId": "user0", "message": "Hello World!Sat Feb 22 2020 10:41:32 GMT-0800 (Pacific Standard Time))" },
+            { "id": 9, "userId": "user1", "message": "Hello World!Sat Feb 22 2020 10:41:32 GMT-0800 (Pacific Standard Time))" },
+            { "id": 10, "userId": "user2", "message": "Hello World!Sat Feb 22 2020 10:41:32 GMT-0800 (Pacific Standard Time))" },
+            { "id": 11, "userId": "user3", "message": "Hello World!Sat Feb 22 2020 10:41:32 GMT-0800 (Pacific Standard Time))" },
+            { "id": 12, "userId": "user0", "message": "Hello World!Sat Feb 22 2020 10:41:32 GMT-0800 (Pacific Standard Time))" },
+            { "id": 13, "userId": "user1", "message": "Hello World!Sat Feb 22 2020 10:41:32 GMT-0800 (Pacific Standard Time))" },
+            { "id": 14, "userId": "user2", "message": "Hello World!Sat Feb 22 2020 10:41:32 GMT-0800 (Pacific Standard Time))" }
+          ]
+        }
+      }
+    }
+  }
+}

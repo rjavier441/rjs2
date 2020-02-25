@@ -34,11 +34,9 @@ const _Lib = {
   // Top-Level Libraries
   settings: __dirname + '/settings.js',
   ApiLegend: __dirname + '/api_legend.js',
-  // BEGIN rjTest
-  // AutoLoader: __dirname + '/route_autoloader.js',
   AutoLoader: __dirname + '/autoloader.js',
-  // END rjTest
   ColorLogger: __dirname + '/colorLogger.js',
+  Cryptic: __dirname + '/cryptic.js',
   DateTimes: __dirname + '/datetimes.js',
   Logger: __dirname + '/logger.js',
   StaticAutoLoader: __dirname + '/static_autoloader.js',
