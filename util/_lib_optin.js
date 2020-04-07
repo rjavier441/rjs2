@@ -33,12 +33,14 @@ const _Lib = {
 
   // Top-Level Libraries
   settings: __dirname + '/settings.js',
+  AccessControl: __dirname + '/accessControl.js',
   ApiLegend: __dirname + '/api_legend.js',
   AutoLoader: __dirname + '/autoloader.js',
   ColorLogger: __dirname + '/colorLogger.js',
   Cryptic: __dirname + '/cryptic.js',
   DateTimes: __dirname + '/datetimes.js',
   Logger: __dirname + '/logger.js',
+  MysqlUtil: __dirname + '/mysqlUtil.js',
   StaticAutoLoader: __dirname + '/static_autoloader.js',
   SslManager: __dirname + '/sslManager.js',
   TemplateManager: __dirname + '/templateManager.js',
