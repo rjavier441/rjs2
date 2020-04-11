@@ -1,8 +1,8 @@
 //	@PROJECT: 				rjs2
 // 	@Name: 						Rolando Javier
 // 	@File: 						ApiLegend.js
-// 	@Date Created: 		September 1, 2018
-// 	@Last Modified: 	September 1, 2018
+// 	@Date Created: 		2018-09-01
+// 	@Last Modified: 	2020-04-11
 // 	@Details:
 // 										This file houses the class definition of the ApiLegend
 //										object.
@@ -54,7 +54,7 @@ class ApiLegend {
 // @parameters		(string) name		the name of the API endpoint
 //					(string) method		a string representing the request method to registers
 //										this endpoint as. Currently supported values include
-//										"get", "post", "put", "delete" (case-insensitive)
+//										"get", "patch", "post", "put", "delete" (case-insensitive)
 //					(string) route		the endpoint route path with respect to the API
 //										Module's root endpoint
 //					(string) desc		a brief description of the API endpoint
@@ -131,6 +131,12 @@ ApiLegend.prototype.register = function ( name, method, route, desc, args, retur
 			case "GET": {
 	
 				this.router.get( endpoint.route, cb );
+				break;
+			}
+
+			case "PATCH": {
+
+				this.router.patch( endpoint.route, cb );
 				break;
 			}
 	
