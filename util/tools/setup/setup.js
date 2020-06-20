@@ -143,11 +143,12 @@ function main( argv ) {
   var doAll = _lib.Util.isset( args.A );
   var doDirOnly = _lib.Util.isset( args.D );
   var doFilesOnly = _lib.Util.isset( args.F );
+  var doMySqlOnly = _lib.Util.isset( args.M );
   var doSymlinksOnly = _lib.Util.isset( args.S );
   var doLibOnly = _lib.Util.isset( args.L );
   var doOneOnly = _lib.Util.isset( args.e );
   var missingReqdCmd = !doAll && !doDirOnly && !doLibOnly && !doFilesOnly &&
-    !doOneOnly && !doSymlinksOnly;
+    !doOneOnly && !doSymlinksOnly && !doMySqlOnly;
   if( args.h || args.help || missingReqdCmd ) {
 
     // Show help prompt
@@ -176,6 +177,9 @@ function main( argv ) {
   }
   if( doOneOnly ) {
     executionList = [ args.e ];
+  }
+  if( doMySqlOnly ) {
+    executionList = [ 'setupMySQL.js' ];
   }
   runScripts( _lib.Util.getPlatform(), executionList );
 
