@@ -5,6 +5,7 @@
 		"installNodeModules.js",
 		"setupRequiredDirs.js",
 		"setupRequiredFiles.js",
-		"setupSymbolicLinks.js"
+		"setupSymbolicLinks.js",
+		"setupMySQL.js"
 	]
 }

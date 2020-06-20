@@ -55,7 +55,7 @@ function script() {
     let q = `CREATE DATABASE IF NOT EXISTS ${credentials.database}`;
 
     // Begin by ensuring a mysql instance is installed and running 
-    _lib.ColorLogger.log( 'Checking for MySQL database...' );
+    _lib.ColorLogger.log( 'Checking for MySQL instance...' );
     let outputTxt = execSync('ps -a | grep mysqld');  // fails if the child
                                                       // process error code is
                                                       // non-zero
