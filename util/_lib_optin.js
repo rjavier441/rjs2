@@ -35,6 +35,7 @@ const _Lib = {
   settings: __dirname + '/settings.js',
   AccessControl: __dirname + '/accessControl.js',
   ApiLegend: __dirname + '/api_legend.js',
+  ApiUtil: __dirname + '/api_util.js',
   AutoLoader: __dirname + '/autoloader.js',
   ColorLogger: __dirname + '/colorLogger.js',
   Cryptic: __dirname + '/cryptic.js',
