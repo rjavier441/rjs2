@@ -20,6 +20,7 @@ const SslManager = require( './sslManager.js' );
 
 // Globals
 const verifyKey = Buffer.from( SslManager.publicKey.toString(), 'utf8' );
+const signKey = Buffer.from( SslManager.privateKey.toString(), 'utf8' );
 
 // BEGIN class AccessControl
 class AccessControl {
@@ -101,7 +102,130 @@ class AccessControl {
       }
     } );
   }
+
+  // @function			registerToken()
+  // @description		Records a newly created JWT of the given type to the
+  //                appropriate internal database.
+  // @parameters		(Connection) conn     A reference to a MySQL connection.
+  //                (string) type         The token type. Valid types are:
+  //                                        "access"
+  //                                        "refresh"
+  //                (string) token        The token to register.
+  //                (number) exp          The number of seconds since epoch
+  //                                      indicating when the given refresh
+  //                                      token jwt expires.
+  // @returns				(Promise) promise     An executable promise. On success,
+  //                                      it resolves with the given token.
+  //                                      On failure, resolves with false.
+  //                                      Otherwise, rejects with an Error()
+  //                                      instance.
+  static registerToken( conn, type, token, exp ) {
+
+    return new Promise( ( resolve, reject ) => {
+
+      let ht = new HandlerTag(
+        'registerToken', 'string'
+      ).getTag();
+      
+      try {
+        // Determine token type and config db settings
+        let tokenType = ['access','refresh'].includes(type) ? type : false;
+        let dbNames = {access: 'access_tokens', refresh: 'refresh_tokens'};
+        if( !tokenType ) {
+          throw new Error(`Invalid token type '${type}'`);
+        }
+
+        // Create and execute query to record the token
+        let q = `INSERT INTO \`rjs2\`.\`${dbNames[type]}\` (token,` +
+          `expirationSeconds) VALUES (${[
+            conn.escape(token), conn.escape(exp)
+          ].join()})`;
+        conn.query( q, (error, results, fields ) => {
+          if( error ) {
+            throw error;
+          } else if( results && results.affectedRows < 1 ) {
+            Logger.log('No rows affected',ht);
+            resolve( false );
+          } else {
+            Logger.log( `Registered ${type} token`, ht );
+            resolve( {
+              token: token
+            } );
+          }
+        } );
+      } catch( exception ) {
+        Logger.log(
+          `Token registration failed (${type}): ${exception.toString()}`,
+          ht
+        );
+        reject( exception );
+      }
+    } );
+  }
+
+  // @function			generateAuthToken()
+  // @description		Generates an authentication token object of the given
+  //                type.
+  // @parameters		(string) username     The name of the user requesting a
+  //                                      new token*.
+  //                (number) id           The id of the user requesting a
+  //                                      new token*.
+  //                (string) type         The type of token to generate and
+  //                                      register. Valid types include:
+  //                                        "access"
+  //                                        "refresh"
+  // @returns				(object) tokenObj     On success, returns the generated
+  //                                      token object with the following
+  //                                      members:
+  //                  (string) token        The generated token string.
+  //                  (number) exp          The number of seconds since
+  //                                        epoch indicating when the given
+  //                                        token JWT expires.
+  //                                      Otherwise, an Error() instance is
+  //                                      thrown.
+  // @notes         *This information is typically embedded in the token.
+  static generateAuthToken( username, id, type ) {
+
+    let ht = new HandlerTag(
+      'generateAuthToken',
+      'string'
+    ).getTag();
+    try {
+      
+      // Validate type
+      if( !( ['access','refresh'].includes(type) ) ) {
+        throw new Error(`Invalid token type '${type}'`,ht);
+      }
+      
+      // Configure auth token content (i.e. should contain identifying
+      // info, no sensitive data) and metadata
+      let payload = { username: username, id: id };
+      let currentTime = Date.now()/1000;        // current time in seconds
+      let offset = 3600 * AccessControl.tokenTTL[type];  // ttl in seconds
+      let expiration = Math.floor( currentTime + offset );
+
+      // Return result
+      Logger.log( 'Generating auth token object', ht );
+      return {
+        token: jwt.sign(
+          { exp: expiration, data: payload },
+          signKey,
+          { algorithm: 'RS256' }
+        ),
+        exp: expiration
+      };
+    } catch( exception ) {
+      Logger.log(`Token generation failed: ${exception.toString()}`, ht);
+      throw exception;
+    }
+  }
 }
+
+// Define static properties
+AccessControl.tokenTTL = { // in hours
+  access: 1,
+  refresh: 24,
+};
 // END class AccessControl
 
 module.exports = AccessControl;
