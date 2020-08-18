@@ -69,11 +69,11 @@ class AccessControl {
         let srcDb;
         switch( type ) {
           case 'access': {
-            srcDb = 'access_tokens';
+            srcDb = 'app.user.access_tokens';
             break;
           }
           case 'refresh': {
-            srcDb = 'refresh_tokens';
+            srcDb = 'app.user.refresh_tokens';
             break;
           }
           default:
@@ -82,7 +82,7 @@ class AccessControl {
         }
 
         // Submit search query
-        let q = `SELECT * FROM rjs2.${srcDb} WHERE token = ${conn.escape(token)}`;
+        let q = `SELECT * FROM \`rjs2\`.\`${srcDb}\` WHERE token = ${conn.escape(token)}`;
         conn.query( q, ( error, results, fields ) => {
 
           if( error ) {
@@ -130,7 +130,7 @@ class AccessControl {
       try {
         // Determine token type and config db settings
         let tokenType = ['access','refresh'].includes(type) ? type : false;
-        let dbNames = {access: 'access_tokens', refresh: 'refresh_tokens'};
+        let dbNames = {access: 'app.user.access_tokens', refresh: 'app.user.refresh_tokens'};
         if( !tokenType ) {
           throw new Error(`Invalid token type '${type}'`);
         }
