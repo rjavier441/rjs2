@@ -19,6 +19,7 @@ const ejs = require( 'ejs' );
 const http = require( 'http' );
 const https = require( 'https' );
 const minimist = require( 'minimist' );
+const cookieParser = require( 'cookie-parser' );
 // END includes
 
 // BEGIN utility functions
@@ -76,6 +77,9 @@ function main( argv ) {
 		extended: true
 	} ) );
 	// app.use( express.static( _lib.settings.root ) );
+
+	// Add cookie parser
+	app.use( cookieParser() );
 
 	// BEGIN DEPRECATED 2020-02-01: Replaced with new API creation scheme
 	// Load and mount APIs under "/api" using the old API Autoloader

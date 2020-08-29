@@ -24,6 +24,9 @@ OPTIONS
   -F
     Runs the file setup routine only.
   
+  -M
+    Runs the rjs2 MySQL database setup routine only.
+  
   -L
     Runs the OS utility setup routine only.
 
