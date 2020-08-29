@@ -17,6 +17,7 @@ const HandlerTag = require( './class/handlerTag.js' );
 const jwt = require( 'jsonwebtoken' );
 const Logger = require( './logger.js' );
 const SslManager = require( './sslManager.js' );
+const Util = require('./util.js');
 
 // Globals
 const verifyKey = Buffer.from( SslManager.publicKey.toString(), 'utf8' );
@@ -28,6 +29,33 @@ class AccessControl {
   // @ctor
   // @parameters		n/a
   constructor() {}
+
+  // @function			cookieHasToken()
+  // @description		Checks to make sure the specified token cookie was
+  //                found.
+  // @parameters		(object) request      The web request object provided by
+  //                                      express.js.
+  //                (string) type         The type of token to search for in
+  //                                      the cookies. Valid types* include:
+  //                                        "access"
+  //                                        "refresh"
+  // @returns				(bool) success        Returns true if the specified
+  //                                      token is found within the request
+  //                                      cookies. Returns false otherwise.
+  //                                      This parameter is typically used
+  //                                      to signal early returns to prevent
+  //                                      state-changing actions on invalid
+  //                                      or missing tokens.
+  // @notes         *This value is case-sensitive
+  static cookieHasToken( request, type ) {
+    if(
+      Util.isset( request.cookies ) &&
+      Util.isset( request.cookies[`${type}Token`] )
+    ) {
+      return true;
+    }
+    return false;
+  }
 
   // @function			verifyToken()
   // @description		Verifies the integrity of the given JWT token.
