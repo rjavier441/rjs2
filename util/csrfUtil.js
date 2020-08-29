@@ -39,7 +39,7 @@ class CsrfUtil {
   //                                      protecting endpoints against CSRF
   //                                      attacks. On failure, throws an
   //                                      Exception.
-  static getInstance() {
+  getInstance() {
     try {
 
       if( !CsrfUtil.instance ) {
@@ -61,7 +61,7 @@ class CsrfUtil {
   //                asking for this token BEFORE any javascript runs. This
   //                means having a hidden <form> field placed as early as
   //                possible before any JS is rendered/loaded.
-  static spaInjectCsrf( app ) {
+  spaInjectCsrf( app ) {
     try {
       
       if( !CsrfUtil.instance ) {
@@ -78,6 +78,6 @@ class CsrfUtil {
 CsrfUtil.instance = false;
 // END class CsrfUtil
 
-module.exports = CsrfUtil;
+module.exports = new CsrfUtil();
 
 // END csrfUtil.js
