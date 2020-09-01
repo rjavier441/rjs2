@@ -262,14 +262,14 @@ class Autoloader extends DependencyInjectee {
       // DEBUG
       // console.error( 'exception:', exception.message );
 
-      let msg = new this._dep.ServerError( `{"Exception (${ht.src})": ${JSON.stringify(exception.message)}}`, {
-        exception: exception
-      } );
-      this._dep.Logger.log(
-        `Failed to mount ${mount}: ` +
-        `${exception.name}: ${exception.message}`,
-        ht
+      let emsg = `Failed to mount ${mount}: ${exception.name}: ` +
+        `${exception.message}`;
+      let msg = new this._dep.ServerError(
+        `{"Exception (${ht.src})": ${JSON.stringify(exception.message)},` +
+        `"emsg": ${emsg}}`,
+        { exception: exception }
       );
+      this._dep.Logger.log( emsg, ht );
       throw msg; // mark
     }
   }
