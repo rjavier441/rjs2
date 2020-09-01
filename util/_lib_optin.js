@@ -39,6 +39,7 @@ const _Lib = {
   AutoLoader: __dirname + '/autoloader.js',
   ColorLogger: __dirname + '/colorLogger.js',
   Cryptic: __dirname + '/cryptic.js',
+  CsrfUtil: __dirname + '/csrfUtil.js',
   DateTimes: __dirname + '/datetimes.js',
   Logger: __dirname + '/logger.js',
   MysqlUtil: __dirname + '/mysqlUtil.js',
