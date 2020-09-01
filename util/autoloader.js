@@ -23,6 +23,8 @@ const configFileName = '_alconfig.json';
 const DependencyInjectee = require(
   `${settings.util}/class/dependencyInjectee.js`
 );
+const CsrfUtil = require( './csrfUtil.js' );
+const { response } = require('express');
 
 // BEGIN Autoloader Config Documentation
 // @config        _alconfig.json
@@ -86,6 +88,61 @@ const DependencyInjectee = require(
 //	                                    current endpoint, and no further
 //	                                    depth-first traversal will occur for the
 //	                                    current directory.
+//                (~object) mountConfig An object describing actions to run
+//                                      at different stages of an endpoint
+//                                      mount. This is useful for specifying
+//                                      certain actions or preprocessing of
+//                                      files, routes and static content.
+//                                      Follows the following format:
+// 
+//                                        "mountConfig": {
+//                                          "fileToPerformActionsOn": {
+//	                                          
+//	                                          // Stages:
+//                                            "pre": [ ... ],
+//                                            "req": [ ... ],
+//                                            ...
+//                                          }
+//                                        }
+//                                      Possible stages (i.e. valid keys)
+//                                      include:
+//                  (~array) pre          Actions that must be performed
+//                                        before mounting. Valid actions
+//                                        include:
+//                                          "csrfProtection":
+//	                                          Pushes CsrfUtil::getInstance.
+//                                          "ejsLoadCsrfToken":
+//	                                          Pushes logic that pulls a
+//                                            CSRF token from the loaded
+//                                            CsrfUtil instance (requires
+//                                            "csrfProtection" action first)
+//                                            and saves it in a local var
+//                                            storage for use with other
+//                                            EJS pre/req pipeline stages.
+//                  (~array) req          Actions that should be performed
+//                                        by the mount handler callback,
+//	                                      which is triggered when a static
+//                                        resource request is made for the
+//                                        associated static content (i.e. a
+//                                        GET request for the routed item).
+//                                        Valid actions include:
+//                                          "ejsRenderAndSendTemplate":
+//                                            Uses EJS to render the entity
+//                                            being mounted, utilizing any
+//                                            ejs loaded variables in its
+//                                            generation. Then, sends the
+//                                            rendered HTML to the client
+//                                            with a code 200. Does NOT end
+//                                            the request; use "terminate"
+//                                            to end the request.
+//                                          "terminate":
+//                                            Ends the request by calling
+//                                            Express::Response::end(). Any
+//                                            actions listed after this are
+//                                            skipped.
+//                  *Coming Soon:*
+//                  ~~~(~object) post        Actions to be performed after
+//                                        mounting.~~~
 // @example
 //	              Given the following directory structure:
 //
@@ -212,8 +269,11 @@ class Autoloader extends DependencyInjectee {
       // DEBUG
       this._dep.Logger.log( `Loading from "${root}"`, ht );
 
+      // Traverse rjs2 filesystem recursively to map routes
       this.traverse( app, '/', root );
       
+      // Mount miscellaneous/general endpoints
+      this.mountCsrfError( app );
       this.mountNotFound( app );
     } catch( exception ) {
       
@@ -277,7 +337,11 @@ class Autoloader extends DependencyInjectee {
   // @function			mountNotFound()
   // @description		This function adds a general purpose "404" Endpoint if all
   //	              other routes fail.
-  // @parameters		n/a
+  // @parameters		(object) app          The ExpressJS app/router to map
+  //                                      the given asset to. This type of
+  //                                      object is typically returned from
+  //                                      a call to "express()" or "express.
+  //                                      Router()".
   // @returns				n/a
   mountNotFound( app ) {
 
@@ -315,13 +379,13 @@ class Autoloader extends DependencyInjectee {
         }
         if( request.accepts('json') ) {
           response.send(
-            new this._dep.Class.ServerError( 'Not Found', {}, 404 )
+            new this._dep.ServerError( 'Not Found', {}, 404 )
           ).end();
           return;
         }
 
         response.type('txt').send(
-          ( new this._dep.Class.ServerError( 'Not Found', {}, 404 ) ).asString()
+          ( new this._dep.ServerError( 'Not Found', {}, 404 ) ).asString()
         ).end();
       } );
     } catch( exception ) {
@@ -338,6 +402,209 @@ class Autoloader extends DependencyInjectee {
     }
   }
 
+  // @function			mountCsrfError()
+  // @description		Adds a general purpose error handler to run if a csurf
+  //                error occurs.
+  // @parameters		(object) app          The ExpressJS app/router to map
+  //                                      the given asset to. This type of
+  //                                      object is typically returned from
+  //                                      a call to "express()" or "express.
+  //                                      Router()".
+  // @returns				n/a
+  mountCsrfError( app ) {
+
+    let ht = new this._dep.HandlerTag(
+      'Autoloader.mountCsrfError()',
+      'string'
+    ).getTag();
+
+    try {
+
+      // DEBUG
+      this._dep.Logger.log( `Mounting general Csrf Error endpoint`, ht );
+
+      app.use( ( error, request, response, next ) => {
+
+        // Only handle if its a CSRF token validation error
+        if( error.code !== 'EBADCSRFTOKEN' ) {
+          return next(error);
+        }
+
+        // Send a 403 code to the client that made this request (which is
+        // likely someone who doesn't have the correct CSRF token)
+        this._dep.Logger.log( `CSRF error: ${error.message}`, ht );
+        response.status( 403 );
+        let serverErrorObj = new this._dep.ServerError(
+          'Forbidden', {}, 403
+        );
+        if( request.accepts( 'html' ) ) {
+          
+          // Generate and send error as HTML to client
+          let payload = this._dep.TemplateManager.generate(
+            'error',
+            {
+              errorCode: 403,
+              errorTitle: 'Forbidden',
+              errorMessage: 'You are not permitted to perform this action'
+            }
+          );
+          response.send( payload ).end();
+        } else if( request.accepts('json') ) {
+
+          // Send error as JSON
+          response.send( serverErrorObj ).end();
+        } else {
+
+          // Send error as text
+          response.type( 'txt' ).send(
+            serverErrorObj.asString()
+          ).end();
+        }
+      } );
+    } catch( exception ) {
+
+      let msg = new this._dep.ServerError( `{"Exception (${ht.src})": ${JSON.stringify(exception.message)}}`, {
+        exception: exception
+      } );
+      this._dep.Logger.log(
+        `Failed to mount "Csrf Error" general endpoint: ` +
+        `${exception.name}: ${exception.message}`,
+        ht
+      );
+      throw msg; // mark
+    }
+  }
+
+  // @function			preActionFactory()
+  // @description		A factory function that builds the processing pipeline
+  //                of functions for static content that is assigned "pre"
+  //                actions
+  // @parameters		(string) mount        The mount path of the entity being
+  //                                      mounted.
+  //                (string) path         The path of the entity being
+  //                                      mounted.
+  //                (array) actions       The array of "pre" actions to
+  //                                      perform. See the documentation
+  //                                      above for a list of supported
+  //                                      action ids.
+  // @returns				(function[]) pipeline The "pre" processing pipeline
+  //                                      to use for this load.
+  preActionFactory( mount, path, actions ) {
+    let rafHt = new this._dep.HandlerTag(
+      'Autoloader.preActionFactory()', 'string'
+    ).getTag();
+    let pipeline = [];
+
+    this._dep.Logger.log(
+      `Building pre action pipeline for "${mount}" (${path})`, rafHt
+    );
+    actions.forEach( actionId => {
+      switch( actionId ) {
+
+        // Apply CSRF Token Checks (only effective in non-GET requests)
+        case 'csrfProtection':{
+          pipeline.push( CsrfUtil.getInstance() );
+          break;
+        }
+        
+        // Inject the CSRF token to the request object's locals for
+        // ejs data
+        case 'ejsLoadCsrfToken': {
+          pipeline.push( ( req, res, next ) => {
+            if( !req.locals ) { req.locals = {}; }
+            if( !req.locals.ejs ) { req.locals.ejs = {}; }
+            req.locals.ejs.csrfToken = req.csrfToken();
+            next();
+          } );
+          break;
+        }
+      }
+    } );
+
+    return pipeline;
+  }
+
+  // @function			reqActionFactory()
+  // @description		A factory function that builds the processing pipeline
+  //                of functions for static content that is assigned "req"
+  //                actions. These actions REPLACE the default behavior of
+  //                the primary mount handler, which typically sends static
+  //                files based on absolute path.
+  // @parameters		(string) mount        The mount path of the entity being
+  //                                      mounted.
+  //                (string) path         The path of the entity being
+  //                                      mounted.
+  //                (array) actions       The array of "req" actions to
+  //                                      perform instead of the default
+  //                                      mount handler. See documentation
+  //                                      above for a list of supported
+  //                                      action ids.
+  // @returns				(function[]) pipeline The "req" processing pipeline to
+  //                                      use for this load.
+  reqActionFactory( mount, path, actions ) {
+    let rafHt = new this._dep.HandlerTag(
+      'Autoloader.reqActionFactory()', 'string'
+    ).getTag();
+    let pipeline = [];
+
+    this._dep.Logger.log(
+      `Building req action pipeline for "${mount}" (${path})`, rafHt
+    );
+    let endProcessing = false;
+    actions.forEach( ( actionId, index ) => {
+      if( endProcessing ) return;
+      switch( actionId ) {
+
+        // Overrides default with EJS html template rendering (and uses
+        // any data from req.locals.ejs that was defined in the earlier
+        // stages)
+        case 'ejsRenderAndSendTemplate': {
+          pipeline.push( ( req, res, next ) => {
+
+            let ht = new this._dep.HandlerTag(
+              `Autoloader.ejsRenderAndSendTemplate() (${mount})`, 'string'
+            ).getTag();
+            
+            try {
+              
+              // Render template
+              this._dep.Logger.log(
+                `Rendering EJS template "${path}"`, ht
+              );
+              let data = req.locals.ejs ? req.locals.ejs : undefined;
+              let content = this._dep.fs.readFileSync( path, 'utf-8' );
+              let output = this._dep.ejs.render( content, data );
+              
+              // Send to client and go to next pipeline function
+              res.type( 'html' );
+              res.set( 'x-timestamp', Date.now() );
+              res.set( 'x-sent', true );
+              res.status( 200 ).send( Buffer.from( output ) );
+              next();
+            } catch( exception ) {
+              this._dep.Logger.log( new this._dep.ServerError(
+                exception.toString()
+              ), ht );
+              next();
+            }
+          } );
+          break;
+        }
+
+        // Terminates the request chain by ending the response
+        case 'terminate': {
+          pipeline.push( ( req, res, next ) => {
+            res.end();
+          } );
+          endProcessing = true; // skips any items after "terminate" cmd
+          break;
+        }
+      }
+    } );
+
+    return pipeline;
+  }
+
   // @function			mountStaticContent()
   // @description		This function mounts the given file to the given endpoint as
   //	              static content.
@@ -347,8 +614,14 @@ class Autoloader extends DependencyInjectee {
   //	                                    "express()" or "express.Router()".
   //	              (string) mount        The endpoint to mount the asset under.
   //	              (string) file         The path to the file.
+  //                (~object) actions     A set of actions to perform at
+  //                                      different stages of the mounting
+  //                                      of this static content. See the
+  //                                      documentation above for more
+  //                                      details.
+  //                                      
   // @returns				n/a
-  mountStaticContent( app, mount, file ) {
+  mountStaticContent( app, mount, file, actions = false ) {
 
     let ht = new this._dep.HandlerTag(
       `Autoloader.mountStaticContent()`,
@@ -362,52 +635,91 @@ class Autoloader extends DependencyInjectee {
         ht
       );
 
-      // Mount static content with a GET
-      app.get( mount, ( request, response ) => {
+      // Configure content handlers
+      let handlerFunctions = [];
 
-        let ht = new this._dep.HandlerTag(
-          `Autoloader.mountStaticContent() (${mount})`,
-          'string'
-        ).getTag();
-  
-        // Send file with automated content-type inference
-        response.sendFile(
-          file,
-          {
-            root: '/',  // specifies start path of 'file' (i.e. 'file' prefix)
-            dotfiles: 'deny',
-            headers: {
-              'x-timestamp': Date.now(),
-              'x-sent': true
-            }
-          },
-          ( error ) => {
-            if( error ) {
-
-              // DEBUG
-              console.log( 'ERROR:\n', error );
-              console.log( 'File:', file );
-  
-              let errorPacket = new this._dep.ServerError( error );
-              this._dep.Logger.log(
-                `Failed to send ${file} to client @ ip ` +
-                `${request.ip}: ${errorPacket.asString()}`,
-                ht
-              );
-              response.status(500).send(
-                new this._dep.ServerError( 'Failed to send content' )
-              ).end();
-            } else {
-              
-              this._dep.Logger.log(
-                `Sent ${file} to client @ ip ${request.ip}`,
-                ht
-              );
-              response.status(200).end();
-            }
-          }
+      // Define pre-mount handlers (if any is requested)
+      if( actions && actions.pre ) {
+        
+        // Run preprocessing pipeline builder
+        handlerFunctions = handlerFunctions.concat(
+          this.preActionFactory( mount, file, actions.pre )
         );
-      } );
+      }
+
+      // Define the request mount handler
+      if( actions && actions.req ) {
+
+        // If specified, override the default with specific handlers
+        handlerFunctions = handlerFunctions.concat(
+          this.reqActionFactory( mount, file, actions.req )
+        );
+
+        // DEBUG
+        // this._dep.Logger.log( handlerFunctions, ht );
+        setTimeout( () => {
+          app._router.stack.forEach( item => {
+            if( item.route && item.route.path.includes('index.ejs' ) ) {
+              console.log( item );
+            }
+          } );
+        }, 2500 );
+      } else {
+
+        // Use the default primary request mount handler
+        handlerFunctions.push( ( request, response ) => {
+  
+          let ht = new this._dep.HandlerTag(
+            `Autoloader.mountStaticContent() (${mount})`,
+            'string'
+          ).getTag();
+  
+          // TODO: 2020-08-30: Change this logic to do view rendering when
+          // it finds index.html; This should allow us to inject CSRF token
+          // into the meta tag
+    
+          // Send file with automated content-type inference
+          response.sendFile(
+            file,
+            {
+              root: '/',  // specifies start path of 'file' (i.e. 'file' prefix)
+              dotfiles: 'deny',
+              headers: {
+                'x-timestamp': Date.now(),
+                'x-sent': true
+              }
+            },
+            ( error ) => {
+              if( error ) {
+  
+                // DEBUG
+                console.log( 'ERROR:\n', error );
+                console.log( 'File:', file );
+    
+                let errorPacket = new this._dep.ServerError( error );
+                this._dep.Logger.log(
+                  `Failed to send ${file} to client @ ip ` +
+                  `${request.ip}: ${errorPacket.asString()}`,
+                  ht
+                );
+                response.status(500).send(
+                  new this._dep.ServerError( 'Failed to send content' )
+                ).end();
+              } else {
+                
+                this._dep.Logger.log(
+                  `Sent ${file} to client @ ip ${request.ip}`,
+                  ht
+                );
+                response.status(200).end();
+              }
+            }
+          );
+        } );
+      }
+
+      // Mount static content with a GET
+      app.get( mount, ...handlerFunctions );
 
       // Handle dot file requests
       let dotfile = mount + '/.';
@@ -418,7 +730,7 @@ class Autoloader extends DependencyInjectee {
           'string'
         ).getTag();
 
-        let errorObject = new this._dep.Class.ServerError(
+        let errorObject = new this._dep.ServerError(
           'Forbidden',
           {},
           403
@@ -452,7 +764,7 @@ class Autoloader extends DependencyInjectee {
           'string'
         ).getTag();
 
-        let errorObject = new this._dep.Class.ServerError(
+        let errorObject = new this._dep.ServerError(
           'Forbidden',
           {},
           403
@@ -561,6 +873,13 @@ class Autoloader extends DependencyInjectee {
         let entityMount = `${mount}/${alias !== false ? alias : entityName}`;
         let entityInfo = this._dep.fs.lstatSync( entityPath );
 
+        // Check for any pre-mounting actions that need to be taken for a
+        // specific file.
+        let entityMountConfig = false;
+        if( config && config.mountConfig && config.mountConfig[entityName] ) {
+          entityMountConfig = config.mountConfig[entityName];
+        }
+
         // Check if this entity is mapped to a middleware controller
         if( config && config.apps && config.apps[entityName] ) {
 
@@ -590,7 +909,9 @@ class Autoloader extends DependencyInjectee {
             }
 
             // Mount static file here
-            this.mountStaticContent( app, entityMount, entityPath );
+            this.mountStaticContent(
+              app, entityMount, entityPath, entityMountConfig
+            );
           }
         }
       } );

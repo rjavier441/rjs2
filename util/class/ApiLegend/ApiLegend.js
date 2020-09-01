@@ -34,137 +34,158 @@ var defaultTemplate = __dirname + "/template/docTemplate.ejs";	// default ApiLeg
 //							(object) router			Reference to an express router object
 class ApiLegend {
 
-	// Constructor
-	constructor ( template ) {
+  // Constructor
+  constructor ( template ) {
 
-		this.name = typeof template.name === "undefined" ? "" : template.name;
-		this.desc = typeof template.desc === "undefined" ? "" : template.desc;
-		this.router = typeof template.router === "undefined" ? undefined : template.router;
-		this.template =
-			typeof template.template === "undefined" ? defaultTemplate : template.template;
-		this.endpoints = [];
-	}
+    this.name = typeof template.name === "undefined" ? "" : template.name;
+    this.desc = typeof template.desc === "undefined" ? "" : template.desc;
+    this.router = typeof template.router === "undefined" ? undefined : template.router;
+    this.template =
+      typeof template.template === "undefined" ? defaultTemplate : template.template;
+    this.endpoints = [];
+  }
 }
 
-// @function		register()
-// @description		This function catalogs an endpoint's information for the corresponding API
-//					documentation, and registers the endpoint with the given router object
-//					reference for the specified request method. Currently supported methods
-//					include GET, POST, PUT, and DELETE
-// @parameters		(string) name		the name of the API endpoint
-//					(string) method		a string representing the request method to registers
-//										this endpoint as. Currently supported values include
-//										"get", "patch", "post", "put", "delete" (case-insensitive)
-//					(string) route		the endpoint route path with respect to the API
-//										Module's root endpoint
-//					(string) desc		a brief description of the API endpoint
-//					(array) args		an array describing the arguments of the endpoint. Each
-//										array element describes a single argument and must be a
-//										JSON object with the following parameters:
-//							(string) name			the name of the argument
-//							(string) type			the argument's (intended) data type
-//							(string) desc			the argument's purpose or description
-//					(array) returnVal	an array describing the endpoint's return value(s).
-//										Each array element describes a single return value and
-//										must be a JSON object with the following parameters:
-//							(string) condition		a string describing the condition that
-//													will return the following return value.
-//							(string) desc			a string decribing what is being returned
-//					(function) cb		a callback function to handle the request. It is given
-//										two arguments:
-//							(object) request		the request object from express.js
-//							(object) response		the response object from express.js
-// @returns			n/a
-ApiLegend.prototype.register = function ( name, method, route, desc, args, returnVal, cb ) {
-	
-	var handlerTag = { "src": "ApiLegend.register" };
-	
-	try {
-		
-		// Create an endpoint descriptor object
-		var endpoint = {
-			"name": name,
-			"route": route,
-			"method": method.toUpperCase(),
-			"desc": desc,
-			"args": args,
-			"returnVal": returnVal
-		};
+// @function			register()
+// @description		This function catalogs an endpoint's information for the
+// 								corresponding API documentation, and registers the
+//								endpoint with the given router object reference for the
+//								specified request method. Currently supported methods
+//								include GET, PATCH, POST, PUT, and DELETE.
+// @parameters		(string) name					the name of the API endpoint
+//								(string) method				a string representing the request
+// 																			method to registers this endpoint
+// 																			as. Currently supported values
+// 																			include "get", "patch", "post",
+// 																			"put", "delete" (case-insensitive).
+//								(string) route				the endpoint route path with respect
+// 																			to the API Module's root endpoint.
+//								(string) desc					a brief description of the API
+// 																			endpoint.
+//								(array) args					an array describing the arguments of
+// 																			the endpoint. Each array element
+// 																			describes a single argument and must
+// 																			be a JSON object with the following
+// 																			parameters:
+//									(string) name					the name of the argument
+//									(string) type					the argument's (intended) data
+// 																				type
+//									(string) desc					the argument's purpose or
+// 																				description
+//								(array) returnVal			an array describing the endpoint's
+// 																			return value(s). Each array element
+// 																			describes a single return value and
+// 																			must be a JSON object with the
+// 																			following parameters:
+//									(string) condition		a string describing the condition
+// 																				that will return the following
+// 																				return value.
+//									(string) desc					a string decribing what is being
+// 																				returned
+//								(function) ...cb			A set of callback functions to run.
+// 																			All but the last callback are
+// 																			assumed to be middleware functions
+// 																			tha can be used for preprocessing,
+// 																			while the last callback handles the
+// 																			request. They are given 2 arguments:
+//									(object) request			the request object from express.js
+//									(object) response			the response object from
+// 																				express.js
+// @returns				n/a
+ApiLegend.prototype.register = function ( name, method, route, desc, args, returnVal, ...cb) {
+  
+  var handlerTag = { "src": "ApiLegend.register" };
+  
+  try {
+    
+    // Create an endpoint descriptor object
+    var endpoint = {
+      "name": name,
+      "route": route,
+      "method": method.toUpperCase(),
+      "desc": desc,
+      "args": args,
+      "returnVal": returnVal
+    };
 
-		// Add autoloader metadata to the callback
-		cb._meta = {
-			endpoint: endpoint,
-			apilegend: this
-		};
+    // Add autoloader metadata to the callback
+    cb.forEach( ( item, index ) => {
+      cb[index]._meta = {
+        endpoint: endpoint,
+        index: index,
+        apilegend: this
+      };
 
-		// Force cb to have it's this pointer set to the function
-		cb = cb.bind(cb);
+      // Force cb to have it's this pointer set to the function itself
+      cb[index] = cb[index].bind(cb[index]);
+    } );
 
-		// Catalog the endpoint's information and resort the array by endpoint name
-		this.endpoints.push( endpoint );
-		this.endpoints.sort( function ( a, b ) {
 
-			var nameA = a.name.toLowerCase();
-			var nameB = b.name.toLowerCase();
+    // Catalog the endpoint's information and resort the array by endpoint name
+    this.endpoints.push( endpoint );
+    this.endpoints.sort( function ( a, b ) {
 
-			// Iterate through the name strings looking for any difference in characters
-			var i = 0;
-			while ( i < nameA.length && i < nameB.length ) {
+      var nameA = a.name.toLowerCase();
+      var nameB = b.name.toLowerCase();
 
-				if ( nameA.charCodeAt( i ) < nameB.charCodeAt( i ) ) {
+      // Iterate through the name strings looking for any difference in characters
+      var i = 0;
+      while ( i < nameA.length && i < nameB.length ) {
 
-					return -1;
-				}
-				if ( nameA.charCodeAt( i ) > nameB.charCodeAt( i ) ) {
+        if ( nameA.charCodeAt( i ) < nameB.charCodeAt( i ) ) {
 
-					return 1;
-				}
-				i++;
-			}
+          return -1;
+        }
+        if ( nameA.charCodeAt( i ) > nameB.charCodeAt( i ) ) {
 
-			return 0;
-		} );
+          return 1;
+        }
+        i++;
+      }
 
-		// Register the endpoint with the router
-		switch ( endpoint.method ) {
+      return 0;
+    } );
 
-			case "GET": {
-	
-				this.router.get( endpoint.route, cb );
-				break;
-			}
+    // Register the endpoint with the router
+    switch ( endpoint.method ) {
 
-			case "PATCH": {
+      case "GET": {
+  
+        this.router.get( endpoint.route, ...cb );
+        break;
+      }
 
-				this.router.patch( endpoint.route, cb );
-				break;
-			}
-	
-			case "POST": {
-	
-				this.router.post( endpoint.route, cb );
-				break;
-			}
-	
-			case "PUT": {
-	
-				this.router.put( endpoint.route, cb );
-				break;
-			}
-	
-			case "DELETE": {
-	
-				this.router.delete( endpoint.route, cb );
-				break;
-			}
-		}
-		
-		// Debug
-		// logger.log( JSON.stringify( this.endpoints, ["name"], 4 ), handlerTag );
-	} catch ( exception ) {
-		
-		logger.log( exception, handlerTag );
-	}
+      case "PATCH": {
+
+        this.router.patch( endpoint.route, ...cb );
+        break;
+      }
+  
+      case "POST": {
+  
+        this.router.post( endpoint.route, ...cb );
+        break;
+      }
+  
+      case "PUT": {
+  
+        this.router.put( endpoint.route, ...cb );
+        break;
+      }
+  
+      case "DELETE": {
+  
+        this.router.delete( endpoint.route, ...cb );
+        break;
+      }
+    }
+    
+    // Debug
+    // logger.log( JSON.stringify( this.endpoints, ["name"], 4 ), handlerTag );
+  } catch ( exception ) {
+    
+    logger.log( exception, handlerTag );
+  }
 };
 
 // @function		routerRef()
@@ -176,13 +197,13 @@ ApiLegend.prototype.register = function ( name, method, route, desc, args, retur
 // @returns			(object) router		the currently stored router reference
 ApiLegend.prototype.routerRef = function ( r = false ) {
 
-	// If router is given, set the router reference
-	if ( r ) {
-		this.router = r;
-	}
+  // If router is given, set the router reference
+  if ( r ) {
+    this.router = r;
+  }
 
-	// Return the currently associated router reference
-	return this.router;
+  // Return the currently associated router reference
+  return this.router;
 };
 
 // @function		getDoc()
@@ -194,44 +215,44 @@ ApiLegend.prototype.routerRef = function ( r = false ) {
 //										is false, apiDoc is a JSON object
 ApiLegend.prototype.getDoc = function ( pretty = false ) {
 
-	var doc = {};
+  var doc = {};
 
-	// Determine how to return the documentation
-	switch ( pretty ) {
+  // Determine how to return the documentation
+  switch ( pretty ) {
 
-		// If pretty format is desired, return an HTML page with the documentation
-		case true: {
+    // If pretty format is desired, return an HTML page with the documentation
+    case true: {
 
-			var data = {
-				"apiName": this.name,
-				"apiDesc": this.desc,
-				"apiEndpoints": this.endpoints
-			};
-			var options = {
-				"filename": this.template,
-				"cache": true,		// enable render function caching for performance boost
-				"strict": true		// force render fucntion to run in JS strict mode
-			};
+      var data = {
+        "apiName": this.name,
+        "apiDesc": this.desc,
+        "apiEndpoints": this.endpoints
+      };
+      var options = {
+        "filename": this.template,
+        "cache": true,		// enable render function caching for performance boost
+        "strict": true		// force render fucntion to run in JS strict mode
+      };
 
-			// First, load the docTemplate
-			var docTemplate = fs.readFileSync( this.template, "utf-8" );
+      // First, load the docTemplate
+      var docTemplate = fs.readFileSync( this.template, "utf-8" );
 
-			doc = ejs.render( docTemplate, data, options );
-			break;
-		}
+      doc = ejs.render( docTemplate, data, options );
+      break;
+    }
 
-		// If not, return a simple JSON object
-		case false: {
+    // If not, return a simple JSON object
+    case false: {
 
-			// Simply copy over the current API lengend info to the JSON doc
-			doc.apiName = this.name;
-			doc.apiDesc = this.desc;
-			doc.apiEndpoints = this.endpoints;
-			break;
-		}
-	}
+      // Simply copy over the current API lengend info to the JSON doc
+      doc.apiName = this.name;
+      doc.apiDesc = this.desc;
+      doc.apiEndpoints = this.endpoints;
+      break;
+    }
+  }
 
-	return doc;
+  return doc;
 };
 
 // END class ApiLegend
