@@ -10,7 +10,7 @@
     "cookie-parser": "^1.4.5",
     "csurf": "^1.11.0",
     "ejs": "^2.7.1",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "jsonwebtoken": "^8.5.1",
     "minimist": "^1.2.5",
     "mocha": "^8.1.1",
